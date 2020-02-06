@@ -1,29 +1,13 @@
-#   文档对象 DOM
+# 文档对象模型DOM
 
-## 设置浏览器文档的标题
-<<< ./tpl/dom/setTitle.js
+## 定义
 
-## 判断当前位置是否为页面底部
+<<< ./tpl/dom/define.js
 
-- 返回值为true/false
+## !DOCTYPE html 作用
+<<< ./tpl/dom/doctype.js
 
-<<< ./tpl/dom/bottomVisible.js
+## DOM级别
+<<< ./tpl/dom/rank.js
 
-## 判断元素是否在可视范围内
-
-- partiallyVisible为是否为完全可见
-
-<<< ./tpl/dom/elementIsVisibleInViewport.js
-
-## 获取元素css样式
-<<< ./tpl/dom/getStyle.js
-
-## 进入全屏
-<<< ./tpl/dom/fullscreenIn.js
-
-## 退出全屏
-<<< ./tpl/dom/fullscreenExit.js
-
-## 全屏事件
-<<< ./tpl/dom/fullscreenchange.js
 

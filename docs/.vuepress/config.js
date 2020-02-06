@@ -1,8 +1,8 @@
 module.exports = {
-  title: 'JavaScript Tools',
-  description: '常用的js方法工具',
+  title: 'Blogs',
+  description: '个人博客网站',
   dest: './dist',
-  base: '/js_tricks/',
+  base: '/blogs/',
   repo: '',
   head: [
     ['link', { rel: 'icon', href: `/images/favicon.png` }],
@@ -30,14 +30,34 @@ module.exports = {
     sidebar: [
       '/dom/',
       '/bom/',
-      '/type/',
-      '/array/',
-      '/date/',
-      '/number/',
-      '/cookie/',
-      '/copy/',
-      '/script/',
-      '/styles/'
+      {
+        title: "javascript",
+        collapsable: true,
+        children: [
+          "/javascript/script",
+          "/javascript/noscript",
+          "/javascript/scriptsort",
+          "/javascript/strict",
+          "/javascript/var",
+          "/javascript/type",
+          "/javascript/null",
+          "/javascript/number",
+          "/javascript/tostring",
+          "/javascript/object",
+          "/javascript/array",
+          "/javascript/not",
+          "/javascript/for-in",
+          "/javascript/with",
+          "/javascript/arguments",
+          "/javascript/env",
+          "/javascript/rubbish",
+          "/javascript/regexp",
+          "/javascript/function",
+          "/javascript/url",
+          "/javascript/math",
+          "/javascript/oop"
+        ]
+      }
     ]
   }
 }
