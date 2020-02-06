@@ -9,7 +9,7 @@
     "deploy": "gh-pages -d dist",
     "deploy:build": "npm run docs:build && gh-pages -d dist"
   },
-  "author": "",
+  "author": "xjl271314",
   "license": "ISC",
   "devDependencies": {
     "gh-pages": "^2.0.0",
