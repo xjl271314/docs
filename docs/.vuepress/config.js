@@ -31,7 +31,7 @@ module.exports = {
       '/dom/',
       '/bom/',
       {
-        title: "javascript",
+        title: "javascript基础知识",
         collapsable: true,
         children: [
           "/javascript/script",
@@ -55,7 +55,11 @@ module.exports = {
           "/javascript/function",
           "/javascript/url",
           "/javascript/math",
-          "/javascript/oop"
+          "/javascript/oop",
+          "/javascript/form",
+          "/javascript/canvans",
+          "/javascript/webgl",
+          "/javascript/html5"
         ]
       }
     ]
