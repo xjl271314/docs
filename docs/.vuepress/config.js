@@ -16,7 +16,7 @@ module.exports = {
   ],
   markdown: {
     anchor: { permalink: false },
-    toc: { includeLevel: [1, 2] },
+    toc: { includeLevel: [1, 2, 3] },
     config: md => {
       md.use(require('markdown-it-include'), './')
     }
@@ -61,7 +61,8 @@ module.exports = {
           "/javascript/webgl",
           "/javascript/html5"
         ]
-      }
+      },
+      '/http/'
     ]
   }
 }

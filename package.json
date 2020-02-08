@@ -18,6 +18,7 @@
     "vuepress": "^0.14.4"
   },
   "dependencies": {
-    "markdown-it-include": "^1.0.0"
+    "markdown-it-include": "^1.0.0",
+    "markdown-it-mermaid": "^0.2.5"
   }
 }
