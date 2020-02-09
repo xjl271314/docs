@@ -62,7 +62,8 @@ module.exports = {
           "/javascript/html5"
         ]
       },
-      '/http/'
+      '/http/',
+      '/safe/'
     ]
   }
 }
