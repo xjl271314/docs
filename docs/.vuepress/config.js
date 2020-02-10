@@ -59,7 +59,8 @@ module.exports = {
           "/javascript/form",
           "/javascript/canvans",
           "/javascript/webgl",
-          "/javascript/html5"
+          "/javascript/html5",
+          "/javascript/cros"
         ]
       },
       '/http/',

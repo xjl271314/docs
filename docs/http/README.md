@@ -553,6 +553,99 @@ CA 机构能够签发证书，同样也存在机制宣布以往签发的证书�
 前面的方法分别从减少传输延时和单机负载的方法提高 `HTTPS` 接入性能，但是方法都基于不改变 `HTTP` 协议的基础上提出的优化方法，`SPDY/HTTP2` 利用 `TLS/SSL` 带来的优势，通过修改协议的方法来提升 `HTTPS` 的性能，提高下载速度等。
 
 
+## HTTP网络优化
+
+### 减少资源体积
+
+- gzip压缩
+
+> `gzip` 使用了 `LZ77` 算法与 `Huffman` 编码来压缩文件，重复度越高的文件可压缩的空间就越大
+
+:::tip
+**如何查看是否开启`gzip`？**
+
+—— 打开控制面板进入`NetWork`，右键选取`response headers` 选择查看`Content-Encoding`
+
+`Content-Encoding`：内容编码格式`gzip` 和 `deflate`
+
+**如何使用`gzip`？**
+
+
+
+1. 首先浏览器（也就是客户端）发送请求时，通过`Accept-Encoding`带上自己支持的内容编码格式列表
+2. 服务端在接收到请求后，从中挑选出一种用来对响应信息进行编码，并通过`Content-Encoding`来说明服务端选定的编码信息
+3. 浏览器在拿到响应正文后，依据`Content-Encoding`进行解压。
+:::
+
+![gzip例子](https://img-blog.csdnimg.cn/20200210001648114.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+我们可以看到图片中开启`gzip`压缩之后文件小了很多(越小的文件越不明显)
+
+- nginx开启
+
+```nginx
+gzip on;
+
+gzip_min_length 1k; // 不压缩临界值，大于1K的才压缩，一般不用改
+
+gzip_comp_level 2; // 压缩级别，1-10，数字越大压缩的越细，时间也越长
+
+gzip_types text/plain application/javascript application/x-javascript text/css application/xml text/javascript application/x-httpd-php image/jpeg image/gif image/png; // 进行压缩的文件类型
+
+gzip_disable "MSIE [1-6]\.";// ie兼容性不好所以放弃
+```
+
+- webpack开启
+
+`compression-webpack-plugin` 这个插件可以提供功能
+
+```js
+const CompressionWebpackPlugin = require('compression-webpack-plugin');
+plugins.push(    
+    new CompressionWebpackPlugin({
+        asset: '[path].gz[query]',// 目标文件名        
+        algorithm: 'gzip',// 使用gzip压缩       
+        test: new RegExp( '\\.(js|css)$' // 压缩 js 与 css),        
+        threshold: 10240,// 资源文件大于10240B=10kB时会被压缩        
+        minRatio: 0.8 // 最小压缩比达到0.8时才会被压缩    
+    })
+);
+```
+
+:::tip
+**`webpack`的`gzip`和`nginx`的有什么关系？**
+
+1. `nginx`没有开启`gzip`压缩,`webpack`打包出的`.gz`文件是用不到的
+
+2. `nginx`开启了`gzip`，`nginx`查找静态资源是否存在已经压缩好的`gzip`压缩文件，如果没有则自行压缩（消耗cpu但感知比较少）
+
+3. `nginx`开启`gzip`压缩,`webpack`打包出的`.gz`文件被找到，提前（打包）压缩直接使用，减少了`nginx`的压缩损耗
+:::
+
+### gzip是怎么压缩的？
+
+到这一步的都不是一般人了，我就简述一下:使用`"滑动窗口"`的方法，来寻找文件中的每一个匹配长度达到最小匹配的串，重复的内容以一个哈希值存储在字典表中并替换到匹配的串上，以此来达到压缩，因此重复度越高的文件可压缩的空间就越大。
+
+
+### 源文件控制
+
+- 图片采用webp格式
+- http2——头部压缩
+
+### 减少资源请求
+- 使用DNS
+- 使用http2
+- 使用缓存
+
+
+## HTTP1.1及HTTP2区别
+
+## 强缓存与协商缓存
+
+
+
+
+
 
 
 
