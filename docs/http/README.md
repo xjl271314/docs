@@ -791,6 +791,8 @@ HTTP1.x中的header带有大量的信息，而且每次都要重复发送，HTTP
 
 Web缓存是可以自动保存常见文档副本的HTTP设备。当Web请求抵达缓存时，如果本地有"已缓存"的副本，就可以从本地存储设备而不是原始服务器中提取这个文档。
 
+![缓存的流程](https://img-blog.csdnimg.cn/20200211145959398.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
 ### 缓存的优点
 
 - 减少了冗余的数据传输，节省了网络费用。
@@ -888,12 +890,87 @@ app.get('/',(req, res)=>{
 
 > 协议缓存主要是利用`Last-Modified`、`If-Modified-Since`和`Etag`、`If-None-Match`来实现。
 
+:::tip
+
+`Last-Modified`:表示为实体头部部分，`response`返回，表示为资源的最后更新时间,精确到秒。
+
+`If-Modified-Since`:通过比较两次的时间判断，资源在请求期间是否有修改，假如没有修改，则命中协商缓存，浏览器从缓存中读取资源，如果没有命中，资源有过修改，返回新的`Last-Modified`和服务器资源。
+
+:::
+
+```js
+app.get('/', (req, res) => {
+    const cssContent = path.join(__dirname, './html/index.html')
+    fs.stat(cssContent, (err, start) => {
+        if (req.headers['if-modified-since'] === start.mtime.toUTCString()) {
+            res.writeHead(304, 'Not Modified');
+            res.end();
+        } else {
+            fs.readFile(cssContent, function (err, data) {
+                let lastModified = start.mtime.toUTCString();
+                res.setHeader('Last-Modified', lastModified);
+                res.writeHead(200, 'OK');
+                res.end(data);
+            })
+        }
+    })
+});
+```
 
 
+:::warning
+
+有些情况下仅判断最后修改日期来验证资源是否有改动是不够的：
+
+1. 存在周期性重写某些资源，但资源实际包含的内容并无变化；
+2. 被修改的信息并不重要，如注释等；
+3. `Last-Modified`无法精确到毫秒，但有些资源更新频率有时会小于一秒。
+:::
+
+:::tip
+
+`ETag`:为相应头部字段，表示资源内容的唯一标识(文件hash,类似webpack打包生成的文件hash)，随服务器`response`返回；
+
+`If-None-Match`: 服务器比较请求头中的`If-None-Match`和当前资源中的`etag`是否一致，来判断资源是否修改过，如果没有修改，则命中缓存，浏览器从缓存中读取资源，如果修改过，服务器会返回新的`etag`，并返回资源；
+
+:::
+
+```js
+app.get('/home', (req, res) => {
+    const cssContent = path.join(__dirname, './html/index.html')
+    fs.stat(cssContent, (err, start) => {
+        let etag = md5(cssContent);
+        if (req.headers['if-none-match'] === etag) {
+            res.writeHead(304, 'Not Modified');
+            res.end();
+        } else {
+            fs.readFile(cssContent, function (err, data) {
+                res.setHeader('Etag', etag);
+                res.writeHead(200, 'OK');
+                res.end(data);
+            })
+        }
+    })
+});
+```
+:::tip
+
+**协商缓存步骤总结:**
+
+1. 请求资源时，把用户本地该资源的`etag`同时带到服务端，服务端和最新资源做对比。
+2. 如果资源没更改，返回304，浏览器读取本地缓存。
+3. 如果资源有更改，返回200，返回最新的资源。
+
+不推荐使用 `Expires` 首部，它指定的是实际的过期日期而不是秒数。
+
+`HTTP`设计者后来认为，由于很多服务器的时钟都不同步，或者不正确，所以最好还是用剩余秒数，而不是绝对时间来表示过期时间。
 
 
+`ETag`解决了`Last-Modified`使用时可能出现的资源的时间戳变了但内容没变及如果再一秒钟以内资源变化但`Last-Modified`没变的问题，感觉ETag更加稳妥。
 
+补充：根据浏览器缓存策略，`Expire`和`Cache-Control`用回车、后退、F5刷新会跳过本地缓存，每次都会从服务器中获数据。
 
+:::
 
 
 

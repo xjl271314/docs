@@ -4,7 +4,7 @@
 
 > 同源策略即：同一协议，同一域名，同一端口号。当其中一个不满足时，我们的请求即会发生跨域问题。
 
-1. 采用`jsonp`请求 
+**1. 采用`jsonp`请求**
 
 不知道大家有没有注意，不管是我们的`script`标签的`src`还是`img`标签的`src`，或者说`link`标签的`href`他们没有被通源策略所限制，比如我们有可能使用一个网络上的图片，就可以请求得到。
 
@@ -49,7 +49,7 @@ router.get('/article-list', (req, res) => {
 其实`jsonp`的整个过程就类似于前端声明好一个函数，后端返回执行函数。执行函数参数中携带所需的数据，整个过程实际非常简单易懂。
 :::
 
-2. document.domain
+**2. document.domain**
 
 这种方式常用于`iframe`通信，用在主域名相同子域名不同的跨域访问中。
 
@@ -57,13 +57,13 @@ router.get('/article-list', (req, res) => {
 
 这两个域名中的文件可以用这种方式进行访问，通过在两个域中具体的文件中设置`document.domain="frame.com"`就可达到跨域访问的目的。
 
-3. window.name
+**3. window.name**
 
 常用于iframe中。
 
 `window`的`name`属性有个特征：在一个窗口(window)的生命周期内,窗口载入的所有的页面都是共享一个`window.name`的，每个页面对`window.name`都有读写的权限，`window.name`是持久存在一个窗口载入过的所有页面中的，并不会因新页面的载入而进行重置。
 
-4. window.postMessage
+**4. window.postMessage**
 
 `window.postMessages`是`HTML5`中实现跨域访问的一种新方式，可以使用它来向其它的`window`对象发送消息，无论这个`window`对象是属于同源或不同源。
 
@@ -75,7 +75,7 @@ router.get('/article-list', (req, res) => {
 
 再让接收数据页面的`window`对象监听自身的`message`事件来获取传过来的消息，消息内容储存在该事件对象的`data`属性中。
 
-5. CORS(Cross-Origin Resource Sharing)
+**5. CORS(Cross-Origin Resource Sharing)**
 
 `CORS`是官方推荐解决跨域问题的方案。
 
@@ -111,7 +111,7 @@ router.get('/article-list', (req, res) => {
 
 一个逗号分隔的列表，表明服务器支持的请求类型（比如：GET, POST）
 
-6. 配置代理服务器。
+**6. 配置代理服务器。**
 
 可以配置`nginx`服务器,服务器与服务器之间访问是不跨域的。
 

@@ -31,7 +31,7 @@ module.exports = {
       '/dom/',
       '/bom/',
       {
-        title: "javascript基础知识",
+        title: "js基础知识",
         collapsable: true,
         children: [
           "/javascript/script",
@@ -60,11 +60,23 @@ module.exports = {
           "/javascript/canvans",
           "/javascript/webgl",
           "/javascript/html5",
-          "/javascript/cros"
+          "/javascript/cros",
+          "/javascript/eventloop",
+          "/javascript/copy"
         ]
       },
+      '/css/',
       '/http/',
-      '/safe/'
+      '/safe/',
+      {
+        title: "开放性问题",
+        collapsable: true,
+        children: [
+          "/open/font",
+          "/open/px",
+          "/open/module",
+        ]
+      }
     ]
   }
 }
