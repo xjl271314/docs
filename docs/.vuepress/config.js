@@ -69,6 +69,15 @@ module.exports = {
       '/http/',
       '/safe/',
       {
+        title: "React",
+        collapsable: true,
+        children: [
+          "/react/lifestyle",
+          "/react/redux",
+          "/react/hooks"
+        ]
+      },
+      {
         title: "开放性问题",
         collapsable: true,
         children: [
