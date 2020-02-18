@@ -74,8 +74,23 @@ module.exports = {
         children: [
           "/react/lifestyle",
           "/react/redux",
-          "/react/hooks"
+          "/react/hooks",
+          "/react/aria",
+          "/react/codesplit",
+          "/react/ref",
+          "/react/hoc",
+          "/react/jsx",
+          "/react/portal",
+          "/react/syntheticEvent"
         ]
+      },
+      {
+        title: "Vue",
+        collapsable: true,
+      },
+      {
+        title: "数据库相关",
+        collapsable: true,
       },
       {
         title: "开放性问题",
