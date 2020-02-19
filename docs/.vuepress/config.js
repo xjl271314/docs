@@ -65,6 +65,7 @@ module.exports = {
           "/javascript/copy"
         ]
       },
+      '/es/',
       '/css/',
       '/http/',
       '/safe/',
