@@ -62,13 +62,22 @@ module.exports = {
           "/javascript/html5",
           "/javascript/cros",
           "/javascript/eventloop",
-          "/javascript/copy"
+          "/javascript/copy",
+          "/javascript/ajax"
         ]
       },
       '/es/',
       '/css/',
       '/http/',
+      '/webmodule/',
       '/safe/',
+      {
+        title: "移动端知识",
+        collapsable: true,
+        children: [
+          "/mobile/meta",
+        ]
+      },
       {
         title: "React",
         collapsable: true,
