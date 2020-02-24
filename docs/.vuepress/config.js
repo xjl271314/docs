@@ -63,7 +63,8 @@ module.exports = {
           "/javascript/cros",
           "/javascript/eventloop",
           "/javascript/copy",
-          "/javascript/ajax"
+          "/javascript/ajax",
+          "/javascript/throtte"
         ]
       },
       '/es/',
@@ -76,6 +77,7 @@ module.exports = {
         collapsable: true,
         children: [
           "/mobile/meta",
+          "/mobile/tips"
         ]
       },
       {
