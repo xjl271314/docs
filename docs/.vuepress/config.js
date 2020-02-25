@@ -72,6 +72,7 @@ module.exports = {
       '/http/',
       '/webmodule/',
       '/safe/',
+      '/nginx/',
       {
         title: "移动端知识",
         collapsable: true,
@@ -85,6 +86,7 @@ module.exports = {
         collapsable: true,
         children: [
           "/react/lifestyle",
+          "/react/com",
           "/react/redux",
           "/react/hooks",
           "/react/aria",
@@ -93,7 +95,8 @@ module.exports = {
           "/react/hoc",
           "/react/jsx",
           "/react/portal",
-          "/react/syntheticEvent"
+          "/react/syntheticEvent",
+          "/react/optimization"
         ]
       },
       {
