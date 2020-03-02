@@ -1,0 +1,1 @@
+# AMD,CMD,CommonJs,UMD

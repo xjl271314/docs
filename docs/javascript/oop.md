@@ -145,14 +145,15 @@ alert(typeof descriptor.get); // "function"
 考虑到在`ECMAScript`中无法创建类，开发人员就发明了一种函数，用函数来封装以特定接口创建对象的细节，如下面的例子所示：
 
 ```js
- var o = new Object(); 
- o.name = name; 
- o.age = age; 
- o.job = job; 
- o.sayName = function(){ 
- 	alert(this.name); 
- }; 
- return o; 
+function createPerson(){
+    var o = new Object(); 
+    o.name = name; 
+    o.age = age; 
+    o.job = job; 
+    o.sayName = function(){ 
+        alert(this.name); 
+    }; 
+    return o; 
 } 
 var person1 = createPerson("Nicholas", 29, "Software Engineer"); 
 var person2 = createPerson("Greg", 27, "Doctor");

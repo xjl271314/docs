@@ -68,9 +68,22 @@ module.exports = {
         ]
       },
       '/es/',
-      '/css/',
+      {
+      title: "CSS相关知识",
+        collapsable: true,
+        children: [
+          "/css/base"
+        ]
+      },
       '/http/',
-      '/webmodule/',
+      {
+        title: "前端工程化",
+        collapsable: true,
+        children: [
+          "/project/module",
+          "/project/webpack"
+        ]
+      },
       '/safe/',
       '/nginx/',
       {
@@ -86,7 +99,9 @@ module.exports = {
         collapsable: true,
         children: [
           "/react/lifestyle",
+          "/react/component",
           "/react/com",
+          "/react/setState",
           "/react/redux",
           "/react/hooks",
           "/react/aria",
@@ -96,12 +111,21 @@ module.exports = {
           "/react/jsx",
           "/react/portal",
           "/react/syntheticEvent",
-          "/react/optimization"
+          "/react/optimization",
+          "/react/fiber"
         ]
       },
       {
         title: "Vue",
         collapsable: true,
+      },
+      {
+        title: "Electron",
+        collapsable: true,
+        children:[
+          '/electron/build',
+          '/electron/update'
+        ]
       },
       {
         title: "数据库相关",
@@ -114,6 +138,7 @@ module.exports = {
           "/open/font",
           "/open/px",
           "/open/module",
+          "/open/rtv",
         ]
       }
     ]
