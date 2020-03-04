@@ -63,6 +63,7 @@ module.exports = {
           "/javascript/cros",
           "/javascript/eventloop",
           "/javascript/copy",
+          "/javascript/macro",
           "/javascript/ajax",
           "/javascript/throtte"
         ]
@@ -86,6 +87,7 @@ module.exports = {
       },
       '/safe/',
       '/nginx/',
+      '/git/',
       {
         title: "移动端知识",
         collapsable: true,
@@ -99,6 +101,9 @@ module.exports = {
         collapsable: true,
         children: [
           "/react/lifestyle",
+          "/react/dom",
+          "/react/diff",
+          "/react/fiber",
           "/react/component",
           "/react/com",
           "/react/setState",
@@ -111,13 +116,15 @@ module.exports = {
           "/react/jsx",
           "/react/portal",
           "/react/syntheticEvent",
-          "/react/optimization",
-          "/react/fiber"
+          "/react/optimization"
         ]
       },
       {
         title: "Vue",
         collapsable: true,
+        children: [
+          "/vue/lifestyle",
+        ]
       },
       {
         title: "Electron",

@@ -10,6 +10,20 @@
 
 基于浏览器对 `requestIdleCallback` 和 `requestAnimationFrame` 这两个 `API` 的支持,`React` 团队实现新的调度策略 -- `Fiber reconcile`。
 
+
+### requestIdelCallBack
+
+客户端线程执行任务时会以帧的形式划分，大部分设备控制在30-60帧是不会影响用户体验的。在两个帧的执行期间，主线程通常会有一小段的空闲时间。`requestIdelCallBack`可以在这个空闲时间调用`IdelCallBack`执行一些任务。
+
+- 低优先级的任务将由`requestIdelCallBack`来处理
+
+- 高优先级的任务，比如动画相关的由`requestAnimationFrame`来处理
+
+- `requestIdelCallBack`可以在多个空闲期调用空闲期回调，执行任务
+
+- `requestIdelCallBack`方法提供`deadline`即任务执行限制时间以切分任务，避免长时间执行，阻塞`UI`渲染而导致掉帧。
+
+
 ### React Fiber的方式：
 
 把一个耗时长的任务分成很多小片，每一个小片的运行时间很短，虽然总时间依然很长，但是在每个小片执行完之后，都给其他任务一个执行的机会，这样唯一的线程就不会被独占，其他任务依然有运行的机会。
