@@ -98,7 +98,12 @@
 
 **双内核浏览器优先加载webkit内核**
 ```html
+<!-- 强制Chromium内核，作用于360浏览器、QQ浏览器等国产双核浏览器 -->
 <meta name="renderer" content="webkit"/>
+<!-- 强制Chromium内核，作用于其他双核浏览器 -->
+<meta name="force-rendering" content="webkit"/>
+<!-- 如果有安装 Google Chrome Frame 插件则强制为Chromium内核，否则强制本机支持的最高版本IE内核，作用于IE浏览器 -->
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
 ```
 
 **双内核浏览器优先加载IE兼容模式**
