@@ -664,4 +664,196 @@ function FriendStatus(props) {
 `React` 会在组件卸载的时候执行清除操作。正如之前学到的，`effect` 在每次渲染的时候都会执行。这就是为什么 `React` 会在执行当前 `effect` 之前对上一个 `effect` 进行清除。
 
 
+## useContext
 
+```js
+const value = useContext(MyContext);
+```
+> 接收一个 `context` 对象（`React.createContext` 的返回值）并返回该 `context` 的当前值。当前的 `context` 值由上层组件中距离当前组件最近的 `<MyContext.Provider>` 的 `value prop` 决定。
+
+
+当组件上层最近的 `<MyContext.Provider>` 更新时，该 `Hook` 会触发重渲染，并使用最新传递给 `MyContext provider` 的 `context value` 值。
+
+### 标准的context方式
+
+```js
+import React from "react";
+import ReactDOM from "react-dom";
+
+// 创建 Context
+const NumberContext = React.createContext();
+// 它返回一个具有两个值的对象
+// { Provider, Consumer }
+
+function App() {
+  // 使用 Provider 为所有子孙代提供 value 值 
+  return (
+    <NumberContext.Provider value={42}>
+      <div>
+        <Display />
+      </div>
+    </NumberContext.Provider>
+  );
+}
+
+function Display() {
+  // 使用 Consumer 从上下文中获取 value
+  return (
+    <NumberContext.Consumer>
+      {value => <div>The answer is {value}.</div>}
+    </NumberContext.Consumer>
+  );
+}
+
+ReactDOM.render(<App />, document.querySelector("#root"));
+```
+:::tip
+**别忘记 `useContext` 的参数必须是 `context `对象本身：**
+
+- 正确： useContext(MyContext)
+- 错误： useContext(MyContext.Consumer)
+- 错误： useContext(MyContext.Provider)
+:::
+
+调用了 `useContext` 的组件总会在 `context` 值变化时重新渲染。如果重渲染组件的开销较大，你可以 通过使用 `memoization` 来优化。
+
+:::warning
+如果你在接触 `Hook` 前已经对 `context API` 比较熟悉，那应该可以理解，`useContext(MyContext)` 相当于 `class`组件中的 `static contextType = MyContext` 或者 `<MyContext.Consumer>`。
+
+`useContext(MyContext)` 只是让你能够读取 `context` 的值以及订阅 `context` 的变化。你仍然需要在上层组件树中使用 `<MyContext.Provider> `来为下层组件提供 `context`。
+:::
+
+```js
+const themes = {
+  light: {
+    foreground: "#000000",
+    background: "#eeeeee"
+  },
+  dark: {
+    foreground: "#ffffff",
+    background: "#222222"
+  }
+};
+
+const ThemeContext = React.createContext(themes.light);
+
+function App() {
+  return (
+    <ThemeContext.Provider value={themes.dark}>
+      <Toolbar />
+    </ThemeContext.Provider>
+  );
+}
+
+function Toolbar(props) {
+  return (
+    <div>
+      <ThemedButton />
+    </div>
+  );
+}
+
+function ThemedButton() {
+  const theme = useContext(ThemeContext);
+
+  return (
+    <button style={{ background: theme.background, color: theme.foreground }}>
+      I am styled by theme context!
+    </button>
+  );
+}
+```
+
+## useReducer
+
+```js
+const [state, dispatch] = useReducer(reducer, initialArg, init);
+```
+
+接收一个形如` (state, action) => newState `的 `reducer`，并返回当前的 `state` 以及与其配套的 `dispatch` 方法。将 `init` 函数作为 `useReducer` 的第三个参数传入，这样初始 `state` 将被设置为 `init(initialArg)`。
+
+这么做可以将用于计算 `state` 的逻辑提取到 `reducer` 外部，这也为将来对重置 `state` 的 `action` 做处理提供了便利。
+
+在某些场景下，`useReducer` 会比 `useState` 更适用，例如 `state` 逻辑较复杂且包含多个子值，或者下一个 `state` 依赖于之前的 `state` 等。并且，使用 `useReducer` 还能给那些会触发深更新的组件做性能优化，因为你可以向子组件传递 `dispatch` 而不是回调函数 。
+
+以下是用 `reducer` 重写 `useState` 计数器示例：
+
+```js
+const initialState = {
+  count: 0
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'increment':
+      return {count: state.count + 1};
+    case 'decrement':
+      return {count: state.count - 1};
+    default:
+      throw new Error();
+  }
+}
+
+function Counter() {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  return (
+    <>
+      Count: {state.count}
+      <button onClick={() => dispatch({type: 'decrement'})}>-</button>
+      <button onClick={() => dispatch({type: 'increment'})}>+</button>
+    </>
+  );
+}
+```
+
+## useCallback
+
+```js
+const memoizedCallback = useCallback(
+  () => {
+    doSomething(a, b);
+  },
+  [a, b],
+);
+```
+
+`useMemo`和`useCallback`都会在组件第一次渲染的时候执行，之后会在某个依赖项变更的时候再次执行，并且这两个`hooks`值都返回缓存的值，`useMemo`返回缓存的变量，`useCallback`返回缓存的函数
+
+:::tip
+```js
+useCallback(fn, deps) 相当于 useMemo(() => fn, deps)。
+```
+:::
+
+## useMemo
+
+```js
+const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
+```
+简单的例子
+```js
+import { useState, useMemo } from 'react';
+import ReactDOM from 'react-dom';
+
+function Time() {
+    return <p>{Date.now()}</p>;
+}
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  const memoizedChildComponent = useMemo((count) => {
+    return <Time />;
+  }, [count]);
+
+  return (
+    <div>
+      <h1>{count}</h1>
+      <button onClick={() => setCount(count + 1)}>+</button>
+      <div>{memoizedChildComponent}</div>
+    </div>
+  );
+}
+
+ReactDOM.render(<Counter />, document.getElementById('root'));
+```
