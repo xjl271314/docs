@@ -664,7 +664,23 @@ function FriendStatus(props) {
 `React` 会在组件卸载的时候执行清除操作。正如之前学到的，`effect` 在每次渲染的时候都会执行。这就是为什么 `React` 会在执行当前 `effect` 之前对上一个 `effect` 进行清除。
 
 
+<<<<<<< HEAD
 ## useContext
+=======
+## useLayoutEffect
+
+`useLayoutEffect`的用法跟`useEffect`的用法是完全一样的，都可以执行副作用和清理操作。它们之间唯一的区别就是`执行的时机`。
+
+- `useEffect`不会阻塞浏览器的绘制任务，它在页面更新后才会执行。
+
+- `useLayoutEffect`跟`componentDidMount`和`componentDidUpdate`的执行时机一样，会阻塞页面的渲染。如果在里面执行耗时任务的话，页面就会卡顿。
+
+:::tip
+在绝大多数情况下，`useEffectHook` 是更好的选择。
+
+唯一例外的就是需要根据新的 `UI` 来进行 `DOM`操作的场景。`useLayoutEffect`会保证在页面渲染前执行，也就是说页面渲染出来的是最终的效果。如果使用`useEffect`，页面很可能因为渲染了 `2` 次而出现抖动
+:::
+>>>>>>> 1c7260da2ac0a3be18a369a66792eef3544793ed
 
 ```js
 const value = useContext(MyContext);
