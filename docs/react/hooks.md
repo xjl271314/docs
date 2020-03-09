@@ -664,23 +664,7 @@ function FriendStatus(props) {
 `React` 会在组件卸载的时候执行清除操作。正如之前学到的，`effect` 在每次渲染的时候都会执行。这就是为什么 `React` 会在执行当前 `effect` 之前对上一个 `effect` 进行清除。
 
 
-<<<<<<< HEAD
 ## useContext
-=======
-## useLayoutEffect
-
-`useLayoutEffect`的用法跟`useEffect`的用法是完全一样的，都可以执行副作用和清理操作。它们之间唯一的区别就是`执行的时机`。
-
-- `useEffect`不会阻塞浏览器的绘制任务，它在页面更新后才会执行。
-
-- `useLayoutEffect`跟`componentDidMount`和`componentDidUpdate`的执行时机一样，会阻塞页面的渲染。如果在里面执行耗时任务的话，页面就会卡顿。
-
-:::tip
-在绝大多数情况下，`useEffectHook` 是更好的选择。
-
-唯一例外的就是需要根据新的 `UI` 来进行 `DOM`操作的场景。`useLayoutEffect`会保证在页面渲染前执行，也就是说页面渲染出来的是最终的效果。如果使用`useEffect`，页面很可能因为渲染了 `2` 次而出现抖动
-:::
->>>>>>> 1c7260da2ac0a3be18a369a66792eef3544793ed
 
 ```js
 const value = useContext(MyContext);
@@ -839,12 +823,14 @@ const memoizedCallback = useCallback(
 ```js
 useCallback(fn, deps) 相当于 useMemo(() => fn, deps)。
 ```
+这种写法在早期的`class`组件中对应的就是对`render`中函数的优化，避免多次`render`导致函数的重新绑定。
 :::
 
 ## useMemo
 
 ```js
 const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
+
 ```
 简单的例子
 ```js
@@ -872,4 +858,225 @@ function Counter() {
 }
 
 ReactDOM.render(<Counter />, document.getElementById('root'));
+```
+
+## useLayoutEffect
+
+`useLayoutEffect`的用法跟`useEffect`的用法是完全一样的，都可以执行副作用和清理操作。它们之间唯一的区别就是`执行的时机`。
+
+- `useEffect`不会阻塞浏览器的绘制任务，它在页面更新后才会执行。
+
+- `useLayoutEffect`跟`componentDidMount`和`componentDidUpdate`的执行时机一样，会阻塞页面的渲染。如果在里面执行耗时任务的话，页面就会卡顿。
+
+:::tip
+在绝大多数情况下，`useEffectHook` 是更好的选择。
+
+唯一例外的就是需要根据新的 `UI` 来进行 `DOM`操作的场景。`useLayoutEffect`会保证在页面渲染前执行，也就是说页面渲染出来的是最终的效果。如果使用`useEffect`，页面很可能因为渲染了 `2` 次而出现抖动
+:::
+
+## useRef
+
+```js
+const refContainer = useRef(initialValue);
+```
+
+`useRef` 返回一个可变的 `ref` 对象，其 `.current` 属性被初始化为传入的参数`（initialValue）`。返回的 `ref` 对象在组件的整个生命周期内保持不变。
+
+```js
+// class
+class MyComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.myRef = React.createRef();
+  }
+  
+  componentDidMount() {
+    this.myRef.current.focus();
+  }  
+
+  render() {
+    return <input ref={this.myRef} type="text" />;
+  }
+}
+
+// hooks
+function() {
+  const myRef = useRef(null);
+
+  useEffect(() => {
+    myRef.current.focus();
+  }, [])
+  
+  return <input ref={myRef} type="text" />;
+}
+```
+
+## useImperativeHandle
+
+```js
+useImperativeHandle(ref, createHandle, [deps])
+```
+
+`useImperativeHandle` 可以让你在使用 `ref` 时自定义暴露给父组件的实例值。在大多数情况下，应当避免使用 `ref` 这样的命令式代码。`useImperativeHandle` 应当与 `forwardRef` 一起使用：
+
+```js
+function FancyInput(props, ref) {
+  const inputRef = useRef();
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      inputRef.current.focus();
+    }
+  }));
+  return <input ref={inputRef} ... />;
+}
+FancyInput = forwardRef(FancyInput);
+```
+
+在本例中，渲染 `<FancyInput ref={inputRef} />` 的父组件可以调用 `inputRef.current.focus()`。
+
+## useInterval
+
+```JS
+/**
+ * @param {function} callback 回调函数
+ * @param {null | number} delay 执行间隔
+ */
+import { useRef, useEffect } from 'react'
+
+function useInterval(callback, delay = 300) {
+    const intervalFn = useRef();
+
+    // remember the latest callback
+    useEffect(() => {
+        intervalFn.current = callback;
+    }, [callback]);
+
+    // set the interval
+    useEffect(() => {
+        if (delay) {
+            const timer = setInterval(() => {
+                intervalFn.current()
+            }, delay)
+            return () => { timer && clearInterval(timer) }
+        }
+    }, [delay])
+}
+```
+
+:::tip
+1. 通过useRef创建一个对象；
+2. 将需要执行的定时任务储存在这个对象上；
+3. 将delay作为第二个参数是为了当我们动态改变定时任务时，能够重新执行定时器。
+4. 将delay设置为null则不启用定时器。
+
+开发中使用useInterval如下：
+
+``` js
+import useInterval from '...';
+
+useInterval(() => {
+    // you code
+}, 1000);
+
+```
+:::
+
+## useEventListener
+
+```js
+import {
+    useRef,
+    useEffect
+} from 'react'
+
+function useEventListener(eventName, handler, element = window) {
+    // 创建一个 ref 来存储处理程序
+    const saveHandler = useRef();
+    // 如果 handler 变化了，就更新 ref.current 的值。
+    // 这个让我们下面的 effect 永远获取到最新的 handler
+    useEffect(() => {
+        saveHandler.current = handler;
+    }, [handler]);
+
+    useEffect(() => {
+        // 确保元素支持 addEventListener
+        const isSupported = element && element.addEventListener;
+        if (!isSupported) return;
+        // 创建事件监听调用存储在 ref 的处理方法
+        const eventListener = event => saveHandler.current(event);
+        // 添加事件监听
+        element.addEventListener(eventName, eventListener);
+        // 清除的时候移除事件监听
+        return () => {
+            element.removeEventListener(eventName, eventListener);
+        };
+    }, [eventName, element]);
+}
+```
+
+## useImgLazy
+
+```js
+// 判断是否在视口里面
+function isInWindow(el){
+    const bound = el.getBoundingClientRect();
+    const clientHeight = window.innerHeight;
+    return bound.top <= clientHeight + 100;
+}
+
+// 加载图片真实链接
+function loadImg(el){
+    if(!el.src){
+        const source = el.getAttribute('data-src');
+        el.src = source;
+    }
+}
+
+// 加载图片
+function checkImgs(className){
+    const imgs = document.querySelectorAll(`img.${className}`);
+    Array.from(imgs).forEach(el =>{
+        if (isInWindow(el)){
+            loadImg(el);
+        }
+    })
+}
+
+function useImgLazy(className){
+    useEffect(()=>{
+        window.addEventListener('scroll',()=>{
+            checkImgs(className)
+        });
+        checkImgs(className);
+
+        return ()=>{
+            window.removeEventListener('scroll')
+        }
+    },[])
+}
+```
+
+直接使用`IntersectionObserver` 实现了windowscroll事件 判断是否在窗口中 节流三大功能
+
+```js
+/**
+ * IntersectionObserver 实现了windowscroll事件 判断是否在窗口中 节流三大功能
+ * 
+ */
+const img = document.querySelectorAll('img')
+const observer = new IntersectionObserver(changes => {
+    // changes是被观察的元素集合
+    for (let i = 0, len = changes.length; i < len; i++) {
+        let change = change[i]
+        // 通过isIntersecting判断是否在窗口中
+        if (change.isIntersecting) {
+            const imgEle = change.target
+            imgEle.src = imgEle.getAttribute('data-src')
+            observer.unobserve(imgEle)
+        }
+    }
+})
+
+[...img].forEach(item => observer.observer(item))
+
 ```
