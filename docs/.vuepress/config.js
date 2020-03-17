@@ -73,7 +73,8 @@ module.exports = {
       title: "CSS相关知识",
         collapsable: true,
         children: [
-          "/css/base"
+          "/css/base",
+          "/css/img"
         ]
       },
       '/http/',

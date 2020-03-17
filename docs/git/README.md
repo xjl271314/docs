@@ -317,3 +317,9 @@ git merge master
 git pull origin dev
 
 ```
+
+### 将一个分支下的多个commit合并成一个
+```
+
+
+```
