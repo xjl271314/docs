@@ -319,7 +319,32 @@ git pull origin dev
 ```
 
 ### 将一个分支下的多个commit合并成一个
-```
 
+场景：有时候我们修改一个Bug或者一段代码的时候，commit 一次之后，发现 Bug 没改对或者这段代码需要再优化之类的，改完之后又 commit 了一次或多次，这样就会感觉提交历史不太美观（有点强迫症），这个时候我们就希望只想保留一次提交历史记录，合并为一个完整的提交。或者是为了上线方便错误回滚，将多次开发的commit合并成一个.https://www.jianshu.com/p/571153f5daa1
+
+> git rebase 命令：将多次commit合并，只保留一次提交历史记录。
+
+```js
+1、`git log` 查看提交历史记录
+
+选取到需要合并的指定记录(一般是最早提交记录)
+
+2. `git rebase -i 10b73908`(-i 后面跟的是提交记录的hash值)
+
+3. 修改指定行的第一个单词 `pick` 为 `squash or s`，然后 输入：`wq or x` 保存退出
+
+(`pick` 的意思是要执行这个 `commit`, `squash` 的意识是这个 `commit` 会被合并到前一个 `commit`)
+
+4. git 会压缩提交历史，若有冲突，需要进行修改，修改的时候保留最新的历史记录，修改完之后输入以下命令：
+
+5. `git add .`
+
+6. `git rebase --continue`
+
+7. 若想退出放弃此次压缩，执行命令：`git rebase --abort`
+
+8. 若无冲突 `or` 冲突已 `fix`，则会出现一个 `commit message` 编辑页面，修改 `commit message` ，然后 输入：`wq or x` 保存退出。
+
+9. 同步到远程 git 仓库 `git push -f`
 
 ```
