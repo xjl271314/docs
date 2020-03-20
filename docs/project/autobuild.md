@@ -1,5 +1,7 @@
 # 前端轻量自动化构建方案
 
+2020.03.20
+
 > https://github.com/dadaiwei/fe-deploy-cli
 
 ### 传统的前端代码打包流程
