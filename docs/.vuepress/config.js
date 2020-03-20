@@ -83,7 +83,8 @@ module.exports = {
         collapsable: true,
         children: [
           "/project/module",
-          "/project/webpack"
+          "/project/webpack",
+          "/project/autobuild"
         ]
       },
       '/safe/',
