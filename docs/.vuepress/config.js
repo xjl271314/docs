@@ -137,8 +137,11 @@ module.exports = {
         ]
       },
       {
-        title: "数据库相关",
+        title: "Mysql",
         collapsable: true,
+        children:[
+          '/mysql/select'
+        ]
       },
       {
         title: "Node.js",
