@@ -35,3 +35,13 @@ select * from 表名 order by 字段名 desc；// 降序，从大到小
 select * from 表名 order by 字段名 asc；// 升序，asc默认可以不写
 ```
 
+
+## 判断产品是否过期，有效期30天
+```sql
+select * from product where datediff（day, getdate(), productTime）< 30
+```
+:::tip
+`datediff()` 这个函数是取得2个日期之前的差，第一个参数是表示返回的是天数（day），月数（month）、年（year）等等 ；
+
+`getdate（）` 表示取得当前日期
+:::
