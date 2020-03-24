@@ -140,6 +140,7 @@ module.exports = {
         title: "Mysql",
         collapsable: true,
         children:[
+          '/mysql/base',
           '/mysql/select'
         ]
       },
