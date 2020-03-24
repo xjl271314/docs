@@ -936,30 +936,33 @@ FancyInput = forwardRef(FancyInput);
 
 ## useInterval
 
-```JS
+支持手动清除`interval`
+```js
 /**
  * @param {function} callback 回调函数
  * @param {null | number} delay 执行间隔
  */
 import { useRef, useEffect } from 'react'
 
-function useInterval(callback, delay = 300) {
+function useInterval(callback, delay = 1000) {
     const intervalFn = useRef();
 
     // remember the latest callback
     useEffect(() => {
-        intervalFn.current = callback;
+        intervalFn.current.callback = callback;
     }, [callback]);
 
     // set the interval
     useEffect(() => {
-        if (delay) {
-            const timer = setInterval(() => {
-                intervalFn.current()
+        if (delay !== null) {
+            intervalFn.current.timer = setInterval(() => {
+                intervalFn.current.callback();
             }, delay)
-            return () => { timer && clearInterval(timer) }
+            return () => intervalFn.current.timer && clearInterval(intervalFn.current.timer);
         }
     }, [delay])
+
+    return intervalFn.current.timer 
 }
 ```
 
@@ -1019,6 +1022,7 @@ function useEventListener(eventName, handler, element = window) {
 ```js
 // 判断是否在视口里面
 function isInWindow(el){
+    // 返回元素距离视窗的top、left等值
     const bound = el.getBoundingClientRect();
     const clientHeight = window.innerHeight;
     return bound.top <= clientHeight + 100;
@@ -1043,16 +1047,9 @@ function checkImgs(className){
 }
 
 function useImgLazy(className){
-    useEffect(()=>{
-        window.addEventListener('scroll',()=>{
-            checkImgs(className)
-        });
-        checkImgs(className);
-
-        return ()=>{
-            window.removeEventListener('scroll')
-        }
-    },[])
+    useEventListener('scroll', ()=>{
+      checkImgs(className)
+    })
 }
 ```
 

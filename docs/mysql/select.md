@@ -94,3 +94,109 @@ SET @rows = FOUND_ROWS();
 
 4. 当你想要限制查询的返回行数的同时又想得到查询的完整结果集合的行数,但又不想重复执行一次查询,那么`SQL_CALC_FOUND_ROWS and FOUND_ROWS()` 是非常有用的！
 :::
+
+
+## inner join 内连接查询
+
+> INNER JOIN（内连接：inner可以省略），也称为`自然连接`。与select  a.* , b.*   from  表a, 表b where  a.id = b.id  等效，也是内连接（推荐使用join）
+
+
+:::warning
+内连接是从结果中删除其他被连接表中没有匹配行的所有行，所以内连接可能会丢失信息。
+:::
+
+### 学生表信息(Students):
+
+ID| Name | Age | City | MajorID
+|:-----|:-----| :-----| :-----| :-----| 
+101 | Tom | 20 | Beijing | 10
+102 | Lucy | 18 | Shanghai | 11
+
+### 专业信息表(Majors):
+
+ID | Name
+|:-----|:-----|
+10 | English | 
+11 | Computer |
+
+```sql
+SELECT Students.ID,Students.Name,Majors.Name AS MajorName FROM Students INNER JOIN Majors ON Students.MajorID = Majors.ID
+```
+
+### 查询结果:
+
+ID | Name | MajorName
+|:-----|:-----|:-----|
+101 | Tom | English | 
+
+
+## LEFT JOIN（左连接）查询
+
+> 结果集保留左表的所有行，但只包含第二个表与第一表匹配的行。第二个表相应的空行被放入NULL值。
+
+```sql
+SELECT Students.ID,Students.Name,Majors.Name AS MajorName
+FROM Students LEFT JOIN Majors
+ON Students.MajorID = Majors.ID
+```
+
+### 查询结果:
+
+ID | Name | MajorName
+|:-----|:-----|:-----|
+101 | Tom | English | 
+102 | Lucy | Null | 
+
+
+## right join (右连接)查询
+
+> 右外连接保留了第二个表的所有行，但只包含第一个表与第二个表匹配的行。第一个表相应空行被入NULL值。
+
+```sql
+SELECT Students.ID,Students.Name,Majors.Name AS MajorName
+FROM Students RIGHT JOIN Majors
+ON Students.MajorID = Majors.ID
+```
+
+### 查询结果:
+
+ID | Name | MajorName
+|:-----|:-----|:-----|
+101 | Tom | English | 
+Null | Null | Computer | 
+
+## FULL JOIN (全外连接）查询
+
+> 会把两个表所有的行都显示在结果表中
+
+```sql
+SELECT Students.ID,Students.Name,Majors.Name AS MajorName
+FROM Students FULL JOIN Majors
+ON Students.MajorID = Majors.ID
+```
+
+### 查询结果:
+
+ID | Name | MajorName
+|:-----|:-----|:-----|
+101 | Tom | English | 
+102 | Lucy | Null | 
+Null | Null | Computer | 
+
+## cross join（交叉连接）查询
+
+> 交叉连接返回左表中的所有行，左表中的每一行与右表中的所有行组合。交叉连接也称作笛卡尔积。 简单查询两张表组合，这是求笛卡儿积，效率最低。
+
+```sql
+SELECT Students.ID,Students.Name,Majors.Name AS MajorName
+FROM Students CROSS JOIN Majors
+```
+
+### 查询结果:
+
+ID | Name | MajorName
+|:-----|:-----|:-----|
+101 | Tom | English | 
+102 | Lucy | English | 
+101 | Tom | Computer | 
+102 | Lucy | Computer | 
