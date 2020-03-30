@@ -84,7 +84,8 @@ module.exports = {
         children: [
           "/project/module",
           "/project/webpack",
-          "/project/autobuild"
+          "/project/autobuild",
+          "/project/err"
         ]
       },
       '/safe/',
@@ -110,6 +111,7 @@ module.exports = {
           "/react/com",
           "/react/setState",
           "/react/redux",
+          "/react/hooksRedux",
           "/react/hooks",
           "/react/aria",
           "/react/codesplit",
@@ -159,7 +161,7 @@ module.exports = {
           "/open/font",
           "/open/px",
           "/open/module",
-          "/open/rtv",
+          "/open/rtv"
         ]
       }
     ]
