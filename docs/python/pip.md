@@ -53,7 +53,7 @@ pip  --no-cache-dir install Pillow
 3. 使用国内源:
 
 ```py
-pip install -i http://pypi.douban.com/simple/ 包名
+pip install -i http://pypi.douban.com/simple/ 包名 --trusted-host pypi.douban.com
 ```
 
 - 阿里云:`http://mirrors.aliyun.com/pypi/simple/`
