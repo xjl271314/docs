@@ -153,6 +153,13 @@ module.exports = {
           '/node/socket'
         ]
       },
+      {
+        title: "Python",
+        collapsable: true,
+        children:[
+          '/python/pip'
+        ]
+      },
       '/bff/',
       {
         title: "开放性问题",
