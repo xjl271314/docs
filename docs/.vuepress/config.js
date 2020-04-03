@@ -21,6 +21,9 @@ module.exports = {
       md.use(require('markdown-it-include'), './')
     }
   },
+  plugins:[
+    require("./plugins/copy/index"),
+  ],
   themeConfig: {
     nav: [
       { text: 'css tricks', link: '' },
@@ -169,6 +172,13 @@ module.exports = {
           "/open/px",
           "/open/module",
           "/open/rtv"
+        ]
+      },
+      {
+        title: "浏览器插件扩展",
+        collapsable: true,
+        children: [
+          "/extensions/chrome"
         ]
       }
     ]
