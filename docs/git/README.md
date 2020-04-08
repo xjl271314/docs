@@ -78,6 +78,9 @@ $ git commit --amend -m [message]
 
 # 重做上一次commit，并包括指定文件的新变化
 $ git commit --amend [file1] [file2] ...
+
+# 快速合并commit
+$ git reset --soft commitHash; git add .; git commit -m '提交信息'; git push -f
 ```
 
 ### 分支管理
@@ -126,11 +129,17 @@ $ git push origin --delete [branch-name]
 $ git branch -dr [remote/branch]
 
 # 本地存在一个分支，名称叫：develop_chen，但远程没有怎么办？
-git push origin develop_chen
+$ git push origin develop_chen
 
 这样就在远程建立一个和本地一样的分支 
 
-git branch --set-upstream-to=origin/develop  develop  本地分支和远程分支简历跟踪关系
+$ git branch --set-upstream-to=origin/develop  develop  本地分支和远程分支简历跟踪关系
+
+# 获取指定分支/commit上的文件内容
+$ git checkout commitHash/branchName -- dir/path/or/file/path
+
+# 以某个分支为标准快速解决冲突
+$ git merge develop --strategy-option theirs/ours
 ```
 
 ### 标签相关
@@ -228,6 +237,9 @@ $ git show [commit]:[filename]
 # 显示当前分支的最近几次提交
 $ git reflog
 
+# 分支merge/rebase操作后，后悔了怎么办？
+$ git reflog --all --date=iso
+
 # 从本地master拉取代码更新当前分支：branch 一般为master
 $ git rebase [branch]
 ```
@@ -268,7 +280,7 @@ $ git push [remote] --all
 $ git checkout [file]
 
 # 恢复某个commit的指定文件到暂存区和工作区
-$ git checkout [commit] [file]
+$ git checkout [commitHash] [file]
 
 # 恢复暂存区的所有文件到工作区
 $ git checkout .
@@ -280,17 +292,17 @@ $ git reset [file]
 $ git reset --hard
 
 # 重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变
-$ git reset [commit]
+$ git reset [commitHash]
 
-# 重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致
-$ git reset --hard [commit]
+# 回滚到指定commit 重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致
+$ git reset --hard [commitHash]
 
 # 重置当前HEAD为指定commit，但保持暂存区和工作区不变
-$ git reset --keep [commit]
+$ git reset --keep [commitHash]
 
 # 新建一个commit，用来撤销指定commit
 # 后者的所有变化都将被前者抵消，并且应用到当前分支
-$ git revert [commit]
+$ git revert [commitHash]
 
 # 暂时将未提交的变化移除，稍后再移入
 $ git stash
@@ -348,3 +360,4 @@ git pull origin dev
 9. 同步到远程 git 仓库 `git push -f`
 
 ```
+
