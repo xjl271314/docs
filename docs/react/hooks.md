@@ -1,5 +1,7 @@
 # React Hooks
 
+- 最后更新于 2020/4/8 19:45:33
+
 ## 前言
 
 **为什么要使用React Hooks?**
@@ -198,7 +200,7 @@ function beginWork(
 
 1. 第一次加载
 
-`mount`过程执行`mountIndeterminateComponent`时，会执行到r`enderWithHooks`这个函数
+`mount`过程执行`mountIndeterminateComponent`时，会执行到`renderWithHooks`这个函数
 
 ```js
 function mountIndeterminateComponent(
@@ -910,6 +912,19 @@ function() {
   return <input ref={myRef} type="text" />;
 }
 ```
+## usePrevious
+
+```js
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
+```
+通常某些场景下我们需要去获取一下该变量在更新之前的值，这个时候就可以使用`usePrevious`。
+
 
 ## useImperativeHandle
 
@@ -1077,3 +1092,371 @@ const observer = new IntersectionObserver(changes => {
 [...img].forEach(item => observer.observer(item))
 
 ```
+## Hooks FAQ
+
+**Q:我应该使用单个还是多个 state 变量？**
+
+在我们之前使用`class`组件的时候,我们都是在一次的状态变更中去更新变化的所有状态，然而`setState`函数走的是一个`合并的过程`。当我们使用`useState`的时候，第二个事件函数去更新状态的时候走的是`覆盖的操作`，直接传入更改的状态的化则会丢失其他的数据。
+
+这时候如何合理的构建一个`state`变量就显的比较重要了。
+
+看一个简单的官方例子
+
+```js
+function Box() {
+  const [state, setState] = useState({ left: 0, top: 0, width: 100, height: 100 });
+  // ...
+}
+```
+
+现在假设我们想要编写一些逻辑以便在用户移动鼠标时改变 `left` 和 `top`。注意到我们是如何必须手动把这些字段合并到之前的 `state` 对象的：
+
+```js
+// ...
+  useEffect(() => {
+    function handleWindowMouseMove(e) {
+      // ...state 确保我们没有 「丢失」 width 和 height 否则的话只会保留left值和top值
+      setState(state => ({ ...state, left: e.pageX, top: e.pageY }));
+    }
+    // 注意：这是个简化版的实现
+    window.addEventListener('mousemove', handleWindowMouseMove);
+    return () => window.removeEventListener('mousemove', handleWindowMouseMove);
+  }, []);
+  // ...
+```
+
+我们推荐把 `state` 切分成多个 `state` 变量，每个变量包含的不同值会在同时发生变化。
+
+举个例子，我们可以把组件的 `state` 拆分为 `position` 和 `size` 两个对象，并永远以非合并的方式去替换 `position：`
+
+```js
+function Box() {
+  const [position, setPosition] = useState({ left: 0, top: 0 });
+  const [size, setSize] = useState({ width: 100, height: 100 });
+
+  useEffect(() => {
+    function handleWindowMouseMove(e) {
+      setPosition({ left: e.pageX, top: e.pageY });
+    }
+    // 注意：这是个简化版的实现
+    window.addEventListener('mousemove', handleWindowMouseMove);
+    return () => window.removeEventListener('mousemove', handleWindowMouseMove);
+  }, []);
+
+  console.log(position)
+  // ...
+```
+
+把独立的 `state` 变量拆分开还有另外的好处。这使得后期把一些相关的逻辑抽取到一个自定义 `Hook` 变得容易，比如说:
+
+```js
+function Box() {
+  const position = useWindowPosition();
+  const [size, setSize] = useState({ width: 100, height: 100 });
+  // ...
+}
+
+function useWindowPosition() {
+  const [position, setPosition] = useState({ left: 0, top: 0 });
+  useEffect(() => {
+    // ...
+  }, []);
+  return position;
+}
+```
+
+把所有 `state` 都放在同一个 `useState` 调用中，或是每一个字段都对应一个 `useState` 调用，这两方式都能跑通。当你在这两个极端之间找到平衡，然后把相关 `state` 组合到几个独立的 `state` 变量时，组件就会更加的可读。如果 `state` 的逻辑开始变得复杂，我们推荐用 `reducer` 来管理它，或使用`自定义 Hook`。
+
+
+**Q:如何获取上一轮的 props 或 state？**
+
+我们可以通过使用ref来存储上个变量的状态
+
+```js
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  const prevCountRef = useRef();
+  useEffect(() => {
+    prevCountRef.current = count;
+  });
+  const prevCount = prevCountRef.current;
+
+  return <h1>Now: {count}, before: {prevCount}</h1>;
+}
+```
+
+这或许有一点错综复杂，但你可以把它抽取成一个自定义 Hook：
+
+```js
+function Counter() {
+  const [count, setCount] = useState(0);
+  const prevCount = usePrevious(count);
+  return <h1>Now: {count}, before: {prevCount}</h1>;
+}
+
+function usePrevious(value) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
+
+```
+
+***Q.为什么我会在我的函数中看到陈旧的 props 和 state ？**
+
+组件内部的任何函数，包括`事件处理函数`和 `effect`，都是从它被创建的那次渲染中被「看到」的。例如，考虑这样的代码：
+
+```js
+function Example() {
+  const [count, setCount] = useState(0);
+
+  function handleAlertClick() {
+    setTimeout(() => {
+      alert('You clicked on: ' + count);
+    }, 3000);
+  }
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+      <button onClick={handleAlertClick}>
+        Show alert
+      </button>
+    </div>
+  );
+}
+```
+
+如果你先点击`「Show alert」`然后增加计数器的计数，那这个 `alert` 会显示在你点击`『Show alert』`按钮时的 `count` 变量。这避免了那些因为假设 `props` 和 `state` 没有改变的代码引起问题。
+
+如果你刻意地想要从某些异步回调中读取 最新的 `state`，你可以用 一个 `ref` 来保存它，修改它，并从中读取。
+
+最后，你看到陈旧的 `props` 和 `state` 的另一个可能的原因，是你使用了「依赖数组」优化但没有正确地指定所有的依赖。举个例子，如果一个 `effect` 指定了 `[]` 作为第二个参数，但在内部读取了 `someProp`，它会一直「看到」 `someProp` 的初始值。解决办法是要么移除依赖数组，要么修正它。
+
+:::tip
+推荐使用`exhaustive-deps` ESLint 规则`eslint-plugin-react-hooks` 包的一部分。它会在依赖被错误指定时发出警告，并给出修复建议。
+:::
+
+**Q.在依赖列表中省略函数是否安全？**
+
+一般来说，不安全。
+
+```js
+function Example({ someProp }) {
+  function doSomething() {
+    console.log(someProp);
+  }
+
+  useEffect(() => {
+    doSomething();
+  }, []); // 🔴 这样不安全（它调用的 `doSomething` 函数使用了 `someProp`）
+}
+```
+
+要记住 `effect` 外部的函数使用了哪些 `props` 和 `state` 很难。这也是为什么 通常你会想要在 `effect` 内部 去声明它所需要的函数。 这样就能容易的看出那个 `effect` 依赖了组件作用域中的哪些值：
+
+```js
+function Example({ someProp }) {
+  useEffect(() => {
+    function doSomething() {
+      console.log(someProp);
+    }
+
+    doSomething();
+  }, [someProp]); // ✅ 安全（我们的 effect 仅用到了 `someProp`）
+}
+```
+
+如果这样之后我们依然没用到组件作用域中的任何值，就可以安全地把它指定为 []：
+
+```js
+useEffect(() => {
+  function doSomething() {
+    console.log('hello');
+  }
+
+  doSomething();
+}, []); // ✅ 在这个例子中是安全的，因为我们没有用到组件作用域中的 *任何* 值
+```
+
+:::warning
+如果你指定了一个 `依赖列表` 作为 `useEffect`、`useMemo`、`useCallback` 或 `useImperativeHandle` 的最后一个参数，它必须包含回调中的所有值，并参与 `React 数据流`。这就包括 `props`、`state`，以及任何由它们衍生而来的东西。
+:::
+
+只有 当函数（以及它所调用的函数）不引用 `props`、`state` 以及由它们衍生而来的值时，你才能放心地把它们从依赖列表中省略。下面这个案例有一个 Bug：
+
+```js
+function ProductPage({ productId }) {
+  const [product, setProduct] = useState(null);
+
+  async function fetchProduct() {
+    const response = await fetch('http://myapi/product/' + productId); // 使用了 productId prop
+    const json = await response.json();
+    setProduct(json);
+  }
+
+  useEffect(() => {
+    fetchProduct();
+  }, []); // 🔴 这样是无效的，因为 `fetchProduct` 使用了 `productId`
+  // ...
+}
+```
+推荐的修复方案是把那个函数移动到你的 `effect` 内部。这样就能很容易的看出来你的 `effect` 使用了哪些 `props` 和 `state`，并确保它们都被声明了：
+
+```js
+function ProductPage({ productId }) {
+  const [product, setProduct] = useState(null);
+
+  useEffect(() => {
+    // 把这个函数移动到 effect 内部后，我们可以清楚地看到它用到的值。
+    async function fetchProduct() {
+      const response = await fetch('http://myapi/product/' + productId);
+      const json = await response.json();
+      setProduct(json);
+    }
+
+    fetchProduct();
+  }, [productId]); // ✅ 有效，因为我们的 effect 只用到了 productId
+  // ...
+}
+```
+
+这同时也允许你通过 `effect` 内部的局部变量来处理无序的响应：
+
+```js
+  useEffect(() => {
+    let ignore = false;
+    async function fetchProduct() {
+      const response = await fetch('http://myapi/product/' + productId);
+      const json = await response.json();
+      if (!ignore) setProduct(json);
+    }
+
+    fetchProduct();
+    return () => { ignore = true };
+  }, [productId]);
+```
+
+如果处于某些原因你 无法 把一个函数移动到 effect 内部，还有一些其他办法：
+
+1. 你可以尝试把那个函数移动到你的组件之外。那样一来，这个函数就肯定不会依赖任何 `props` 或 `state`，并且也不用出现在依赖列表中了。
+
+2. 如果你所调用的方法是一个纯计算，并且可以在渲染时调用，你可以 转而在 `effect` 之外调用它， 并让 `effect` 依赖于它的返回值。
+
+3. 万不得已的情况下，你可以 把函数加入 `effect` 的依赖但 把它的定义包裹 进 `useCallback Hook`。这就确保了它不随渲染而改变，除非 它自身 的依赖发生了改变：
+
+```js
+function ProductPage({ productId }) {
+  // ✅ 用 useCallback 包裹以避免随渲染发生改变
+  const fetchProduct = useCallback(() => {
+    // ... Does something with productId ...
+  }, [productId]); // ✅ useCallback 的所有依赖都被指定了
+
+  return <ProductDetails fetchProduct={fetchProduct} />;
+}
+
+function ProductDetails({ fetchProduct }) {
+  useEffect(() => {
+    fetchProduct();
+  }, [fetchProduct]); // ✅ useEffect 的所有依赖都被指定了
+  // ...
+}
+```
+
+**Q.如果我的 effect 的依赖频繁变化，我该怎么办？**
+
+有时候，你的 effect 可能会使用一些频繁变化的值。你可能会忽略依赖列表中 state，但这通常会引起 Bug：
+
+```js
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCount(count + 1); // 这个 effect 依赖于 `count` state
+    }, 1000);
+    return () => clearInterval(id);
+  }, []); // 🔴 Bug: `count` 没有被指定为依赖
+
+  return <h1>{count}</h1>;
+}
+```
+
+传入空的依赖数组 `[]`，意味着该 `hook` 只在组件挂载时运行一次，并非重新渲染时。
+
+但如此会有问题，在 `setInterval`的回调中，`count` 的值不会发生变化。因为当 `effect` 执行时，我们会创建一个闭包，并将 `count` 的值被保存在该闭包当中，且初值为 `0`。每隔一秒，回调就会执行 `setCount(0 + 1)`，因此，`count` 永远不会超过 `1`。
+
+指定 `[count]` 作为依赖列表就能修复这个 `Bug`，但会导致每次改变发生时定时器都被重置。事实上，每个 `setInterval` 在被清除前（类似于 `setTimeout`）都会调用一次。但这并不是我们想要的。要解决这个问题，我们可以使用 `setState` 的函数式更新形式。它允许我们指定 `state` 该如何改变而不用引用 当前 `state`：
+
+```js
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCount(c => c + 1); // ✅ 在这不依赖于外部的 `count` 变量
+    }, 1000);
+    return () => clearInterval(id);
+  }, []); // ✅ 我们的 effect 不适用组件作用域中的任何变量
+
+  return <h1>{count}</h1>;
+}
+```
+
+（setCount 函数的身份是被确保稳定的，所以可以放心的省略掉）
+
+此时，`setInterval` 的回调依旧每秒调用一次，但每次 `setCount` 内部的回调取到的 `count` 是最新值（在回调中变量命名为 c）。
+
+
+**Q.如何避免向下传递回调？**
+
+我们已经发现大部分人并不喜欢在组件树的每一层手动传递回调。尽管这种写法更明确，但这给人感觉像错综复杂的管道工程一样麻烦。
+
+在大型的组件树中，我们推荐的替代方案是通过 `context` 用 `useReducer` 往下传一个 `dispatch` 函数：
+
+```js
+const TodosDispatch = React.createContext(null);
+
+function TodosApp() {
+  // 提示：`dispatch` 不会在重新渲染之间变化
+  const [todos, dispatch] = useReducer(todosReducer);
+
+  return (
+    <TodosDispatch.Provider value={dispatch}>
+      <DeepTree todos={todos} />
+    </TodosDispatch.Provider>
+  );
+}
+```
+
+`TodosApp` 内部组件树里的任何子节点都可以使用 `dispatch` 函数来向上传递 `actions` 到 `TodosApp`：
+
+```js
+function DeepChild(props) {
+  // 如果我们想要执行一个 action，我们可以从 context 中获取 dispatch。
+  const dispatch = useContext(TodosDispatch);
+
+  function handleClick() {
+    dispatch({ type: 'add', text: 'hello' });
+  }
+
+  return (
+    <button onClick={handleClick}>Add todo</button>
+  );
+}
+```
+
+总而言之，从维护的角度来这样看更加方便（不用不断转发回调），同时也避免了回调的问题。像这样向下传递 `dispatch` 是处理深度更新的推荐模式。
+
+**Q.React 是如何把对 Hook 的调用和组件联系起来的？**
+
+React 保持对当先渲染中的组件的追踪。多亏了 Hook 规范，我们得知 Hook 只会在 React 组件中被调用（或自定义 Hook —— 同样只会在 React 组件中被调用）。
+
+每个组件内部都有一个「记忆单元格」列表。它们只不过是我们用来存储一些数据的 `JavaScript` 对象。当你用 `useState()` 调用一个 `Hook` 的时候，它会读取当前的单元格（或在首次渲染时将其初始化），然后把指针移动到下一个。这就是多个 `useState()` 调用会得到各自独立的本地 `state` 的原因。
+

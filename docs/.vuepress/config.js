@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Blogs',
+  title: '许将龙的博客',
   description: '个人博客网站',
   dest: './dist',
   base: '/blogs/',
