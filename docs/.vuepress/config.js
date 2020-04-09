@@ -95,6 +95,13 @@ module.exports = {
       '/nginx/',
       '/git/',
       {
+        title: "TypeScript",
+        collapsable: true,
+        children: [
+          "/typescript/",
+        ]
+      },
+      {
         title: "移动端知识",
         collapsable: true,
         children: [

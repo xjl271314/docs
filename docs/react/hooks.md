@@ -1463,3 +1463,41 @@ React 保持对当先渲染中的组件的追踪。多亏了 Hook 规范，我�
 
 每个组件内部都有一个「记忆单元格」列表。它们只不过是我们用来存储一些数据的 `JavaScript` 对象。当你用 `useState()` 调用一个 `Hook` 的时候，它会读取当前的单元格（或在首次渲染时将其初始化），然后把指针移动到下一个。这就是多个 `useState()` 调用会得到各自独立的本地 `state` 的原因。
 
+***Q.我该如何实现 getDerivedStateFromProps？*
+
+尽管你可能不需要它，但在一些罕见的你需要用到的场景下（比如实现一个 `<Transition>` 组件），你可以在渲染过程中更新 `state` 。`React` 会立即退出第一次渲染并用更新后的 `state` 重新运行组件以避免耗费太多性能。
+
+这里我们把 `row prop` 上一轮的值存在一个 `state` 变量中以便比较：
+
+```js
+function ScrollView({row}) {
+  const [isScrollingDown, setIsScrollingDown] = useState(false);
+  const [prevRow, setPrevRow] = useState(null);
+
+  if (row !== prevRow) {
+    // Row 自上次渲染以来发生过改变。更新 isScrollingDown。
+    setIsScrollingDown(prevRow !== null && row > prevRow);
+    setPrevRow(row);
+  }
+
+  return `Scrolling down: ${isScrollingDown}`;
+}
+```
+初看这或许有点奇怪，但渲染期间的一次更新恰恰就是 `getDerivedStateFromProps` 一直以来的概念。
+
+**Q.Hooks中为什么不用 React.memo?**
+
+推荐使用 `React.useMemo` 而不是 `React.memo`，因为在组件通信时存在 `React.useContext` 的用法，这种用法会使所有用到的组件重渲染，只有 `React.useMemo` 能处理这种场景的按需渲染。
+
+**Q.没有性能问题的组件也要使用 useMemo 吗？**
+
+要，考虑未来维护这个组件的时候，随时可能会通过 `useContext` 等注入一些数据，这时候谁会想起来添加 `useMemo` 呢？
+
+**Q.为什么不用解构方式代替 defaultProps?**
+
+虽然解构方式书写 `defaultProps` 更优雅，但存在一个硬伤：对于`对象类型`每次 `Rerender` 时引用都会变化，这会带来性能问题，因此不要这么做。
+
+**Q.可以在函数内直接申明普通常量或普通函数吗？**
+
+不可以，`Function Component` 每次渲染都会重新执行，常量推荐放到函数外层避免性能问题，函数推荐使用 `useCallback` 申明。
+
