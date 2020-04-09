@@ -973,7 +973,10 @@ function useInterval(callback, delay = 1000) {
             intervalFn.current.timer = setInterval(() => {
                 intervalFn.current.callback();
             }, delay)
-            return () => intervalFn.current.timer && clearInterval(intervalFn.current.timer);
+            return () => {
+              clearInterval(intervalFn.current.timer);
+              intervalFn.current = null;
+            }
         }
     }, [delay])
 
