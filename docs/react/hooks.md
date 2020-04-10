@@ -960,7 +960,7 @@ FancyInput = forwardRef(FancyInput);
 import { useRef, useEffect } from 'react'
 
 function useInterval(callback, delay = 1000) {
-    const intervalFn = useRef();
+    const intervalFn = useRef({});
 
     // remember the latest callback
     useEffect(() => {

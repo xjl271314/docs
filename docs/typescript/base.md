@@ -188,12 +188,3 @@ let tuple: [number , string] = [1 , '2']
 tuple.push('3'); //正常push
 tuple[2]  //报错, 因为越界访问了
 ```
-
-## 枚举 
-
-`enum`类型是对`JavaScript`标准数据类型的一个补充。 像C#等其它语言一样，使用枚举类型可以为一组数值赋予友好的名字。
-
-```ts
-enum Color {Red, Green, Blue}
-let c: Color = Color.Green;
-```

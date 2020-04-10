@@ -98,7 +98,8 @@ module.exports = {
         title: "TypeScript",
         collapsable: true,
         children: [
-          "/typescript/",
+          "/typescript/base",
+          "/typescript/enum",
         ]
       },
       {
