@@ -100,6 +100,10 @@ module.exports = {
         children: [
           "/typescript/base",
           "/typescript/enum",
+          "/typescript/interface",
+          "/typescript/fan",
+          "/typescript/func",
+          "/typescript/expirence",
         ]
       },
       {
