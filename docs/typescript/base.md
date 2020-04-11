@@ -1,5 +1,7 @@
 # 基本变量类型
 
+- 2020-04-10
+
 `Typescript`基本变量类型在原有的`javascript`类型上记性了扩展
 
 ## `Boolean`
