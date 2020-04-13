@@ -88,7 +88,8 @@ module.exports = {
           "/project/module",
           "/project/webpack",
           "/project/autobuild",
-          "/project/err"
+          "/project/err",
+          "/project/standards"
         ]
       },
       '/safe/',
@@ -135,7 +136,8 @@ module.exports = {
           "/react/jsx",
           "/react/portal",
           "/react/syntheticEvent",
-          "/react/optimization"
+          "/react/optimization",
+          "/react/webpack"
         ]
       },
       {

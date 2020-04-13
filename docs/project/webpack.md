@@ -341,3 +341,112 @@ publicPath: 'https://cdn.example.com/assets/'
 - `publicPath`并不会对生成文件的路径造成影响，主要是对你的页面里面引入的资源的路径做对应的补全，常见的就是css文件里面引入的图片url值.
 
 
+## splitChunks
+
+`splitChunks`算是`webpack`中比较高级的一个用法，主要是跟`模块拆分`与`代码拆分`功能相关。
+
+在研究`splitChunks`之前，我们先再回顾下`webpack`中的`module`、`chunk`和`bundle`。
+
+
+- `module`：就是js的模块化`webpack`支持`commonJS`、`ES6`等模块化规范，简单来说就是你通过`import`语句引入的代码。
+
+- `chunk`: `chunk`是`webpack`根据功能拆分出来的，包含三种情况：
+  1. 你的项目入口`（entry）`
+  2. 通过`import()`动态引入的代码
+  3. 通过`splitChunks`拆分出来的代码
+
+`chunk`包含着`module`，可能是一对多也可能是一对一。
+
+- `bundle`：`bundle`是`webpack`打包之后的各个文件，一般就是和`chunk`是一对一的关系，`bundle`就是对`chunk`进行编译压缩打包等处理之后的产出。
+
+在`webpack4`之后有一个默认的`splitChunks`配置：
+
+```js
+module.exports = {
+  //...
+  optimization: {
+    splitChunks: {
+      chunks: 'async',
+      minSize: 30000,
+      minChunks: 1,
+      maxAsyncRequests: 5,
+      maxInitialRequests: 3,
+      automaticNameDelimiter: '~',
+      name: true,
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true
+        }
+      }
+    }
+  }
+};
+```
+
+### chunks
+
+`chunks`的含义是拆分模块的范围，它有三个值`async`、`initial`和`all`。
+
+- `async`表示只从异步加载得模块（`动态加载import()`）里面进行拆分
+- `initial`表示只从入口模块进行拆分
+- `all`表示以上两者都包括
+
+`chunks`的默认配置是`async`，也就是只从`动态加载得模块`里面进行拆分
+
+### cacheGroups
+
+`cacheGroups`其实是`splitChunks`里面最核心的配置,`splitChunks`就是根据`cacheGroups`去拆分模块的.
+
+`splitChunks`默认有两个缓存组：`vender`和`default`。
+
+如果有一个模块满足了多个缓存组的条件就会去按照权重划分，谁的权重高就优先按照谁的规则处理。
+
+
+### maxInitialRequests
+
+> 表示允许入口并行加载的最大请求数。
+
+之所以有这个配置也是为了对拆分数量进行限制，不至于拆分出太多模块导致请求数量过多而得不偿失。
+
+**这里需要注意几点：**
+
+1. 入口文件本身算一个请求
+2. 如果入口里面有动态加载得模块这个不算在内
+3. 通过`runtimeChunk`拆分出的`runtime`不算在内
+4. 只算`js`文件的请求，`css`不算在内
+5. 如果同时又两个模块满足`cacheGroup`的规则要进行拆分，但是`maxInitialRequests`的值只能允许再拆分一个模块，那尺寸更大的模块会被拆分出来
+
+
+### maxAsyncRequests
+
+`maxAsyncRequests`和`maxInitialRequests`有相似之处，它俩都是用来限制拆分数量的，`maxInitialRequests`是用来限制入口的拆分数量而`maxAsyncRequests`是用来限制异步模块内部的并行最大请求数的，说白了你可以理解为是`每个import()`它里面的最大并行请求数量。
+
+**这其中要注意以下几点：**
+
+1. `import()`文件本身算一个请求
+
+2. 并不算js以外的公共资源请求比如css
+
+3. 如果同时有两个模块满足`cacheGroup`的规则要进行拆分，但是`maxInitialRequests`的值只能允许再拆分一个模块，那`尺寸更大`的模块会被拆分出来
+
+### 其余要点
+
+1. `splitChunks.cacheGroup`必须同时满足各个条件才能生效，比如`minSize`或是`minChunks`等条件必须同时满足才行
+
+2. `splitChunks`的配置项都是作用于`cacheGroup`上的，如果将`cacheGroup`的默认两个分组`vendor`和`default`设置为`false`，则`splitChunks`就不会起作用
+
+3. `minChunks`、`maxAsyncRequests`、`maxInitialRequests`的值必须设置为大于等于1的数
+
+4. 当`chunk`没有名字时，通过`splitChunks`分出的模块的名字用`id`替代，当然你也可以通过`name`属性自定义
+
+5. 当`父chunk`和`子chunk`同时引入相同的`module`时，并不会将其分割出来而是删除掉`子chunk`里面共同的`module`，保留`父chunk`的`module`，这个是因为 `optimization.removeAvaliableModules` 默认是`true`
+
+6. 当两个`cacheGroup.priority`相同时，先定义的会先命中
+
+7.除了`js`，`splitChunks`也适用于`css`
