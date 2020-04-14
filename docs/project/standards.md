@@ -243,6 +243,30 @@ font-size:0.8em; ------> font-size:.8em;
 
 2. 多浏览器前缀兼容性的问题 推荐使用`post-css`插件进行解决
 
+3. `border-raduis属性`实现圆形的时候正常情况下都用`50%`,不推荐使用`100%`,虽然实现的效果是一致的但是会造成没必要的浏览器计算。在制作动画的时候`50%`和`100%`则略有不同。
+
+比如一个`50px 150px`的方形，如果`border-radius`设置为`100%`，则等价于：
+
+```css
+border-radius: 50px/150px;
+/* 也等同 */
+border-top-left-radius: 100%;
+border-top-right-radius: 100%;
+border-bottom-left-radius: 100%;
+border-bottom-right-radius: 100%;
+/* 或者是 */
+border-top-left-radius: 50px 150px;
+border-top-right-radius: 50px 150px;
+border-bottom-left-radius: 50px 150px;
+border-bottom-right-radius: 50px 150px;
+```
+:::tip
+在 `Lea Verou` 的演讲`The Humble Border Radius`中，她说到 `W3C` 对于`重合曲线`有这样的规范：如果两个相邻的角的半径和超过了对应的盒子的边的长度，那么浏览器要重新计算保证它们不会重合。
+:::
+
+当我们给设置了100%时，圆角就会从左下角跨到右上角，如果同时把右上角的圆角半径也设置成为100%，则两个相邻圆角合起来就有200%。
+
+这种情况自然是不允许出现的，所以浏览器就会重新就算，匀出空间给右边的圆角，同时缩放两个圆角的半径直到它们可以刚好符合这个方形，所以半径就变成了50%。
 
 ## 命名规范
 
