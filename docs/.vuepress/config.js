@@ -167,7 +167,10 @@ module.exports = {
         title: "Node.js",
         collapsable: true,
         children:[
-          '/node/socket'
+          '/node/socket',
+          '/node/uploadQiNiu',
+          '/node/schedule',
+          '/node/koaMiddleware'
         ]
       },
       {
@@ -175,6 +178,13 @@ module.exports = {
         collapsable: true,
         children:[
           '/python/pip'
+        ]
+      },
+      {
+        title: "Redis",
+        collapsable: true,
+        children:[
+          '/redis/base'
         ]
       },
       '/bff/',
