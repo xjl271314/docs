@@ -170,7 +170,9 @@ module.exports = {
           '/node/socket',
           '/node/uploadQiNiu',
           '/node/schedule',
-          '/node/koaMiddleware'
+          '/node/koaMiddleware',
+          '/node/jwt',
+          '/node/async'
         ]
       },
       {
