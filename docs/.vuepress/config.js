@@ -21,7 +21,7 @@ module.exports = {
       md.use(require('markdown-it-include'), './')
     }
   },
-  plugins:[
+  plugins: [
     require("./plugins/copy/index"),
   ],
   themeConfig: {
@@ -196,6 +196,13 @@ module.exports = {
           "/open/px",
           "/open/module",
           "/open/rtv"
+        ]
+      },
+      {
+        title: "即时通讯",
+        collapsable: true,
+        children: [
+          "/im/tcent",
         ]
       },
       {

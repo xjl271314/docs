@@ -25,6 +25,7 @@
 <script>
 import ClipboardJS from "clipboard";
 import { Message } from "element-ui";
+
 export default {
   name: "Copy",
   data() {
@@ -42,6 +43,7 @@ export default {
     initCopyBtn() {
       setTimeout(() => {
         const containers = document.querySelectorAll(".extra-class");
+
         [].forEach.call(containers, (container, index) => {
           const pre = container.querySelector("pre");
           if (!pre) {

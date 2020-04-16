@@ -138,7 +138,7 @@ function assignHandler(){
 
 ## 模仿块级作用域
 
-**早期的`JavaScript`没有块级作用域的概念。**这意味着在块语句中定义的变量，实际上是在包含函数中而非语句中创建的，来看下面的例子:
+**早期的`JavaScript`没有块级作用域的概念**。这意味着在块语句中定义的变量，实际上是在包含函数中而非语句中创建的，来看下面的例子:
 
 ```javascript
 function outputNumbers(count){ 
