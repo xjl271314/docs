@@ -114,8 +114,8 @@ class Koa {
 ```js
 // 传入中间件列表
 function compose(middlewareList) {
-	// 返回一个函数，接收 ctx （即 res 和 req 的组合）—— 记住了，下文要用
-    return function (ctx) {
+	// 返回一个函数，接收 ctx （即 res 和 req 的组合）和 next —— 记住了，下文要用
+    return function (ctx, next) {
 	    // 定义一个派发器，这里面就实现了 next 机制
         function dispatch(i) {
 	        // 获取当前中间件
@@ -123,14 +123,16 @@ function compose(middlewareList) {
             try {
                 return Promise.resolve(
 	                // 通过 i + 1 获取下一个中间件，传递给 next 参数
-                    fn(ctx, dispatch.bind(null, i + 1))
+                    fn(ctx, function next(){
+                        return dispatch.bind(null, i + 1);
+                    })
                 )
             } catch (err) {
                 return Promise.reject(err);
             }
         }
         // 开始派发第一个中间件
-        return dispatch(0)
+        return dispatch(0);
     }
 }
 ```
@@ -175,12 +177,14 @@ const http = require('http');
 
 // 组合中间件
 function compose(middlewareList) {
-    return function (ctx) {
+    return function (ctx, next) {
         function dispatch(i) {
             const fn = middlewareList[i]
             try {
                 return Promise.resolve(
-                    fn(ctx, dispatch.bind(null, i + 1))
+                    fn(ctx, function next(){
+                        return dispatch.bind(null, i + 1);
+                    })
                 )
             } catch (err) {
                 return Promise.reject(err)

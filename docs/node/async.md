@@ -334,5 +334,5 @@ db.getConnection(function(connection){
 ```
 
 :::tip
-在使用 `async` 处理事务的时候经常用到的是`series`和`waterfall`两种模式
+在使用 `async` 处理事务的时候经常用到的是`series`和`waterfall`两种模式。
 :::

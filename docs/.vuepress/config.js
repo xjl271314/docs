@@ -68,7 +68,8 @@ module.exports = {
           "/javascript/copy",
           "/javascript/macro",
           "/javascript/ajax",
-          "/javascript/throtte"
+          "/javascript/throtte",
+          "/javascript/eventsEmitter"
         ]
       },
       '/es/',
@@ -172,7 +173,9 @@ module.exports = {
           '/node/schedule',
           '/node/koaMiddleware',
           '/node/jwt',
-          '/node/async'
+          '/node/async',
+          '/node/childProcess',
+          '/node/egg'
         ]
       },
       {
