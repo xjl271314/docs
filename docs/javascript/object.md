@@ -38,3 +38,24 @@ var person = {
  age : 29 
 };
 ```
+
+## Object.create(null)
+
+```js
+// 当我们使用Object.create(null)创建的对象不是Object的子类
+
+const a = {};
+const b = Object.create(null);
+
+a == b // false
+
+typeof a;// object
+typeof b;// object
+
+a instanceof Object;// true
+b instanceof Object;// false
+
+a.toString();// [object Object]
+b.toString();// VM274:1 Uncaught TypeError: b.toString is not a function
+```
+
