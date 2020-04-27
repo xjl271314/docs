@@ -18,6 +18,8 @@
 
 ## 实现egg-core
 
+`Egg.js`能够保持这些约定，得益于`egg-core`中的各种`loader`，比如`context_loader`、`file_loader`.
+
 
 
 

@@ -216,7 +216,14 @@ module.exports = {
         children: [
           "/extensions/chrome"
         ]
-      }
+      },
+      {
+        title: "算法",
+        collapsable: true,
+        children: [
+          "/algorithm/cacheLRU",
+        ]
+      },
     ]
   }
 }
