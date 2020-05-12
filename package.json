@@ -12,6 +12,7 @@
   "author": "xjl271314",
   "license": "ISC",
   "devDependencies": {
+    "@vuepress/plugin-back-to-top": "^1.5.0",
     "element-ui": "^2.13.1",
     "gh-pages": "^2.0.0",
     "node-sass": "^4.13.1",

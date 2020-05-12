@@ -22,7 +22,8 @@ module.exports = {
     }
   },
   plugins: [
-    require("./plugins/copy/index"),
+    './plugins/copy/index',
+    '@vuepress/back-to-top'
   ],
   themeConfig: {
     nav: [
@@ -86,17 +87,26 @@ module.exports = {
         title: "前端工程化",
         collapsable: true,
         children: [
+          "/project/mock",
           "/project/module",
           "/project/webpack",
           "/project/autobuild",
           "/project/err",
           "/project/standards",
-          "/project/docker"
+          "/project/docker",
+          "/project/autoTryCatch"
         ]
       },
       '/safe/',
-      '/nginx/',
       '/git/',
+      {
+        title: "nginx",
+        collapsable: true,
+        children: [
+          "/nginx/base",
+          "/nginx/https"
+        ]
+      },
       {
         title: "TypeScript",
         collapsable: true,
@@ -224,6 +234,13 @@ module.exports = {
         collapsable: true,
         children: [
           "/algorithm/cacheLRU",
+        ]
+      },
+      {
+        title: "工具",
+        collapsable: true,
+        children: [
+          "/tool/charles",
         ]
       },
     ]
