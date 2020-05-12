@@ -22,7 +22,7 @@ module.exports = {
     }
   },
   plugins: [
-    './plugins/copy/index',
+    require('./plugins/copy/index'),
     '@vuepress/back-to-top',
     '@vuepress/active-header-links'
   ],
