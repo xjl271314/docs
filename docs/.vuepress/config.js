@@ -174,7 +174,8 @@ module.exports = {
         collapsable: true,
         children:[
           '/mysql/base',
-          '/mysql/select'
+          '/mysql/select',
+          '/mysql/insert'
         ]
       },
       {
