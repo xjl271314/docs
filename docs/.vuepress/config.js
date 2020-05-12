@@ -23,7 +23,8 @@ module.exports = {
   },
   plugins: [
     './plugins/copy/index',
-    '@vuepress/back-to-top'
+    '@vuepress/back-to-top',
+    '@vuepress/active-header-links'
   ],
   themeConfig: {
     nav: [
