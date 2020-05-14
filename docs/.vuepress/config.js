@@ -36,7 +36,7 @@ module.exports = {
       '/dom/',
       '/bom/',
       {
-        title: "js基础知识",
+        title: "javaScript基础知识",
         collapsable: true,
         children: [
           "/javascript/script",
@@ -72,6 +72,13 @@ module.exports = {
           "/javascript/ajax",
           "/javascript/throtte",
           "/javascript/eventsEmitter"
+        ]
+      },
+      {
+        title: "javaScript高级技巧",
+        collapsable: true,
+        children: [
+          "/javascriptHigh/mutationObserver",
         ]
       },
       '/es/',
