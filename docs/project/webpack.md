@@ -60,6 +60,8 @@ module.exports = {
 
 - `test` 属性，用于标识出应该被对应的 `loader` 进行转换的某个或某些文件。
 - `use` 属性，表示进行转换时，应该使用哪个 `loader`。
+
+`thread-loader`:可以配置webpack进行多进程的打包js和css。
 :::
 
 ```js
@@ -77,10 +79,13 @@ const config = {
         test: /\.js$/, //匹配所有的js文件
         exclude: /node_modules/,//除了node_modules以外
        },
-      // 配置css loaders
+      // 配置css loaders 假如在index.js中引入css 会被转化成commonjs对象
       { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+      // styles-loader 将css转化成style 插入到head中
       { test: /\.less$/, use: ['style-loader', 'css-loader', 'less-loader'] },
-      { test: /\.scss$/, use: ['style-loader', 'css-loader', 'sass-loader'] }
+      { test: /\.scss$/, use: ['style-loader', 'css-loader', 'sass-loader'] },
+      // url-loader可以处理一些图片大小转base64的功能   limit的单位是B(字节)
+      { test: /\.png|jpg|jpeg|gif$/, use: [ loader:'url-loader',options:{limit: 10240} ]}
     ]
   }
 };
@@ -175,31 +180,132 @@ module.exports = config;
 
 - 调整样式更加快速 - 几乎相当于在浏览器调试器中更改样式。
 
-**在应用程序中**
+你可以设置 HMR，以使此进程自动触发更新，或者你可以选择要求在用户交互时进行更新。通常我们可以使用`webpack-dev-server`来进行处理。
 
-通过以下步骤，可以做到在应用程序中置换(swap in and out)模块：
+:::tip
+ - `webpack-dev-server` 不会刷新浏览器
 
-1. 应用程序代码要求 HMR runtime 检查更新。
+ - `webpack-dev-server` 不输出文件,二是放在内存中
 
-2. HMR runtime（异步）下载更新，然后通知应用程序代码。
+ - 使用 `HotModuleReplacementPlugin` 插件(webpack自带)
 
-3. 应用程序代码要求 HMR runtime 应用更新。
+ - 使用 `webpack-dev-middleware`也可以实现相同的功能，不过这种方式会将`webpack`输出的文件传输给服务器,适用于灵活的定制场景。
+:::
 
-4. HMR runtime（同步）应用更新。
+### 热跟新原理
 
-你可以设置 HMR，以使此进程自动触发更新，或者你可以选择要求在用户交互时进行更新。
+![极客时间热更原理](https://img-blog.csdnimg.cn/20200515205923186.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
 
-**在编译器中**
 
-除了普通资源，编译器(compiler)需要发出 "update"，以允许更新之前的版本到新的版本。"update" 由两部分组成：
 
-1. 更新后的 manifest(JSON)
+## 文件监听
 
-2. 一个或多个更新后的 chunk (JavaScript)
+> 文件监听是在发现源码发生变化的时候,自动的构建出新的输出文件。
 
-manifest 包括新的编译 hash 和所有的待更新 chunk 目录。每个更新 chunk 都含有对应于此 chunk 的全部更新模块（或一个 flag 用于表明此模块要被移除）的代码。
+webpack中开启监听模式有两种方式实现:
 
-编译器确保模块 ID 和 chunk ID 在这些构建之间保持一致。通常将这些 ID 存储在内存中（例如，使用 webpack-dev-server 时），但是也可能将它们存储在一个 JSON 文件中。
+- 启动 `webpack` 的时候带上 `--watch` 参数
+
+- 在配置 `webpack.config.js` 的时候设置 `watch:true`
+
+:::warning
+这种方式虽然webpack构建是成功了 但是需要开发者手动刷新浏览器才会显示效果
+:::
+
+### 文件监听的原理
+
+> 轮询的判断文件的最后编辑时间是否发生了变化。当某个文件发生了变化，并不会立即告诉监听者，而是先缓存起来,等待 `aggregateTimeout`
+
+```js
+modules.exports = {
+   // 默认是false 不开启
+   watch: true,
+   // 只有watch开启之后才会有效
+   watchOptions: {
+     // 默认为空 不监听的文件或文件夹 支持正则匹配
+     ignored: /node_modules/,
+     // 监听到变化后等待多少ms之后执行 默认是300ms
+     aggregateTimeout:300,
+     // 判断文件是否发生变化通过不停询问系统指定文件有没有变化实现的， 默认为每秒询问1000次
+     poll: 1000
+   }
+}
+```
+
+## 文件指纹
+
+> 文件指纹其实指的就是每次文件打包之后后面跟着的`HashCode`,用来做版本管理等功能
+
+### 分类
+
+- `Hash`: 和整个项目的构建有关,只要项目文件有修改,整个项目构建的hash值就会更改。
+
+- `Chunkhash`: 和`webpack`打包的`chunk`有关，不同的`entry`会生成不同的`chunkhash`。
+
+- `Contenthash`: 根据文件的内容来定义`hash`,文件内容不变,则`contenthash`不变。
+
+## CommonsChunkPlugin
+
+> 主要是用来提取第三方库和公共模块，避免`首屏加载的bundle文件`或者`按需加载的bundle文件`体积过大，从而导致加载时间过长，是一把优化项目的利器。
+
+
+### chunk有哪几种，主要有以下三种：
+
+1. `webpack`当中配置的`入口文件（entry）`是`chunk`，可以理解为`entry chunk`
+
+2. 入口文件以及它的依赖文件通过`code split（代码分割`）出来的也是`chunk`，可以理解为`children chunk`
+
+3. 通过`commonsChunkPlugin`创建出来的文件也是`chunk`，可以理解为`commons chunk`
+
+### 可配置的属性：
+
+| 属性名 | 属性说明
+| :--- | :---
+| `name` | 可以是已经存在的`chunk（一般指入口文件`）对应的`name`，那么就会把公共模块代码合并到这个`chunk`上；否则，就会创建名字为`name`的`commons chunk`进行合并
+| `filename` | 指定`commons chunk`的文件名
+| `chunks` | 指定该`source chunk`，即指定从哪些`chunk`当中去找公共模块，省略该选项的时候，默认就是`entry chunks`
+| `minChunks` | 既可以数字，也可以是函数，还可以是`Infinity`
+
+
+#### 插件的作用:
+
+单独分离出第三方库、自定义公共模块、webpack运行文件
+
+
+- 抽离webpack运行文件，修改webpack配置文件：
+
+```js
+plugins: [
+    new webpack.optimize.CommonsChunkPlugin({
+      name : ['vendor', 'runtime'],
+      filename: '[name].js',
+      minChunks: Infinity
+    })
+]
+```
+上面这段抽离`webpack`运行文件代码的意思是创建一个名为`runtime`的`commons chunk`进行`webpack`运行文件的抽离，其中`source chunks`是`vendor.js`。
+
+
+## CleanWebpackPlugin
+
+> 清理构建目录
+
+## ExtractTextWebpackPlugin 
+
+> 将CSS从bundle中提取成一个独立的css文件
+
+## CopyWebpackPlugin
+
+> 将文件或者文件夹拷贝到构建的输出目录
+
+## UglifyjsWebpackPlugin
+
+> 压缩JS
+
+## ZipWebpackPlugin
+
+> 将打包出的资源生成一个zip包
+
 
 ## HtmlWebpackPlugin
 
