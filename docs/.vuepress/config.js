@@ -158,7 +158,8 @@ module.exports = {
           "/react/syntheticEvent",
           "/react/optimization",
           "/react/webpack",
-          "/react/recompose"
+          "/react/recompose",
+          "/react/problems"
         ]
       },
       {
