@@ -244,6 +244,360 @@ modules.exports = {
 
 - `Contenthash`: 根据文件的内容来定义`hash`,文件内容不变,则`contenthash`不变。
 
+## 自动清理构建目录
+
+- 2020.05.18
+
+默认情况下每次webpack的构建的需要手动去清除之前构建产生的目录文件，这样在实际工程中就变得很麻烦。下面将会讲解几种自动化清理构建目录的方法。
+
+1. 通过script命令
+
+```js
+rm -rf ./dist && webpack
+// rimraf 是个插件库
+rimraf ./dist && webpack
+```
+
+2. 使用 `clean-webpack-plugin` 插件
+
+> 这个插件默认会删除 `output` 指定的输出目录
+
+```js
+plugins: [
+  new CleanWebpackPlugin();
+]
+```
+
+## CSS增强
+
+### 1. 自动补全属性兼容
+
+CSS3某些属性其实在不同浏览器的支持情况不一样，以前的css代码中经常会出现以下这种qingx
+
+```css
+-moz-border-redius:50px;
+-webkit-border-redius:50px;
+-o-border-redius:50px;
+-ms-border-redius:50px;
+border-redius:50px;
+```
+
+如何只编写W3C规范的属性，其余的让大宝工具自动帮助我们完成?
+
+其实我们可以通过使用`post-css`和`autoprefixer`插件来辅助我们完成这个功能。
+
+```js
+module.exports = {
+  ...,
+  module: {
+    rule: [{
+        test: /\.scss$/,
+        use: [{
+                loader: require.resolve('style-loader')
+            },
+            {
+                loader: require.resolve('css-loader')
+            },
+            {
+                loader: require.resolve('postcss-loader'),
+                options: {
+                    plugins: [
+                        require('autoprefixer')({
+                            overrideBrowserslist: ['last 4 versions', 'ie 9', 'android 4.4.4', 'ios 8'],
+                        }),
+                    ],
+                },
+            },
+            {
+                loader: require.resolve('sass-loader'),
+                options: {
+                    modifyVars: true,
+                    javascriptEnabled: true
+                },
+            },
+        ],
+    }, ]
+  }
+}
+```
+
+机制是在CanIUse上查找兼容性。
+
+### 2. 自动px转rem适配移动端
+
+```js
+const {
+  addPostcssPlugins,
+} = require("customize-cra");
+
+addPostcssPlugins([require('postcss-px2rem')({ remUnit: 75 / 2 })]), // px转换成rem
+
+// 早期版本
+module.exports ={
+  ...,
+  {
+    loader: 'px2rem-loader',
+      options: {
+        remUnit: 75,// 1rem = 75px  750设计稿
+        remPrecision: 8 ,// px转rem小数点位数
+      }
+  },
+}
+```
+
+:::tip
+推荐使用手机淘宝的[`lib-flexible`](https://github.com/amfe/lib-flexible)库配套使用 或者使用本博客对应的js技巧篇中的方法。
+:::
+
+## 静态资源内联
+
+### 意义
+
+- 页面框架的初始化脚本
+
+- 上报相关打点
+
+- CSS内联避免页面闪动
+
+- 小图片或者字体内联 减少`HTTP`请求数
+
+
+### 实现
+
+主要是用 `raw-loader`来实现静态资源内联。
+
+### 功能
+
+- `raw-loader` 内联html
+
+```js
+<script>${require('raw-loader!babel-loader!./meta.html')}</script>
+```
+
+- `raw-loader` 内联js
+
+```js
+<script>${require('raw-loader!babel-loader!../node_modules/lib_flexible')}</script>
+```
+
+### 实现css内联
+
+1. 借助`style-loader`
+
+```js
+module.exports = {
+  ...,
+  {
+    loader: 'style-loader',
+    options:{
+        insertAt: 'top',// 样式插入head
+        singleton: true, // 将所有的style标签合并成一个
+    }
+  }
+}
+```
+
+2. 使用`html-inline-css-webpack-plugin`
+
+## 使用 source map
+
+> soure map可以将打包后的文件与原文件建立映射 方便查找打包之前的文件、定位错误
+
+:::warning
+注意: 一般仅在开发环境开启
+:::
+
+### 关键字
+
+- `eval`: 使用`eval`包裹模块代码
+
+- `source map`: 产生`.map`文件
+
+- `cheap`: 不包含列信息
+
+- `inline`: 将`.map`作为`DataURI`嵌入,不单独生成`.map`文件
+
+- `module`: 包含`loader`的`sourcemap`
+
+
+## 提取页面的公共资源
+
+### 基础库的分离
+
+> 将react、react-dom等基础包通过cdn引入,不打入bundle中。
+
+实际操作起来就是将这些库使用`externals`进行引入或者使用`splitChunks`进行分割.
+
+**使用 `html-webpack-externals-plugin`**
+
+```js
+// 安装
+npm i html-webpack-externals-plugin -D
+
+
+// 使用 
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
+
+module.exports = {
+  ...,
+  plugins: [
+    ...,
+    new HtmlWebpackExternalsPlugin({
+        externals: [
+          {
+            module: 'react',
+            entry: 'cdn文件地址',
+            global: 'React'
+          },
+          {
+            module: 'react-dom',
+            entry: 'cdn文件地址',
+            global: 'ReactDOM'
+          }
+        ]
+    })
+  ]
+}
+
+// index.html
+<script src="依赖地址"></script>
+```
+
+## splitChunks
+
+`splitChunks`算是`webpack`中比较高级的一个用法，主要是跟`模块拆分`与`代码拆分`功能相关。
+
+在研究`splitChunks`之前，我们先再回顾下`webpack`中的`module`、`chunk`和`bundle`。
+
+
+- `module`：就是js的模块化`webpack`支持`commonJS`、`ES6`等模块化规范，简单来说就是你通过`import`语句引入的代码。
+
+- `chunk`: `chunk`是`webpack`根据功能拆分出来的，包含三种情况：
+  1. 你的项目入口`（entry）`
+  2. 通过`import()`动态引入的代码
+  3. 通过`splitChunks`拆分出来的代码
+
+`chunk`包含着`module`，可能是一对多也可能是一对一。
+
+- `bundle`：`bundle`是`webpack`打包之后的各个文件，一般就是和`chunk`是一对一的关系，`bundle`就是对`chunk`进行编译压缩打包等处理之后的产出。
+
+在`webpack4`之后有一个默认的`splitChunks`配置：
+
+```js
+module.exports = {
+  //...
+  optimization: {
+    splitChunks: {
+      chunks: 'async',
+      minSize: 30000,
+      minChunks: 1,
+      maxAsyncRequests: 5,
+      maxInitialRequests: 3,
+      automaticNameDelimiter: '~',
+      name: true,
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -10
+        },
+        default: {
+          minChunks: 2,
+          priority: -20,
+          reuseExistingChunk: true
+        }
+      }
+    }
+  }
+};
+```
+
+### chunks
+
+`chunks`的含义是拆分模块的范围，它有三个值`async`、`initial`和`all`。
+
+- `async`表示只从异步加载得模块（`动态加载import()`）里面进行拆分
+- `initial`表示只从入口模块进行拆分
+- `all`表示以上两者都包括
+
+`chunks`的默认配置是`async`，也就是只从`动态加载得模块`里面进行拆分
+
+### cacheGroups
+
+`cacheGroups`其实是`splitChunks`里面最核心的配置,`splitChunks`就是根据`cacheGroups`去拆分模块的.
+
+`splitChunks`默认有两个缓存组：`vender`和`default`。
+
+如果有一个模块满足了多个缓存组的条件就会去按照权重划分，谁的权重高就优先按照谁的规则处理。
+
+
+### maxInitialRequests
+
+> 表示允许入口并行加载的最大请求数。
+
+之所以有这个配置也是为了对拆分数量进行限制，不至于拆分出太多模块导致请求数量过多而得不偿失。
+
+**这里需要注意几点：**
+
+1. 入口文件本身算一个请求
+2. 如果入口里面有动态加载得模块这个不算在内
+3. 通过`runtimeChunk`拆分出的`runtime`不算在内
+4. 只算`js`文件的请求，`css`不算在内
+5. 如果同时又两个模块满足`cacheGroup`的规则要进行拆分，但是`maxInitialRequests`的值只能允许再拆分一个模块，那尺寸更大的模块会被拆分出来
+
+
+### maxAsyncRequests
+
+`maxAsyncRequests`和`maxInitialRequests`有相似之处，它俩都是用来限制拆分数量的，`maxInitialRequests`是用来限制入口的拆分数量而`maxAsyncRequests`是用来限制异步模块内部的并行最大请求数的，说白了你可以理解为是`每个import()`它里面的最大并行请求数量。
+
+**这其中要注意以下几点：**
+
+1. `import()`文件本身算一个请求
+
+2. 并不算js以外的公共资源请求比如css
+
+3. 如果同时有两个模块满足`cacheGroup`的规则要进行拆分，但是`maxInitialRequests`的值只能允许再拆分一个模块，那`尺寸更大`的模块会被拆分出来
+
+### 其余要点
+
+1. `splitChunks.cacheGroup`必须同时满足各个条件才能生效，比如`minSize`或是`minChunks`等条件必须同时满足才行
+
+2. `splitChunks`的配置项都是作用于`cacheGroup`上的，如果将`cacheGroup`的默认两个分组`vendor`和`default`设置为`false`，则`splitChunks`就不会起作用
+
+3. `minChunks`、`maxAsyncRequests`、`maxInitialRequests`的值必须设置为大于等于1的数
+
+4. 当`chunk`没有名字时，通过`splitChunks`分出的模块的名字用`id`替代，当然你也可以通过`name`属性自定义
+
+5. 当`父chunk`和`子chunk`同时引入相同的`module`时，并不会将其分割出来而是删除掉`子chunk`里面共同的`module`，保留`父chunk`的`module`，这个是因为 `optimization.removeAvaliableModules` 默认是`true`
+
+6. 当两个`cacheGroup.priority`相同时，先定义的会先命中
+
+7. 除了`js`，`splitChunks`也适用于`css`
+
+## Tree Shaking
+
+> 一个模块里可能有很多个方法,只要其中的某个方法使用到了,则整个文件都会被打包到 `bundle`中去，`tree shaking `就是只把用到的方法打入到 `bundle` , 没用到的方法会在 `ugify阶段`被擦除掉。
+
+### 使用
+
+`webpack`默认支持, 在 `.barbelrc` 里面设置 `modules: false` 即可。
+
+:::tip
+`production model` 的情况下默认开启。
+
+必须是ES6的语法, CJS的方式不支持。
+:::
+
+### 原理
+
+利用ES6模块的特点:
+  - 只能作为模块顶层的语句出现,只在文件的顶层,不能在代码中动态导入
+  - `import`的模块名只能是字符串常量
+  - `import binding` 是 `immutable` 的
+
+代码擦除:
+  - `uglify`阶段删除无用代码。
+
+
 ## CommonsChunkPlugin
 
 > 主要是用来提取第三方库和公共模块，避免`首屏加载的bundle文件`或者`按需加载的bundle文件`体积过大，从而导致加载时间过长，是一把优化项目的利器。
@@ -447,112 +801,3 @@ publicPath: 'https://cdn.example.com/assets/'
 - `publicPath`并不会对生成文件的路径造成影响，主要是对你的页面里面引入的资源的路径做对应的补全，常见的就是css文件里面引入的图片url值.
 
 
-## splitChunks
-
-`splitChunks`算是`webpack`中比较高级的一个用法，主要是跟`模块拆分`与`代码拆分`功能相关。
-
-在研究`splitChunks`之前，我们先再回顾下`webpack`中的`module`、`chunk`和`bundle`。
-
-
-- `module`：就是js的模块化`webpack`支持`commonJS`、`ES6`等模块化规范，简单来说就是你通过`import`语句引入的代码。
-
-- `chunk`: `chunk`是`webpack`根据功能拆分出来的，包含三种情况：
-  1. 你的项目入口`（entry）`
-  2. 通过`import()`动态引入的代码
-  3. 通过`splitChunks`拆分出来的代码
-
-`chunk`包含着`module`，可能是一对多也可能是一对一。
-
-- `bundle`：`bundle`是`webpack`打包之后的各个文件，一般就是和`chunk`是一对一的关系，`bundle`就是对`chunk`进行编译压缩打包等处理之后的产出。
-
-在`webpack4`之后有一个默认的`splitChunks`配置：
-
-```js
-module.exports = {
-  //...
-  optimization: {
-    splitChunks: {
-      chunks: 'async',
-      minSize: 30000,
-      minChunks: 1,
-      maxAsyncRequests: 5,
-      maxInitialRequests: 3,
-      automaticNameDelimiter: '~',
-      name: true,
-      cacheGroups: {
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          priority: -10
-        },
-        default: {
-          minChunks: 2,
-          priority: -20,
-          reuseExistingChunk: true
-        }
-      }
-    }
-  }
-};
-```
-
-### chunks
-
-`chunks`的含义是拆分模块的范围，它有三个值`async`、`initial`和`all`。
-
-- `async`表示只从异步加载得模块（`动态加载import()`）里面进行拆分
-- `initial`表示只从入口模块进行拆分
-- `all`表示以上两者都包括
-
-`chunks`的默认配置是`async`，也就是只从`动态加载得模块`里面进行拆分
-
-### cacheGroups
-
-`cacheGroups`其实是`splitChunks`里面最核心的配置,`splitChunks`就是根据`cacheGroups`去拆分模块的.
-
-`splitChunks`默认有两个缓存组：`vender`和`default`。
-
-如果有一个模块满足了多个缓存组的条件就会去按照权重划分，谁的权重高就优先按照谁的规则处理。
-
-
-### maxInitialRequests
-
-> 表示允许入口并行加载的最大请求数。
-
-之所以有这个配置也是为了对拆分数量进行限制，不至于拆分出太多模块导致请求数量过多而得不偿失。
-
-**这里需要注意几点：**
-
-1. 入口文件本身算一个请求
-2. 如果入口里面有动态加载得模块这个不算在内
-3. 通过`runtimeChunk`拆分出的`runtime`不算在内
-4. 只算`js`文件的请求，`css`不算在内
-5. 如果同时又两个模块满足`cacheGroup`的规则要进行拆分，但是`maxInitialRequests`的值只能允许再拆分一个模块，那尺寸更大的模块会被拆分出来
-
-
-### maxAsyncRequests
-
-`maxAsyncRequests`和`maxInitialRequests`有相似之处，它俩都是用来限制拆分数量的，`maxInitialRequests`是用来限制入口的拆分数量而`maxAsyncRequests`是用来限制异步模块内部的并行最大请求数的，说白了你可以理解为是`每个import()`它里面的最大并行请求数量。
-
-**这其中要注意以下几点：**
-
-1. `import()`文件本身算一个请求
-
-2. 并不算js以外的公共资源请求比如css
-
-3. 如果同时有两个模块满足`cacheGroup`的规则要进行拆分，但是`maxInitialRequests`的值只能允许再拆分一个模块，那`尺寸更大`的模块会被拆分出来
-
-### 其余要点
-
-1. `splitChunks.cacheGroup`必须同时满足各个条件才能生效，比如`minSize`或是`minChunks`等条件必须同时满足才行
-
-2. `splitChunks`的配置项都是作用于`cacheGroup`上的，如果将`cacheGroup`的默认两个分组`vendor`和`default`设置为`false`，则`splitChunks`就不会起作用
-
-3. `minChunks`、`maxAsyncRequests`、`maxInitialRequests`的值必须设置为大于等于1的数
-
-4. 当`chunk`没有名字时，通过`splitChunks`分出的模块的名字用`id`替代，当然你也可以通过`name`属性自定义
-
-5. 当`父chunk`和`子chunk`同时引入相同的`module`时，并不会将其分割出来而是删除掉`子chunk`里面共同的`module`，保留`父chunk`的`module`，这个是因为 `optimization.removeAvaliableModules` 默认是`true`
-
-6. 当两个`cacheGroup.priority`相同时，先定义的会先命中
-
-7.除了`js`，`splitChunks`也适用于`css`
