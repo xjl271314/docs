@@ -87,7 +87,8 @@ module.exports = {
         collapsable: true,
         children: [
           "/css/base",
-          "/css/img"
+          "/css/img",
+          "/css/fix"
         ]
       },
       '/http/',
@@ -132,7 +133,8 @@ module.exports = {
         collapsable: true,
         children: [
           "/mobile/meta",
-          "/mobile/tips"
+          "/mobile/tips",
+          "/mobile/wxShare"
         ]
       },
       {
