@@ -465,6 +465,8 @@ module.exports = {
 
 ## splitChunks
 
+- 2020.05.18
+
 `splitChunks`算是`webpack`中比较高级的一个用法，主要是跟`模块拆分`与`代码拆分`功能相关。
 
 在研究`splitChunks`之前，我们先再回顾下`webpack`中的`module`、`chunk`和`bundle`。
@@ -575,6 +577,8 @@ module.exports = {
 
 ## Tree Shaking
 
+- 2020.05.19
+
 > 一个模块里可能有很多个方法,只要其中的某个方法使用到了,则整个文件都会被打包到 `bundle`中去，`tree shaking `就是只把用到的方法打入到 `bundle` , 没用到的方法会在 `ugify阶段`被擦除掉,从而减小了包的体积。
 
 ### 使用
@@ -613,12 +617,205 @@ webpack4之后在`mode:production` 的情况下默认开启。
 
 > `webpack-deep-scope-plugin`是一位中国同胞(学生)在`Google夏令营`，在导师Tobias带领下写的一个`webpack`插件。主要用于填充`webpack`自身`Tree-shaking`的不足，通过`作用域分析`来消除无用的代码。
 
+## Scope Hoisting
 
+- 2020.05.19
+
+> `scope hoisting` 是 `webpack3` 的新功能，直译过来就是`「作用域提升」`。熟悉 `JavaScript` 都应该知道`「函数提升」`和`「变量提升」`，`JavaScript` 会把函数和变量声明提升到当前作用域的顶部。`「作用域提升」`也类似于此，`webpack` 会把引入的 `js` 文件“提升到”它的引入者顶部。
+
+### 现象
+
+在未使用`Scope Hoisting`的情况下,编译后的代码中存在着大量的闭包代码。
+
+```js
+// 编译前
+// a.js
+export default 'xxxx';
+
+// b.js
+import index from './a';
+console.log(index);
+```
+
+```js
+// 编译后
+
+/****/ "./app/index/app.js";
+/******************!*\
+  !*** ./app/index/app.js ***!
+  \**************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__){
+
+"use strict";
+__webpack_require__.r(__webpack_exports);
+/* harmony import */ var __js_index__WEBPACK_IMPORTED_MODULES_0__ = __webpack_require__(/*! ./js/index */ "./app/index/app.js")
+
+
+console.log(__js_index__WEBPACK_IMPORTED_MODULES_0__["default"]);
+/***/ }),
+
+/****/ "./app/index/js/index.js";
+/******************!*\
+  !*** ./app/index/js/index.js ***!
+  \**************************/
+/*! export provided:default */
+/***/ (function(module, __webpack_exports__, __webpack_require__){
+
+"use strict";
+__webpack_require__.r(__webpack_exports);
+
+/* harmony default export */ __webpack_exoirts__["default"] = ('xxxx');
+
+/***/ })
+```
+
+**这样会导致:**
+
+1. 大量闭包函数包裹代码，导致体积增大(模块越多的情况下越明显)
+
+2. 运行代码时创建的函数作用域变多,内存开销变大
+
+### 原理之模块转化分析
+
+我们来探究下为什么经过`webpack`打包之后会产生这么多的闭包函数，先来了解下`webpack`的`模块转化`。
+
+```js
+// 打包之前的代码
+import { helloword } from './helloworld';
+import '../../common';
+
+document.write(helloworld());
+```
+
+```js
+// 打包之后的模块初始化函数
+/* 0 */
+/***/(function(module, __webpack_exports__, __webpack_require__)){
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import (指es6的import语法)*/ var _common_WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _helloworld_WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
+
+document.write(Object(_helloworld_WEBPACK_IMPORTED_MODULE_1__["helloworld"])());
+
+/***/ })
+```
+
+#### 结论
+
+- 被 `webpack` 转化后的模块会带上一层包裹
+
+- `import` 会被转化成 `__webpack_require`
+
+
+### 进一步分析 `webpack` 的模块机制
+
+```js
+(function(modules){
+  var installedModules = {};
+
+  function __webpack_require__(moduleId) {
+    if (installedModules[moduleId]) {
+        return installedModules[moduleId].exports;
+    }
+
+    var module = installedModules[moduleId] = {
+      i: moduleId,
+      l: false,
+      exports: {}
+    };
+    modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+    module.l = true;
+    return module.exports;
+  }
+  __webpack_require__(0);
+})([
+  /* 0 module*/
+  (function (module, __webpack_exports__. __webpack_require__){
+    ...
+  }),
+  /* 1 module*/
+  (function (module, __webpack_exports__. __webpack_require__){
+    ...
+  }),
+  /* n module*/
+  (function (module, __webpack_exports__. __webpack_require__){
+    ...
+  }),
+]);
+```
+
+#### 结论
+
+- `webpack`打包出来的是一个 `IIFE(匿名闭包)`
+
+- `modules` 是一个数组,每一项是一个模块初始化函数
+
+- `__webpack_require` 用来加载模块, 返回的是 `module.exports`
+
+- 通过`WEBPACK_REQUIRE_METHOD(0)`来启动程序
+
+
+### Scope Hoisting 原理
+
+> 将所有模块的代码按照引用顺序放在一个函数作用域里, 然后适当的重命名一些变量以防止变量名冲突。
+
+![Scope Hoisting 原理](https://img-blog.csdnimg.cn/20200519145232537.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+
+### Scope Hoisting 使用
+
+**在`webpack4`下 `mode` 为 `production` 时默认开启了此功能。**
+
+<!------------------------------------------------------>
+
+## 代码分割和动态import
+
+- 2020.05.19
+
+### 如何动态的import
+
+1. 安装 babel 插件
+
+```
+npm install @babel/plugin-syntax-dynamic-import --save-dev
+```
+
+2. 配置`.babelrc`文件的`plugins`
+
+```js
+{
+  ...,
+  plugins: [
+    '@babel/plugin-syntax-dynamic-import',
+    ...
+  ]
+}
+```
+
+### 如何使用
+
+```js
+import(path).then(res=>{
+  // do something
+});
+```
+
+### 内部原理
+
+通过 `webpackJsonp` 请求异步加载。动态创建`script标签`,然后引入。
 
 ## CommonsChunkPlugin
 
+- 2020.05.18
+
 > 主要是用来提取第三方库和公共模块，避免`首屏加载的bundle文件`或者`按需加载的bundle文件`体积过大，从而导致加载时间过长，是一把优化项目的利器。
 
+:::tip
+`webpack4`之后推荐使用`splitChunks`替代该方法。
+:::
 
 ### chunk有哪几种，主要有以下三种：
 
