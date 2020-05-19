@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 module.exports = {
   title: '我的博客',
   description: '个人博客网站',
@@ -24,7 +26,13 @@ module.exports = {
   plugins: [
     require('./plugins/copy/index'),
     '@vuepress/back-to-top',
-    '@vuepress/active-header-links'
+    '@vuepress/active-header-links',
+    ['@vuepress/last-updated',{
+      transformer: (timestamp, lang) => {
+        moment.locale(lang)
+        return moment(timestamp).format('YYYY-MM-DD HH:mm:SS')
+      }
+    }]
   ],
   themeConfig: {
     nav: [
@@ -255,7 +263,8 @@ module.exports = {
           "/tool/charles",
         ]
       },
-    ]
+    ],
+    lastUpdated: '上次更新时间' ,
   }
 }
 

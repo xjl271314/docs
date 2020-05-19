@@ -575,17 +575,23 @@ module.exports = {
 
 ## Tree Shaking
 
-> 一个模块里可能有很多个方法,只要其中的某个方法使用到了,则整个文件都会被打包到 `bundle`中去，`tree shaking `就是只把用到的方法打入到 `bundle` , 没用到的方法会在 `ugify阶段`被擦除掉。
+> 一个模块里可能有很多个方法,只要其中的某个方法使用到了,则整个文件都会被打包到 `bundle`中去，`tree shaking `就是只把用到的方法打入到 `bundle` , 没用到的方法会在 `ugify阶段`被擦除掉,从而减小了包的体积。
 
 ### 使用
 
 `webpack`默认支持, 在 `.barbelrc` 里面设置 `modules: false` 即可。
 
 :::tip
-`production model` 的情况下默认开启。
+webpack4之后在`mode:production` 的情况下默认开启。
 
-必须是ES6的语法, CJS的方式不支持。
+必须是ES6的语法, CJS的方式不支持,且其中编写的方法不能有副作用，否则就会失效。
 :::
+
+**副作用解释**
+
+> 对于相同的输入就有相同的输出，不依赖外部环境，也不改变外部环境。
+
+符合上述的描述就可以称为纯函数，反之就是带有副作用。
 
 ### 原理
 
@@ -596,6 +602,17 @@ module.exports = {
 
 代码擦除:
   - `uglify`阶段删除无用代码。
+
+### 扩展 
+
+- 2020.05.19
+
+上述描述到如果模块是不纯,那么`tree shaking`检测就会失效，如何优化这部分的功能呢?
+
+这里可以配合使用另外一个插件`webpack-deep-scope-plugin`。
+
+> `webpack-deep-scope-plugin`是一位中国同胞(学生)在`Google夏令营`，在导师Tobias带领下写的一个`webpack`插件。主要用于填充`webpack`自身`Tree-shaking`的不足，通过`作用域分析`来消除无用的代码。
+
 
 
 ## CommonsChunkPlugin

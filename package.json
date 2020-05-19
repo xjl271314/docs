@@ -23,6 +23,7 @@
   "dependencies": {
     "clipboard": "^2.0.6",
     "markdown-it-include": "^1.0.0",
-    "markdown-it-mermaid": "^0.2.5"
+    "markdown-it-mermaid": "^0.2.5",
+    "moment": "^2.25.3"
   }
 }
