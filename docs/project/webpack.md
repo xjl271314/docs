@@ -807,6 +807,389 @@ import(path).then(res=>{
 
 通过 `webpackJsonp` 请求异步加载。动态创建`script标签`,然后引入。
 
+## webpack与CI/CD集成
+
+- 2020.05.19
+
+
+### 本地开发增加`precommit`钩子
+
+1. 安装 `husky`
+
+```
+npm install husky --save-dev
+```
+
+2. 增加 `npm script`，通过 `lint-staged` 增量检查修改的文件
+
+```js
+...,
+"scripts": {
+  "precommit": "lint-staged"
+},
+"husky": {
+    "hooks": {
+      "pre-commit": "git rev-parse --abbrev-ref HEAD | if ! [[ $(xargs) =~ 'gray|master|t\\d*' ]]; then lint-staged; fi",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+},
+"lint-staged": {
+  "linters": {
+    "*.{js,scss}": ["eslint --fix", "git add"]
+  }
+}
+```
+
+## webpack打包组件和基础库
+
+- 2020.05.19
+
+> `webpack`除了打包应用，也可以用来打包js库和一些自定义组件库。
+
+:::tip
+单纯只是打包js库和组件库的话 使用[`rollup`](https://www.rollupjs.com/)打包也是一个不错的选择
+:::
+
+**我们来实现一个简单的打包例子，这个例子需要满足以下几点功能:**
+
+1. 需要支持打包`压缩版(x.min.js)`和`非压缩版本(x.js)`。
+
+2. 支持 `AMD/CJS/ESM` 模块引入。
+
+3. 支持通过`script`脚本直接引入链接。
+
+```js
+// ESM
+import * as Tool from 'tools';
+
+//cjs
+const Tool = require('tools');
+
+// AMD
+require(['tools'],function(){
+  ...
+})
+
+// script 脚本
+<script src="https://xxx.com/tools"></script>
+```
+
+**如何将库暴露出去？**
+
+- `library`：指定库的全局变量
+
+- `libraryTarget`：支持库引入的方式
+
+```js
+module.exports = {
+   mode: 'production',
+   entry: {
+     tools: "./src/index.js",
+     tools.min: "./src/index.js"
+   },
+   output:{
+     filename: "[name].js",
+     library: "tools",
+     libraryExport: "default",
+     libraryTarget: "umd",// var this window ...
+   }
+}
+```
+
+**接下来让我们开始表演:**
+
+### 1.新建项目 `webpack-build-tools` 安装`webpack`和`webpack-cli`
+
+```
+mkdir webpack-build-tools
+
+cd webpack-build-tools
+
+npm init -y
+
+npm i webpack webpack-cli
+```
+
+### 2. 新建目录 `src/index.js`,编写我们的工具代码
+
+此处的代码来自我的博客下 `js-tips` 仅作为示例使用
+
+```js
+/**
+ * 将参数中的null undefined转化为空
+ * @param {String} el 
+ */
+export function transferDefectParams(el) {
+    return ['null', 'undefined'].includes(el) ? '' : el
+}
+
+/**
+ * 正则表示法
+ * 思路:通过正则表达式获取url上的参数 然后通过数组reduce追加到对象中
+ * 
+ * @param {string} url 需要获取的url地址默认为当前地址
+ */
+export default function getUrlParameters(url = window.location.href) {
+    /**
+     * match返回字符串中匹配结果的数组,匹配不到返回null
+     * [^?=&]+ 匹配除了?=&之外的字符 仅匹配一次
+     * Array.reduce(callBack(prev,cur,index,array), initialValue)
+     * Array.slice(start,[end]) 返回start-end的元素
+     */
+    const params = url.match(/([^?=&]+)=([^&]*)/g)
+    if (params) {
+        return params.reduce((a, v) => (a[v.slice(0, v.indexOf('='))] = transferDefectParams(v.slice(v.indexOf('=') + 1)), a), {})
+    }
+    return {}
+}
+```
+
+### 3. 安装 `terser-webpack-plugin` 压缩插件
+
+```
+npm i terser-webpack-plugin -D
+```
+
+### 4. 新建 `webpack.config.js`
+
+```js
+const TerserPlugin = require('terser-webpack-plugin') // 引入压缩插件
+
+module.exports = {
+    mode: 'none', // 因为默认是production 默认会进行压缩
+    entry: {
+        "tools": "./src/index.js",
+        "tools.min": "./src/index.js"
+    },
+    output: {
+        filename: "[name].js",
+        library: "tools",
+        libraryExport: "default", // 不添加的话引用的时候需要 tools.default
+        libraryTarget: "umd", // var this window ...
+    },
+    optimization: {
+        minimize: true,
+        minimizer: [
+            new TerserPlugin({ // 使用压缩插件
+                include: /\.min\.js$/
+            })
+        ]
+    }
+}
+```
+### 5. 修改 `package.json` 添加打包命令
+
+```json
+{
+  "name": "webpack-build-tools",
+  "version": "1.0.0",
+  "description": "js常用工具函数",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "prepublish": "webpack"
+  },
+  "keywords": [
+    "webpack-build-tools"
+  ],
+  "author": "xjl271314",
+  "license": "ISC",
+  "dependencies": {
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  },
+  "devDependencies": {
+    "terser-webpack-plugin": "^3.0.1"
+  }
+}
+```
+
+### 6. 打包并查看打包效果
+
+```
+npm run build
+```
+
+![打包结果](https://img-blog.csdnimg.cn/20200519174826824.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+
+```js
+// tools.js
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["tools"] = factory();
+	else
+		root["tools"] = factory();
+})(window, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "transferDefectParams", function() { return transferDefectParams; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return getUrlParameters; });
+/**
+ * 将参数中的null undefined转化为空
+ * @param {String} el 
+ */
+function transferDefectParams(el) {
+    return ['null', 'undefined'].includes(el) ? '' : el
+}
+
+/**
+ * 正则表示法
+ * 思路:通过正则表达式获取url上的参数 然后通过数组reduce追加到对象中
+ * 
+ * @param {string} url 需要获取的url地址默认为当前地址
+ */
+function getUrlParameters(url = window.location.href) {
+    /**
+     * match返回字符串中匹配结果的数组,匹配不到返回null
+     * [^?=&]+ 匹配除了?=&之外的字符 仅匹配一次
+     * Array.reduce(callBack(prev,cur,index,array), initialValue)
+     * Array.slice(start,[end]) 返回start-end的元素
+     */
+    const params = url.match(/([^?=&]+)=([^&]*)/g)
+    if (params) {
+        return params.reduce((a, v) => (a[v.slice(0, v.indexOf('='))] = transferDefectParams(v.slice(v.indexOf('=') + 1)), a), {})
+    }
+    return {}
+}
+
+/***/ })
+/******/ ])["default"];
+});
+```
+
+```js
+// tools.min.js
+!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define([],t):"object"==typeof exports?exports.tools=t():e.tools=t()}(window,(function(){return function(e){var t={};function n(r){if(t[r])return t[r].exports;var o=t[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,n),o.l=!0,o.exports}return n.m=e,n.c=t,n.d=function(e,t,r){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var o in e)n.d(r,o,function(t){return e[t]}.bind(null,o));return r},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=0)}([function(e,t,n){"use strict";function r(e){return["null","undefined"].includes(e)?"":e}function o(e=window.location.href){const t=e.match(/([^?=&]+)=([^&]*)/g);return t?t.reduce((e,t)=>(e[t.slice(0,t.indexOf("="))]=r(t.slice(t.indexOf("=")+1)),e),{}):{}}n.r(t),n.d(t,"transferDefectParams",(function(){return r})),n.d(t,"default",(function(){return o}))}]).default}));
+```
+
+### 7.设置入口文件 不同环境下使用不同的入口文件
+
+`package.json`中的`main`字段为`index.js`，所以在项目根目录下新建 `index.js`
+
+```js
+// index.js
+if (process.env.NODE_ENV === 'production') { // 通过环境变量来决定入口文件
+    module.exports = require('./dist/tools.min.js')
+} else {
+    module.exports = require('./dist/tools.js')
+}
+```
+
+### 8.进行npm包发布(需要注册npm账号,且进行登录)
+
+```
+npm publish
+```
+
+### 9. 同步代码到git,并编写对应的说明文档等
+
+```js
+// 其他项目引用
+npm i tools -s
+
+import getUrlParameters from 'tools';
+```
+
+:::tip
+完整代码参见[github地址](https://github.com/xjl271314/webpack-build-tools)
+:::
+
 ## CommonsChunkPlugin
 
 - 2020.05.18

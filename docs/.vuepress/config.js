@@ -1,8 +1,8 @@
 const moment = require('moment');
 
 module.exports = {
-  title: '我的博客',
-  description: '个人博客网站',
+  title: '前端工程师成长路线',
+  description: '博客 分享 读后感 成长规划',
   dest: './dist',
   base: '/blogs/',
   repo: '',
