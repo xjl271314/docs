@@ -6,12 +6,13 @@
 
 > `webpack`是一个现代`JavasScript`应用程序的模块打包器(`module bunder`)
 
+
 ## 四个核心概念
 
-- 入口(entry)
-- 输出(output)
-- loader
-- 插件(plugins)
+- `入口(entry)`
+- `输出(output)`
+- `loader`
+- `插件(plugins)`
 
 ### 入口
 
@@ -169,6 +170,7 @@ module.exports = config;
 那么，一旦你的应用程序中，形如 index.html 文件、一些 bundle 和各种资源加载到浏览器中，会发生什么？你精心安排的 /src 目录的文件结构现在已经不存在，所以 webpack 如何管理所有模块之间的交互呢？这就是 manifest 数据用途的由来……
 
 当编译器(compiler)开始执行、解析和映射应用程序时，它会保留所有模块的详细要点。这个数据集合称为 "Manifest"，当完成打包并发送到浏览器时，会在运行时通过 Manifest 来解析和加载模块。无论你选择哪种模块语法，那些 import 或 require 语句现在都已经转换为 __webpack_require__ 方法，此方法指向模块标识符(module identifier)。通过使用 manifest 中的数据，runtime 将能够查询模块标识符，检索出背后对应的模块。
+
 
 ## 模块热替换
 
@@ -1189,6 +1191,154 @@ import getUrlParameters from 'tools';
 :::tip
 完整代码参见[github地址](https://github.com/xjl271314/webpack-build-tools)
 :::
+
+## webpack实现SSR打包
+
+- 2020.05.19
+
+1. 客户端渲染: HTML + CSS + JS + Data ————> 渲染后的HTML
+
+2. 服务端渲染:
+
+  - 所有的模板等资源都存储在服务器
+
+  - 内网机器拉取更快
+
+  - 一个 HTML 返回所有的数据
+
+![渲染差别](https://img-blog.csdnimg.cn/20200519202722384.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+
+### SSR代码实现思路
+
+- 服务端：
+
+1. 使用 `react-dom/server` 的 `renderToString` 方法将 `React组件` 渲染成字符串。
+
+2. 服务端路由返回对应的模板。
+
+- 客户端
+
+打包出针对服务端的组件。
+
+
+### 简单示例
+
+```json
+// package.json
+"script":{
+  ...,
+  "build:ssr": "webpack --config webpack.ssr.js"
+}
+```
+
+目录下新建 `server/index.js`
+```js
+/* server/index.js */
+
+// 兼容window报错
+if(typeof window === 'undefined'){
+    global.window = {};
+}
+
+const express = require('express');
+const { renderToString }  = require('react-dom/server');
+const SSR = require('../dist/xx-server');
+
+const server = port => {
+    const app = express();
+
+    app.use(express.static('dist'));
+
+    app.get('/search', (req, res)=>{
+        const html = renderMarkup(renderToString(SSR));
+        res.status(200).send(html);
+    });
+
+    app.listen(port, () => {
+        console.log('Server is running on port:', port);
+    });
+};
+
+server(process.env.PORT || 3000);
+
+
+const renderMarkup = str => {
+    return `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+        <div id="root">${str}</div>
+    </body>
+    </html>`
+};
+```
+
+组件目录下创建`index-server.js`
+```js
+// index-server.js server端不能识别import 需要使用commonjs规范
+'use strict';
+
+const React = require('react');
+
+const Example = () => <div>Hello World</div>;
+
+module.exports = <Example />;
+```
+
+创建 `webpack.ssr.js`
+
+```js
+// webpack.ssr.js
+module.exports = {
+  ...,
+  output:{
+    path: path.join(__dirname, 'dist'),
+    filename: '[name-server].js',
+    libraryTarget: 'umd'
+  }
+}
+```
+
+### 打包过程中遇到的问题
+
+#### 浏览器的全局变量(`Node.js` 中没有`document`, `window`)
+
+  - 组件适配: 将不兼容的组件根据打包环境进行适配
+
+  - 请求适配: 将`fetch` 或者 `ajax` 发送请求的写法改成 `isomorphic-fetch` 或者 `axios`
+
+#### 样式问题(`Node.js` 无法解析`CSS`)
+
+  - 服务端打包通过 `ignore-loader` 忽略掉 `CSS的解析`
+
+  - 将`style-loader` 替换成 `isomorphic-style-loader`
+
+  - 或者使用内联样式`style`
+
+
+### 解决打包样式问题
+
+使用打包出来的浏览器端 html 文件作为模板, 设置占位符, 动态插入组件。
+
+
+修改 `/server/index.js`
+
+```js
+const template = fs.readFileSync('xxx');
+```
+
+修改对应的 `template.html`
+
+```html
+<div id="root"><!-- HTML_PLCAEHOLDER ---></div>
+```
+
+
 
 ## CommonsChunkPlugin
 
