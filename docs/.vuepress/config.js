@@ -96,7 +96,9 @@ module.exports = {
         children: [
           "/css/base",
           "/css/img",
-          "/css/fix"
+          "/css/fix",
+          "/css/display",
+          "/css/interview"
         ]
       },
       '/http/',
