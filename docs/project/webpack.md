@@ -194,7 +194,7 @@ module.exports = config;
  - 使用 `webpack-dev-middleware`也可以实现相同的功能，不过这种方式会将`webpack`输出的文件传输给服务器,适用于灵活的定制场景。
 :::
 
-### 热跟新原理
+### 热更新原理
 
 ![极客时间热更原理](https://img-blog.csdnimg.cn/20200515205923186.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
 

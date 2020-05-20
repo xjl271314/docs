@@ -111,7 +111,8 @@ module.exports = {
           "/project/err",
           "/project/standards",
           "/project/docker",
-          "/project/autoTryCatch"
+          "/project/autoTryCatch",
+          "/project/gitlabCI"
         ]
       },
       '/safe/',
