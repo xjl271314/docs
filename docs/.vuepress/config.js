@@ -235,7 +235,8 @@ module.exports = {
           "/open/font",
           "/open/px",
           "/open/module",
-          "/open/rtv"
+          "/open/rtv",
+          "/open/highList"
         ]
       },
       {
