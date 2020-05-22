@@ -150,8 +150,171 @@ export default Example;
 基于以上理论和考虑到实际情况列表高度不固定的情况下我们实现了一下的列表组件。
 
 ```jsx
-import
+import React,{ useRef, useState, useEffect, useCallback, useLayoutEffect } from 'react';
+import './index.scss';
+
+const throttle = (fn, timehold = 450)=> {
+    let startTime = new Date().getTime();
+    const context = this;
+
+    return function () {
+        const currentTime = new Date().getTime();
+        if (currentTime - startTime >= timehold) {
+            fn.apply(context, [...arguments]);
+
+            startTime = currentTime;
+        }
+    };
+};
+
+const VirtualList = props =>{
+    const listRefs = [];
+    const { list = [] } = props;
+    const listContainer = useRef();
+    const [ defaultHeight, setDefaultHeight] = useState(50);
+    const [ positions, setPositions ] = useState({});
+    const [ listHeight, setListheight ] = useState(0);
+    // const [ visibleHeight, setVisibleHeight] = useState(0);
+    const [ visibleNumber, setVisibleNumber] = useState(0);
+    const [ transferOffset, setTransferOffset] = useState(0);
+    const [ visibleList, setVisibleList] = useState(list);
+    const [ startIndex, setStartIndex] = useState(0);
+    const [ endIndex, setEndIndex] = useState(0);
+
+    // 初始化参数
+    useEffect(()=>{
+        const initPositions = () => {
+            const options = list.map ((d, index) => ({
+                index,
+                height: defaultHeight,
+                top: index * defaultHeight,
+                bottom: (index + 1) * defaultHeight
+            }));
+            setPositions(options);
+        };
+
+        initPositions();
+
+        return () => initPositions();
+    },[list, defaultHeight]);
 
 
+    // 获取列表起始索引
+    const getStartIndex = useCallback((top = 0) => binarySearch(positions, top), [positions]);
+
+    // 二分法查找
+    const binarySearch = (list, value) => {
+        let start = 0;
+        let end = list.length - 1;
+        let tempIndex = null;
+        while (start <= end) {
+          let midIndex = parseInt((start + end) / 2);
+          let midValue = list[midIndex].bottom;
+          if (midValue === value) {
+            return midIndex + 1;
+          } else if (midValue < value) {
+            start = midIndex + 1;
+          } else if (midValue > value) {
+            if (tempIndex === null || tempIndex > midIndex) {
+              tempIndex = midIndex;
+            }
+            end = end - 1;
+          }
+        }
+        return tempIndex;
+    };
+
+    //获取列表项的当前尺寸
+    const updateItemsSize = useCallback(() => {
+        const nodes = listRefs;
+        nodes && nodes.forEach(node => {
+          const rect = node.getBoundingClientRect();
+          let { height } = rect;
+          let index = +node.id;
+          let oldHeight = positions[index].height;
+          let dValue = oldHeight - height;
+          //存在差值
+          if (dValue) {
+            positions[index].bottom = positions[index].bottom - dValue;
+            positions[index].height = height;
+            for (let k = index + 1; k < positions.length; k++) {
+                positions[k].top = positions[k - 1].bottom;
+                positions[k].bottom = positions[k].bottom - dValue;
+            }
+            setPositions(positions);
+            setDefaultHeight(height);
+          }
+        });
+    },[listRefs, positions]);
+
+    // 更新偏移量
+    const setStartOffset = useCallback(() =>{
+      let startOffset = startIndex >= 1 ? positions[startIndex - 1].bottom : 0;
+      setTransferOffset(startOffset);
+    },[positions, startIndex]);
+
+    // 滚动监听
+    const listScroll = throttle(e => {
+        const $ref = listContainer.current;
+        const scrollTop = $ref.scrollTop;
+        // 此时开始的索引值
+        setStartIndex(getStartIndex(scrollTop));
+        // 此时结束的索引值
+        setEndIndex(startIndex + visibleNumber);
+        // 列表偏移量
+        setStartOffset();
+    },30);
+
+    useEffect(()=>{
+        const $ref = listContainer.current;
+        const scrollTop = $ref.scrollTop;
+        const clientHeight = $ref.getBoundingClientRect().height;
+        // 正常的总列表高度
+        const height = list.length * defaultHeight + 'px';
+        // setVisibleHeight(clientHeight);
+        setListheight(height);
+        // 可显示的列表数
+        setVisibleNumber(Math.ceil(clientHeight / defaultHeight));
+        // 列表偏移量
+        setTransferOffset(scrollTop - (scrollTop % defaultHeight));
+        // 此时开始的索引值
+        setStartIndex(getStartIndex(scrollTop));
+        // 此时结束的索引值
+        setEndIndex(startIndex + visibleNumber);
+        // 可见的列表数据
+        setVisibleList(list.slice(startIndex, endIndex));
+        
+    },[endIndex, getStartIndex, list, startIndex, visibleNumber, defaultHeight]);
+
+    // 等待列表DOM更新
+    useLayoutEffect(()=>{
+        if (!listRefs || listRefs.length === 0 || Object.keys(positions).length === 0){
+            return ;
+        }
+        // 获取真实元素大小，修改对应的尺寸缓存
+        updateItemsSize();
+       // 更新列表总高度
+       let height = positions[positions.length - 1].bottom;
+       setListheight(height);
+       // 更新真实偏移量
+       setStartOffset();
+    }, [listRefs, positions, setStartOffset, updateItemsSize]);
+
+    return (
+        <div ref={listContainer} onScroll={listScroll} className="infinite-list-container">
+            {/* 容器内的占位，高度为总列表高度，用于形成滚动条 */}
+            <div className="infinite-list-phantom" style={{ height: listHeight}}></div>
+            <div className="infinite-list" style={{transform:[`translateY(${transferOffset}px)`]}}>{
+                visibleList.map((item, index) => <div key={index} id={item} ref={n=>listRefs[index] = n} className="infinite-list-item">我是列表项{item}</div>)
+            }</div>
+        </div>
+    )
+}
+export default React.memo(VirtualList);
 ```
 
+:::tip
+内部Item组件的实现可以采用外部传入的方法,这里不做展开。
+
+Vue 版本的可以参考[原作者的地址](https://codesandbox.io/s/virtuallist2-1bqk6)
+:::
