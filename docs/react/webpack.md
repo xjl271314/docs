@@ -1,15 +1,6 @@
-<!--
- * @Prd: 
- * @Link: 
- * @Author: xjl
- * @Email: xujl@weipaitang.com
- * @Date: 2020-04-13 19:39:17
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-04-13 19:46:21
- -->
 # create-react-app中集成webpack
 
-CRA中默认webpack的相关配置都是已经隐藏的，可以通过命令`npm run enject`反编译出来配置文件，但这个操作是不可逆的。这里推荐的是使用社区的一个[`react-app-rewrite`]('https://github.com/arackaf/customize-cra')插件。
+CRA中默认webpack的相关配置都是已经隐藏的，可以通过命令`npm run enject`反编译出来配置文件，但这个操作是不可逆的。这里推荐的是使用社区的一个[react-app-rewrite](https://github.com/arackaf/customize-cra)插件。
 
 ```js
 yarn add customize-cra react-app-rewired --dev

@@ -161,6 +161,8 @@ module.exports = {
           "/react/setState",
           "/react/redux",
           "/react/hooksRedux",
+          "/react/reduxSaga",
+          "/react/mobx",
           "/react/hooks",
           "/react/aria",
           "/react/codesplit",

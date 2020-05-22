@@ -313,6 +313,44 @@ const VirtualList = props =>{
 export default React.memo(VirtualList);
 ```
 
+CSS样式如下:
+
+```scss
+.infinite-list-container{
+    position: relative;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    height: 60vh;
+}
+
+.infinite-list-phantom {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    z-index: -1;
+}
+
+.infinite-list {
+    left: 0;
+    right: 0;
+    top: 0;
+    position: absolute;
+}
+
+.infinite-list-item{
+    display: flex;
+    // height: 50px;
+    justify-content: center;
+    align-items: center;
+    background-color: green;
+    color: #FFF;
+    font-size: 24px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #EEE;
+}
+```
+
 :::tip
 内部Item组件的实现可以采用外部传入的方法,这里不做展开。
 
