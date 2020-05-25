@@ -87,6 +87,7 @@ module.exports = {
         collapsable: true,
         children: [
           "/javascriptHigh/mutationObserver",
+          "/javascriptHigh/createTypes",
         ]
       },
       '/es/',
