@@ -221,7 +221,8 @@ module.exports = {
         title: "Python",
         collapsable: true,
         children:[
-          '/python/pip'
+          '/python/pip',
+          '/python/pillow'
         ]
       },
       {

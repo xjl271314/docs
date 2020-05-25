@@ -1,5 +1,14 @@
 # 常用基本操作
 
+- 2020.05.25
+
+## 安装
+
+[Mysql社区下载地址](https://dev.mysql.com/downloads/mysql/)
+
+
+## 操作
+
 1. 更改root密码
 ```sql
 mysqladmin -uroot password 'yourpassword'
