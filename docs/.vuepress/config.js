@@ -228,7 +228,8 @@ module.exports = {
         title: "Redis",
         collapsable: true,
         children:[
-          '/redis/base'
+          '/redis/base',
+          '/redis/notification'
         ]
       },
       '/bff/',
