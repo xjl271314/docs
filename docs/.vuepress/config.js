@@ -145,7 +145,8 @@ module.exports = {
         children: [
           "/mobile/meta",
           "/mobile/tips",
-          "/mobile/wxShare"
+          "/mobile/wxShare",
+          "/mobile/h5live"
         ]
       },
       {
