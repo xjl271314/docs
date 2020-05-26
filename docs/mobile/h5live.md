@@ -261,3 +261,12 @@ video.addEventListener('timeupdate', function(e){
 
 但是这样仍然会有一些问题，比如当前检测到视频卡住了，JS控制重新播放，而当前还是没有获取到推流的话。 浏览器会先loading获取视频，最后会x显示加载失败。 我们的检查会轮询执行，所以我们可以在视频正常播放前使用一些提示类组件。
 
+
+4. 播放兼容问题 
+
+```js
+playsinline="true" webkit-playsinline="true  // 解决ios自动播放全屏问题
+
+x5-video-player-type="h5" x5-video-player-fullscreen="true" // 解决安卓同层级播放
+
+```

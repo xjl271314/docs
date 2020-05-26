@@ -102,6 +102,13 @@ module.exports = {
           "/css/interview"
         ]
       },
+      {
+        title: "Svg相关知识",
+        collapsable: true,
+        children:[
+          '/svg/path',
+        ]
+      },
       '/http/',
       {
         title: "前端工程化",
@@ -147,7 +154,8 @@ module.exports = {
           "/mobile/meta",
           "/mobile/tips",
           "/mobile/wxShare",
-          "/mobile/h5live"
+          "/mobile/h5live",
+          "/mobile/h5liveProblems"
         ]
       },
       {

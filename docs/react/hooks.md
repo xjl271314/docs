@@ -776,7 +776,14 @@ const [state, dispatch] = useReducer(reducer, initialArg, init);
 
 这么做可以将用于计算 `state` 的逻辑提取到 `reducer` 外部，这也为将来对重置 `state` 的 `action` 做处理提供了便利。
 
-在某些场景下，`useReducer` 会比 `useState` 更适用，例如 `state` 逻辑较复杂且包含多个子值，或者下一个 `state` 依赖于之前的 `state` 等。并且，使用 `useReducer` 还能给那些会触发深更新的组件做性能优化，因为你可以向子组件传递 `dispatch` 而不是回调函数 。
+:::tip
+`useReducer` 将 `how(reducer)` 和 `what(dispatch(action))` 进行抽离; 使用 `reducer` 逻辑状态进行集中化维护;
+
+相比 `useState`, `useReducer` 没有`闭包问题`;
+
+当状态的一个 `state` 依赖状态中的另一个 `state` 时, 这种情况最好使用 `useReducer`; 可以参考 `decoupling-updates-from-actions` 中 Dan 列举的 demo。
+
+:::
 
 以下是用 `reducer` 重写 `useState` 计数器示例：
 
