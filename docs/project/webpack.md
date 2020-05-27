@@ -1621,3 +1621,12 @@ module.exports = merge(baseConfig, devConfig);
 - 2020.05.27
 
 ![构建功能模块设计](https://img-blog.csdnimg.cn/2020052712400568.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+
+## 目录结构设计
+
+![目录结构设计](https://img-blog.csdnimg.cn/20200527203103923.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+## 冒烟测试
+
+- 2020.05.28

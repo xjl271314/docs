@@ -246,8 +246,9 @@ autoplay： 自动播放
     meta - 当页面加载后只载入元数据
     none - 当页面加载后不载入视频
 muted：当设置该属性后，音频输出为静音
-webkit-playsinline playsinline:   内联播放
-x5-video-player-type="h5-page" :  启用x5内核H5播放器
+webkit-playsinline playsinline:   内联播放 解决在iOS Safari和一些安卓的一些浏览器下播放视频
+                                  的时候，不能在h5页面中播放视频，系统会自动接管视频的问题
+x5-video-player-type="h5-page" :  启用x5内核H5播放器 解决安卓同层级播放
 x5-video-player-fullscreen="true"  全屏设置。ture和false的设置会导致布局上的不一样
 x5-video-orientation="portraint" ：声明播放器支持的方向，可选值landscape 横屏,portraint竖屏。
                                    默认值portraint。无论是直播还是全屏H5一般都是竖屏播放，
@@ -300,11 +301,26 @@ video.addEventListener('timeupdate', function(e){
 但是这样仍然会有一些问题，比如当前检测到视频卡住了，JS控制重新播放，而当前还是没有获取到推流的话。 浏览器会先loading获取视频，最后会x显示加载失败。 我们的检查会轮询执行，所以我们可以在视频正常播放前使用一些提示类组件。
 
 
-4. 播放兼容问题 
+4. 自动播放兼容问题 
+
+但是在很多移动浏览器里，都是要求用户的真实操作来（`touchend`、`click`、`doubleclick` 或 `keydown 事件等标准的事件`）触发调用`video.play()`,才能自动播放影音视频。
 
 ```js
-playsinline="true" webkit-playsinline="true  // 解决ios自动播放全屏问题
+ dom.addEventListener('click', function () {
+   video.play()
+})
+```
 
-x5-video-player-type="h5" x5-video-player-fullscreen="true" // 解决安卓同层级播放
+在微信里IOS支持自动播放，安卓目前暂不支持
 
+```js
+window.wx &&
+    wx.ready && 
+        wx.ready(() => {
+            wx.getNetworkType({
+                success: res => {
+                    video.play();
+                }
+            });
+        })
 ```
