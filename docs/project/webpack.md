@@ -1338,7 +1338,28 @@ const template = fs.readFileSync('xxx');
 <div id="root"><!-- HTML_PLCAEHOLDER ---></div>
 ```
 
+## 优化构建时命令行的显示
 
+- 2020.05.26
+
+实际开发过程中当我们进行打包`npm run build`或者在开发过程中`npm run dev`的时候会在控制台输出大量的信息。
+
+### 使用 `friendly-errors-webpack-plugin` 优化日志显示
+
+- `success`: 构建成功的日志提示
+
+- `warning`: 构建警告的日志提示
+
+- `error`: 构建报错的日志提示
+
+```js
+stats: 'errors-only'
+...
+plugins:[
+  ...,
+  new FriendlyErrorsWebpackPlugin()
+]
+```
 
 ## CommonsChunkPlugin
 
@@ -1548,3 +1569,55 @@ publicPath: 'https://cdn.example.com/assets/'
 - `publicPath`并不会对生成文件的路径造成影响，主要是对你的页面里面引入的资源的路径做对应的补全，常见的就是css文件里面引入的图片url值.
 
 
+## 构建配置抽离成npm包
+
+- 2020.05.26
+
+### 意义
+
+- 通用性
+  - 业务的开发者无需关注构建配置
+  - 统一团队构建脚本
+
+- 可维护性
+  - 构建配置合理的拆分
+  - README文档、ChangeLog文档等
+
+- 质量
+  - 冒烟测试
+  - 持续集成
+
+### 可选方案
+
+**1. 通过配置多个文件区分不同环境的构建 `webpack --config` 进行参数的控制**
+
+- 基础环境: webpack.base.js
+- 开发环境: webpack.dev.js
+- 生成环境: webpack.prod.js
+- SSR环境: webpack.ssr.js
+- PWA环境: webpack.pwa.js
+
+**2. 将构建配置设计成一个库， 比如 `hjs-webpack`**
+
+- 规范: Git Commit日志、README文档、ESlint规范、Semver规范等
+- 质量: 冒烟测试、单元测试、测试覆盖率和CI等
+
+**3. 抽离成一个工具进行管理， 比如 `create-react-app`**
+
+**4. 将所有配置放在一个文件，通过一个 `--env` 参数控制分支选择**
+
+### 组合
+
+> 推荐使用`webpack-merge`组合我们的配置
+
+```js
+const merge = require('webpack-merge');
+
+module.exports = merge(baseConfig, devConfig);
+```
+
+## 构建包功能模块设计
+
+- 2020.05.27
+
+![构建功能模块设计](https://img-blog.csdnimg.cn/2020052712400568.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)

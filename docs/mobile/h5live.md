@@ -5,34 +5,35 @@
 
 ## 直播的流程
 
-在研究方案前 我们先来了解下直播的大致流程:
+在研究方案前我们先来了解下直播的大致流程:
 
 ![直播流程](https://img-blog.csdnimg.cn/20200525115522476.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
-
-实际的直播和用户播放的直播会有10秒左右或者更高的延迟,如何降低这个延时是重要的问题。
-
 
 ## 视频流协议HLS与RTMP
 
 目前 `WEB`项目 上主流的视频直播方案有 `HLS` 和 `RTMP`，`H5`上目前以 `HLS` 为主（`HLS`存在延迟性问题，也可以借助 `video.js` 采用`RTMP`），PC端则以 `RTMP` 为主实时性较好。
 
+实际的直播和用户播放的直播会有10秒左右或者更高的延迟,如何降低这个延时提高体验的关键。
+
 ### HTTP Live Streaming
 
-> `HTTP Live Streaming`（简称 `HLS`）是一个基于 `HTTP` 的视频流协议，由 `Apple` 公司实现，`Mac OS` 上的 `QuickTime`、`Safari` 以及 `iOS` 上的 `Safari` 都能很好的支持 `HLS`，高版本 `Android` 也增加了对 `HLS` 的支持。一些常见的客户端如：`MPlayerX`、`VLC` 也都支持 `HLS` 协议。
+> `HLS(HTTP Live Streaming)`是一个基于 `HTTP` 的视频流协议，由 `Apple` 公司实现，`Mac OS` 上的 `QuickTime`、`Safari` 以及 `iOS` 上的 `Safari` 都能很好的支持 `HLS`，高版本 `Android` 也增加了对 `HLS` 的支持。一些常见的客户端如：`MPlayerX`、`VLC` 也都支持 `HLS` 协议。
 
-`HLS` 协议基于 `HTTP`，而一个提供 `HLS` 的服务器需要做两件事：
+**提供 HLS 的服务器需要做两件事**：
  
-1. `编码`: 以 `H.263` 格式对图像进行编码，以 `MP3` 或者 `HE-AAC` 对声音进行编码，最终打包到 `MPEG-2 TS（Transport Stream）`容器之中；
+1. `编码`: 以 `H.263` 格式对图像进行编码，以 `MP3` 或者 `HE-AAC` 对声音进行编码，最终打包到 `MPEG-2 TS（Transport Stream）`容器之中。
 
-2. `分割`: 把编码好的 `TS` 文件等长切分成后缀为 `ts` 的小文件，并生成一个 `.m3u8` 的纯文本索引文件；
+2. `分割`: 把编码好的 `TS` 文件等长切分成后缀为 `ts` 的小文件，并生成一个 `.m3u8` 的纯文本索引文件。
 
 ### m3u8文件
 
 浏览器使用的是 `m3u8` 文件。
 
-> `m3u8` 跟`音频列表格式 m3u` 很像，可以简单的认为 `m3u8` 就是包含多个 `ts` 文件的播放列表。
+> `m3u8` 跟`音频列表格式 m3u` 很像，可以简单的认为 `m3u8` 就是包含多个 `ts` 文件的播放列表(采用utf-8编码)。
 
-播放器按顺序逐个播放，全部放完再请求一下 `m3u8` 文件，获得包含最新 `ts` 文件的播放列表继续播，周而复始。整个直播过程就是依靠一个不断更新的 `m3u8` 和一堆小的 ts 文件组成，`m3u8` 必须动态更新，`ts` 可以走 `CDN`。一个典型的 `m3u8` 文件格式如下：
+### 播放流程
+
+播放器会按顺序逐个播放，全部放完再请求一下 `m3u8` 文件，获得包含最新 `ts` 文件的播放列表继续播放，周而复始。整个直播过程就是依靠一个不断更新的 `m3u8` 和一堆小的 ts 文件组成，`m3u8` 必须动态更新，`ts` 可以走 `CDN`。一个典型的 `m3u8` 文件格式如下：
 
 ```json
 #EXTM3U
@@ -63,9 +64,19 @@ pili-live-rtmp.xxx.com_1708021247HmBHAG-1590389226932.ts
 <video src=”./bipbopall.m3u8″ height=”300″ width=”400″  preload=”auto” autoplay=”autoplay” loop=”loop” webkit-playsinline=”true”></video>
 ```
 
-:::warning
+:::tip
 `HLS` 在 `PC` 端仅支持`safari`浏览器，类似`chrome`浏览器使用`HTML5 video`
-标签无法播放 `m3u8` 格式，需要其他插件辅助转化,可采用目前网上一些比较成熟的方案，如：`sewise-player([Flash和HTML5播放器]Flash播放m3u8文件)`、`MediaElement([Flash和Sliverlight播放器] )`、`videojs-contrib-hls(解码m3u8文件)`、`jwplayer([Flash和HTML5播放器]  网页媒体播放器)`、`videojs(可能会出现 跨域 问题，需要服务端的配合，让视频允许跨域)`。
+标签无法播放 `m3u8` 格式，需要其他插件辅助转化,可采用目前网上一些比较成熟的方案。
+
+- `sewise-player([Flash和HTML5播放器]Flash播放m3u8文件)`
+
+- `MediaElement([Flash和Sliverlight播放器] )`
+
+- `videojs-contrib-hls(解码m3u8文件)`
+
+- `jwplayer([Flash和HTML5播放器]  网页媒体播放器)`
+
+- `videojs(可能会出现 跨域 问题，需要服务端的配合，让视频允许跨域)`。
 :::
 
 **`video.js`方案部分代码展示**
@@ -134,7 +145,7 @@ myPlayer.play(); //视频播放
 ```html
 <link href=“http://vjs.zencdn.net/5.8.8/video-js.css” rel=“stylesheet”>
 <video id=“example_video_1″ class=“video-js vjs-default-skin” controls preload=“auto” width=“640” height=“264” loop=“loop” webkit-playsinline>
-<source src=“rtmp://10.14.221.17:1935/rtmplive/home” type=‘rtmp/flv’>
+<source src=“rtmp://10.14.221.17:1935/rtmplive/home” type='rtmp/flv'>
 </video>
 
 <script src=“http://vjs.zencdn.net/5.8.8/video.js”></script>
@@ -213,11 +224,39 @@ this.play();
 
 1. `Video`标签兼容问题
 
-比如： 在微信和QQ的内置浏览器里，播放视频会自动全屏，`video标签`也是永远浮在页面最上层，你根本控制不了。 浮在最上层不只是`X5浏览器`，还有些手机只带的浏览器。 视频源出现问题的表现，播放按钮的问题，都有不同。 这些都是脱离我们代码本身，浏览器的设置，所以从代码层面上我们是没法解决的。
+比如： 在微信和QQ的内置浏览器里，播放视频会自动全屏，`video标签`也是永远浮在页面最上层，你根本控制不了。 浮在最上层不只是`X5浏览器`，还有些手机只带的浏览器。 视频源出现问题的表现，播放按钮的问题，都有不同。 因此需要我们对video标签的属性就行兼容处理:
+
+```html
+<video 
+  id="video" 
+  style="object-fit:fill" 
+  autoplay
+  webkit-playsinline 
+  playsinline 
+  x5-video-player-type="h5"
+  x5-video-player-fullscreen="true"
+  x5-video-orientation="portraint" 
+  src="video.mp4" 
+  poster="img.jpg"
+/></video>
+<!-- object-fit: fill   视频内容充满整个video容器
+poster:"img.jpg" 视频封面
+autoplay： 自动播放
+    auto - 当页面加载后载入整个视频
+    meta - 当页面加载后只载入元数据
+    none - 当页面加载后不载入视频
+muted：当设置该属性后，音频输出为静音
+webkit-playsinline playsinline:   内联播放
+x5-video-player-type="h5-page" :  启用x5内核H5播放器
+x5-video-player-fullscreen="true"  全屏设置。ture和false的设置会导致布局上的不一样
+x5-video-orientation="portraint" ：声明播放器支持的方向，可选值landscape 横屏,portraint竖屏。
+                                   默认值portraint。无论是直播还是全屏H5一般都是竖屏播放，
+                                   但是这个属性需要x5-video-player-type开启H5模式 -->
+```
 
 2. `Video`推流监听问题
 
-推流会有一些不可控的情况，主播关闭摄像头，推送断流等，客户端断网。 这个时候在H5端的表现就是卡住，肯定会卡住。 一旦卡住之后，就算推流又重新开始了，video依然会卡在那里，不会有任何重新播放的样子。 如果推流重新开始，用户自己点击控制条的暂停，再点击播放，又可以正常播放了。 
+推流会有一些不可控的情况，主播关闭摄像头，推送断流等，客户端断网。 这个时候在H5端的表现就是卡住，一旦卡住之后，就算推流又重新开始了，video依然会卡在那里，不会有任何重新播放的样子。 如果推流重新开始，用户自己点击控制条的暂停，再点击播放，又可以正常播放了。 
 
 可我们不可能让用户一直点，因为你也不知道推流什么时候重新开始，或者什么时候不再是断网状态。 通过点击控制条的暂停，再点击播放便可以播放的规律，我们可以自己检查当前的状态，再用JS控制video暂停，再播放。
 
@@ -227,7 +266,6 @@ const video = document.getElementById('video');
 video.pause();
 video.play();
 ```
-
 
 如何检查当前是卡住的状态呢？这里需要用到`timeupdate`事件。一旦用户是播放状态，监听`timeupdate`，通过对比`currentTime`轮询着来检查当前是否卡住。
 
