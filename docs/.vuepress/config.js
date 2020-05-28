@@ -107,6 +107,7 @@ module.exports = {
         collapsable: true,
         children:[
           '/svg/path',
+          '/svg/animation',
         ]
       },
       '/http/',
