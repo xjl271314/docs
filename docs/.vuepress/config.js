@@ -117,6 +117,7 @@ module.exports = {
         children: [
           "/project/mock",
           "/project/module",
+          "/project/babel",
           "/project/webpack",
           "/project/autobuild",
           "/project/err",

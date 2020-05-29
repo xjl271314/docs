@@ -1428,6 +1428,48 @@ plugins: [
 
 > 将打包出的资源生成一个zip包
 
+## MiniCssExtractPlugin
+
+- 2020.05.29
+
+> 将css打包成单独的css文件
+
+```js
+// npm i  mini-css-extract-plugin
+
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const path = require("path");
+module.exports = {
+    mode: "development", //打包为开发模式
+    entry: "./src/main", //入口文件,从项目根目录指定
+    output: { //输出路径和文件名，使用path模块resolve方法将输出路径解析为绝对路径
+        path: path.resolve(__dirname, "../dist/js"), //将js文件打包到dist/js的目录
+        filename: "main.js" 
+    },
+    module: {
+	    rules: [
+	      {
+	        test: /\.css$/,
+	        use: [
+	        	MiniCssExtractPlugin.loader,
+	        	{
+		            loader: "css-loader",
+		            options: {
+		              minimize: true
+		            }
+		        },
+	        ]
+	      }
+	    ]
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+    	filename: "../css/styles.css" //如果需要将css文件单独放入css文件夹中需要../
+    }) 
+  ]
+}
+```
+
 
 ## HtmlWebpackPlugin
 
