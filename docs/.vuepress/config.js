@@ -106,6 +106,7 @@ module.exports = {
         title: "Svg相关知识",
         collapsable: true,
         children:[
+          '/svg/base',
           '/svg/path',
           '/svg/animation',
         ]
