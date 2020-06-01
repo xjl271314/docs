@@ -1725,3 +1725,18 @@ npm i mocha chai -D
 ```
 npm run test
 ```
+
+### 验证测试覆盖率
+
+```
+npm i -g istanbul
+```
+
+修改script
+
+```js
+"scripts": {
+  ...,
+  "test": "istanbul cover node_modules/mocha/bin/_mocha"
+}
+```
