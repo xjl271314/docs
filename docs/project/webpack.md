@@ -1671,4 +1671,57 @@ module.exports = merge(baseConfig, devConfig);
 
 ## 冒烟测试
 
-- 2020.05.28
+- 2020.6.01
+
+1. 判断构建是否成功
+
+2. 判断基本功能是否正常 
+
+借助第三方工具jest等。
+
+## 单元测试和测试覆盖率
+
+- 2020.06.01
+
+### 单纯的测试框架,需要断言库
+
+- chai
+- mocha
+- ava
+- should.js
+- expect
+- better-assert
+
+### 集成框架，开箱即用
+
+- jest
+- jasmine
+
+### 编写单元测试用例
+
+![编写单元测试用例](https://img-blog.csdnimg.cn/20200601203435647.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+### 单元测试的接入
+
+1. 安装相关的插件
+
+```
+npm i mocha chai -D
+```
+
+2. 新建`test`目录, 并增加 `xxx.test.js` 测试文件
+
+3. 在 `package.json` 中的 `scripts` 字段增加 `test` 命令
+
+```js
+"scripts": {
+  ...,
+  "test": "node_modules/mocha/bin/_mocha"
+}
+```
+
+4. 执行测试命令
+
+```
+npm run test
+```
