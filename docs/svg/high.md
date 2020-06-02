@@ -167,3 +167,11 @@ x和y可以进行自由的组合。
     <rect x="75" y="10" width="150" height="30" fill="url(#grad1)" />
 </svg>
 ```
+
+## 使用 `<radialGradient>`来创建径向渐变
+
+- 2020.06.02
+
+> `<radialGradient>`元素用于定义放射性渐变。`<radialGradient>`标签必须嵌套在`<defs>`的内部
+
+<svg-radialGradient1 />

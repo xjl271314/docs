@@ -1740,3 +1740,7 @@ npm i -g istanbul
   "test": "istanbul cover node_modules/mocha/bin/_mocha"
 }
 ```
+
+## 构建包的持续集成和 Travis CI
+
+
