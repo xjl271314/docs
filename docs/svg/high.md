@@ -154,6 +154,11 @@ x和y可以进行自由的组合。
 
 > `linearGradient` 用来实现元素线性渐变的效果。`<linearGradient>` 标签必须嵌套在 `<defs>` 的内部。
 
+#### 参数说明
+
+- `(x1，y1)` 到 `(x2，y2)`的连线是线性渐变的径向。
+- id 是必须要给的参数 用于引用。
+
 <svg-lineargradient1 />
 
 ```html
@@ -174,4 +179,42 @@ x和y可以进行自由的组合。
 
 > `<radialGradient>`元素用于定义放射性渐变。`<radialGradient>`标签必须嵌套在`<defs>`的内部
 
+#### 参数说明
+
+- `(cx，cy)` 为最下层（最外层）
+- `(fx，fy)` 为最上层（最内层）渐变中心点
+- `r` 为最内层和最外层（最上层和最下层）渐变半径
+
 <svg-radialGradient1 />
+
+```html
+<svg>
+    <defs>
+        <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+          <stop offset="0%" style="stop-color:rgb(255,255,255);
+      stop-opacity:0" />
+          <stop offset="100%" style="stop-color:rgb(0,0,255);stop-opacity:1" />
+        </radialGradient>
+    </defs>
+    <ellipse cx="200" cy="70" rx="85" ry="55" fill="url(#grad1)" />
+</svg>
+```
+
+## 使用 `<stop>`来创建分段渐变
+
+- 2020.06.03
+
+> 上述线性渐变和径向渐变我们都使用到了stop元素，stop元素是用于对整个渐变进行分段。
+
+```html
+<stop offset="0%" stop-color="red" />
+<stop offset="100%" stop-color="blue" />
+```
+
+| 参数名  | 描述
+|:----- | :----
+| `offset` | 从何处开始渐变。属性值既可以是百分比也可以是小数。
+| `stop-color` | 渐变的颜色。
+
+
+## 
