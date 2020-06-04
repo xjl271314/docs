@@ -110,6 +110,7 @@ module.exports = {
           '/svg/high',
           '/svg/path',
           '/svg/animation',
+          '/svg/example',
         ]
       },
       '/http/',

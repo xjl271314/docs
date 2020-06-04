@@ -217,4 +217,71 @@ x和y可以进行自由的组合。
 | `stop-color` | 渐变的颜色。
 
 
-## 
+## 使用 `stroke` 属性来实现各种线条
+
+- 2020.06.04
+
+> svg中提供了一个stroke属性，主要用来绘制边线相关的功能。
+
+1. `stroke`属性定义一条线，文本或元素轮廓颜色：
+
+<svg-stroke1 />
+
+```html
+<svg>
+    <g fill="none">
+        <path stroke="red" d="M5 20 l215 0" />
+        <path stroke="blue" d="M5 40 l215 0" />
+        <path stroke="black" d="M5 60 l215 0" />
+    </g>
+</svg>
+```
+
+2. `stroke-width` 属性定义了一条线，文本或元素轮廓厚度：
+
+<svg-stroke2 />
+
+```html
+<svg width="300" height="70">
+    <g fill="none" stroke="black">
+        <path stroke-width="2" d="M5 20 l215 0" />
+        <path stroke-width="4" d="M5 40 l215 0" />
+        <path stroke-width="6" d="M5 60 l215 0" />
+    </g>
+</svg>
+```
+
+3. `stroke-linecap` 属性定义不同类型的开放路径的终结：
+
+<svg-stroke3 />
+
+```html
+<svg width="300" height="70">
+  <g fill="none" stroke="black" stroke-width="6">
+    <path stroke-linecap="butt" d="M5 20 l215 0" />
+    <path stroke-linecap="round" d="M5 40 l215 0" />
+    <path stroke-linecap="square" d="M5 60 l215 0" />
+  </g>
+</svg>
+```
+
+4. `stroke-dasharray` 属性用于创建虚线：
+
+<svg-stroke4 />
+
+```html
+<svg width="300" height="70">
+    <g fill="none" stroke="black" stroke-width="4">
+        <path stroke-dasharray="5 5" d="M5 20 l215 0" />
+        <path stroke-dasharray="10 10" d="M5 40 l215 0" />
+        <path stroke-dasharray="20 10 5 5 5 10" d="M5 60 l215 0" />
+    </g>
+</svg>
+```
+
+| 参数名  | 描述
+|:----- | :----
+| `stroke` | 从何处开始渐变。属性值既可以是百分比也可以是小数。
+| `stroke-width` | 渐变的颜色。
+| `stroke-linecap` | 渐变的颜色。
+| `stroke-dasharray` | 渐变的颜色。

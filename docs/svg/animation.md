@@ -1,4 +1,4 @@
-# Svg动画属性详解
+# svg动画属性详解
 
 - 2020.05.28
 
@@ -60,3 +60,21 @@
 > 定义了一个元素如何沿着运动路径进行移动,这个动画属性很好的解决了CSS无法实现路径动画的问题
 
 <svg-animate3 />
+
+```html
+<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+    <path
+        fill="none"
+        stroke="lightgrey"
+        d="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z"
+    />
+
+    <circle r="5" fill="red">
+        <animateMotion
+          dur="10s"
+          repeatCount="indefinite"
+          path="M20,50 C20,-50 180,150 180,50 C180-50 20,150 20,50 z"
+        />
+    </circle>
+</svg>
+```
