@@ -235,7 +235,13 @@ module.exports = {
         collapsable: true,
         children:[
           '/python/pip',
-          '/python/pillow'
+          '/python/pillow',
+          {
+            title:'文件处理相关',
+            children:[
+              '/python/autoRenameImgs'
+            ]
+          }
         ]
       },
       {
