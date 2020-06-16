@@ -266,7 +266,8 @@ module.exports = {
           "/open/px",
           "/open/module",
           "/open/rtv",
-          "/open/highList"
+          "/open/highList",
+          "/open/system"
         ]
       },
       {
