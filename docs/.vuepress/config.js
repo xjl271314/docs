@@ -238,6 +238,7 @@ module.exports = {
           '/python/pip',
           '/python/pillow',
           '/python/os',
+          '/python/selenium',
           {
             title:'文件处理相关',
             children:[
