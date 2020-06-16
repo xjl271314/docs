@@ -42,7 +42,6 @@ for folder in folderlist:
             dst = os.path.join(os.path.abspath(inner_path),str(folder) + '_' + str(i) + '.' + pic_type)
             try:
                 os.rename(src, dst)
-                print('converting {0} to {1} ...'.format(src, dst))
                 i += 1
             except:
                 continue

@@ -234,12 +234,15 @@ module.exports = {
         title: "Python",
         collapsable: true,
         children:[
+          '/python/base',
           '/python/pip',
           '/python/pillow',
+          '/python/os',
           {
             title:'文件处理相关',
             children:[
-              '/python/autoRenameImgs'
+              '/python/autoRenameImgs',
+              '/python/jsonToCsv'
             ]
           }
         ]
@@ -249,7 +252,8 @@ module.exports = {
         collapsable: true,
         children:[
           '/redis/base',
-          '/redis/notification'
+          '/redis/notification',
+          '/redis/multy'
         ]
       },
       '/bff/',
