@@ -2,17 +2,23 @@
 
 - 2020.06.18
 
+这里采用两步的方式，先将pdf转化为图片，再将图片转化为文字
+
+## pdf转图片
+
 ```py
 '''
 pip install PyMuPDF
+pip install fitz
 '''
-
 import sys, fitz, os, datetime
 
 def pyMuPDF_fitz(pdfPath, imagePath):
     startTime_pdf2img = datetime.datetime.now()#开始时间
 
     pdfDoc = fitz.open(pdfPath)
+    print(pdfDoc.pageCount)
+
     for pg in range(pdfDoc.pageCount):
         page = pdfDoc[pg]
         rotate = int(0)
@@ -35,4 +41,4 @@ if __name__ == "__main__":
     pdfPath = 'webpack.pdf'
     imagePath = './'
     pyMuPDF_fitz(pdfPath, imagePath)
-    ```
+```
