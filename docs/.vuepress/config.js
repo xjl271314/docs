@@ -243,7 +243,8 @@ module.exports = {
             title:'文件处理相关',
             children:[
               '/python/autoRenameImgs',
-              '/python/jsonToCsv'
+              '/python/jsonToCsv',
+              '/python/readPdf',
             ]
           }
         ]
