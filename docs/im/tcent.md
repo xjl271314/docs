@@ -1693,6 +1693,384 @@ promise.then(function(imResponse) {
 });
 ```
 
+## 获取群成员列表
+
+:::tips
+- 从`v2.6.2`版本开始，该接口支持拉取群成员禁言截止时间戳（muteUntil），接入侧可根据此值判断群成员是否被禁言，以及禁言的剩余时间。
+
+- 低于`v2.6.2`版本时，该接口获取的群成员列表中的资料仅包括头像、昵称等，能够满足群成员列表的渲染需求。如需查询群成员禁言截止时间戳（muteUntil）等详细资料，请使用 getGroupMemberProfile。
+
+- 该接口是分页拉取群成员，不能直接用于获取群的总人数。获取群的总人数（memberNum）请使用 getGroupProfile 。
+:::
+
+```js
+tim.getGroupMemberList(options);
+```
+
+参数`options`为`Object`类型，包含的属性值如下表所示：
+
+| 参数名  | 类型 | 属性 | 默认值 | 描述
+| :--- | :---- | :---- | :---- | :---- 
+| `groupID` | String | - | - | 群组的 ID
+| `count`	| Number	| `<optional>`	| 15	| 需要拉取的数量。最大值为100，避免回包过大导致请求失败。若传入超过100，则只拉取前100个
+| `offset`	| Number	| `<optional>`	| 0	| 偏移量，默认从0开始拉取
+
+**获取群成员列表示例:**
+
+```js
+let promise = tim.getGroupMemberList({ 
+  groupID: 'group1', 
+  count: 30, 
+  offset:0 
+}); // 从0开始拉取30个群成员
+promise.then(function(imResponse) {
+  console.log(imResponse.data.memberList); // 群成员列表
+}).catch(function(imError) {
+  console.warn('getGroupMemberList error:', imError);
+});
+// 从v2.6.2 起，该接口支持拉取群成员禁言截止时间戳。
+let promise = tim.getGroupMemberList({ groupID: 'group1', count: 30, offset:0 }); // 从0开始拉取30个群成员
+promise.then(function(imResponse) {
+  console.log(imResponse.data.memberList); // 群成员列表
+  for (let groupMember of imResponse.data.memberList) {
+    if (groupMember.muteUntil * 1000  > Date.now()) {
+      console.log(`${groupMember.userID} 禁言中`);
+    } else {
+      console.log(`${groupMember.userID} 未被禁言`);
+    }
+  }
+}).catch(function(imError) {
+    console.warn('getGroupMemberProfile error:', imError);
+});
+```
+
+## 获取群成员资料
+
+:::warning
+- 使用该接口前，需要将 SDK 版本升级至v2.2.0或以上。
+
+- 每次查询的用户数上限为50。如果传入的数组长度大于50，则只取前50个用户进行查询，其余丢弃。
+:::
+
+```js
+tim.getGroupMemberProfile(options);
+```
+
+参数`options`为`Object`类型，包含的属性值如下表所示：
+
+| 参数名  | 类型 | 属性 |  描述
+| :--- | :---- | :---- | :---- 
+| `groupID` | String | - | 群组的 ID
+| `userIDList`	| `Array.<String>`	| -	| 要查询的群成员用户 ID 列表
+| `memberCustomFieldFilter`	| `Array.<String>`	| `<optional>`	| 群成员自定义字段筛选。可选，若不填，则默认查询所有群成员自定义字段
+
+## 添加群成员
+
+添加群成员需要遵循以下的规则：
+
+- `TIM.TYPES.GRP_PRIVATE 私有群`：任何群成员都可邀请他人加群，且无需被邀请人同意，直接将其拉入群组中。
+
+- `TIM.TYPES.GRP_PUBLIC 公开群/ TIM.TYPES.GRP_CHATROOM 聊天室`：只有 App 管理员可以邀请他人入群，且无需被邀请人同意，直接将其拉入群组中。
+
+- `TIM.TYPES.GRP_AVCHATROOM 音视频聊天室`：不允许任何人邀请他人入群（包括 App 管理员）。
+
+```js
+tim.addGroupMember(options);
+```
+
+参数`options`为`Object`类型，包含的属性值如下表所示：
+
+| 参数名  | 类型 |   描述
+| :--- | :---- | :---- 
+| `groupID` | String |  群组的 ID
+| `userIDList`	| `Array.<String>`	| 待添加的群成员 ID 数组。单次最多添加500个成员
+
+其中then的回调函数参数为 `IMResponse`，`IMResponse.data`属性值如下表所示：
+
+| 名称  | 类型 |   描述
+| :--- | :---- | :---- 
+| `successUserIDList`	| `Array<String>`	| 添加成功的 userID 列表
+| `failureUserIDList`	| `Array<String>`	| 添加失败的 userID 列表
+| `existedUserIDList`	| `Array<String>`	| 已在群中的 userID 列表
+| `group`	| `Group`	| 接口调用后的群组资料
+
+**添加群成员的示例:**
+
+```js
+let promise = tim.addGroupMember({
+  groupID: 'group1',
+  userIDList: ['user1','user2','user3']
+});
+promise.then(function(imResponse) {
+  console.log(imResponse.data.successUserIDList); // 添加成功的群成员 userIDList
+  console.log(imResponse.data.failureUserIDList); // 添加失败的群成员 userIDList
+  console.log(imResponse.data.existedUserIDList); // 已在群中的群成员 userIDList
+  console.log(imResponse.data.group); // 添加后的群组信息
+}).catch(function(imError) {
+  console.warn('addGroupMember error:', imError); // 错误信息
+});
+```
+
+## 删除群成员
+
+> 删除群成员。群主可移除群成员。
+
+```js
+tim.deleteGroupMember(options)
+```
+
+参数`options`为`Object`类型，包含的属性值如下表所示：
+
+| 参数名  | 类型 |   描述
+| :--- | :---- | :---- 
+| `groupID` | String |  群组的 ID
+| `userIDList`	| `Array.<String>`	| 待删除的群成员的 ID 列表
+| `reason` | String |  踢人的原因，可选参数
+
+**删除群成员示例:**
+
+```js
+let promise = tim.deleteGroupMember({
+  groupID: 'group1', 
+  userIDList:['user1'], 
+  reason: '你违规了，我要踢你！'
+});
+promise.then(function(imResponse) {
+  console.log(imResponse.data.group); // 删除后的群组信息
+  console.log(imResponse.data.userIDList); // 被删除的群成员的 userID 列表
+}).catch(function(imError) {
+  console.warn('deleteGroupMember error:', imError); // 错误信息
+});
+```
+
+## 禁言或取消禁言
+
+> 设置群成员的禁言时间，可以禁言群成员，也可取消禁言。`TIM.TYPES.GRP_PRIVATE` 类型的群组（即私有群）不能禁言。
+
+:::tips
+只有群主和管理员拥有该操作权限：
+
+- 群主可以禁言/取消禁言管理员和普通群成员。
+
+- 管理员可以禁言/取消禁言普通群成员。
+:::
+
+```js
+tim.setGroupMemberMuteTime(options)
+```
+
+参数`options`为`Object`类型，包含的属性值如下表所示：
+
+| 参数名  | 类型 |   描述
+| :--- | :---- | :---- 
+| `groupID` | String |  群组的 ID
+| `userID`	| String | 群成员 ID
+| `muteTime` | Number |  禁言时长，单位秒 例如，设置该值为1000，则表示即刻起禁言该用户1000秒，设置为0，则表示取消禁言
+
+**禁言或取消禁言示例:**
+
+```js
+let promise = tim.setGroupMemberMuteTime({
+  groupID: 'group1',
+  userID: 'user1',
+  muteTime: 600 // 禁言10分钟；设为0，则表示取消禁言
+});
+promise.then(function(imResponse) {
+  console.log(imResponse.data.group); // 修改后的群资料
+  console.log(imResponse.data.member); // 修改后的群成员资料
+}).catch(function(imError) {
+  console.warn('setGroupMemberMuteTime error:', imError); // 禁言失败的相关信息
+});
+```
+
+## 设为管理员或撤销管理员
+
+> 修改群成员角色，只有群主拥有操作权限。
+
+```js
+tim.setGroupMemberRole(options)
+```
+
+参数`options`为`Object`类型，包含的属性值如下表所示：
+
+| 参数名  | 类型 |   描述
+| :--- | :---- | :---- 
+| `groupID` | String |  群组的 ID
+| `userID`	| String | 群成员 ID
+| `role` | String |  权限
+
+其中 role的类型如下:
+
+- TIM.TYPES.GRP_MBR_ROLE_ADMIN（群管理员
+
+- TIM.TYPES.GRP_MBR_ROLE_MEMBER（群普通成员）
+
+**设置管理员权限示例:**
+
+```js
+let promise = tim.setGroupMemberRole({
+  groupID: 'group1',
+  userID: 'user1',
+  role: TIM.TYPES.GRP_MBR_ROLE_ADMIN // 将群 ID: group1 中的用户：user1 设为管理员
+});
+promise.then(function(imResponse) {
+  console.log(imResponse.data.group); // 修改后的群资料
+  console.log(imResponse.data.member); // 修改后的群成员资料
+}).catch(function(imError) {
+  console.warn('setGroupMemberRole error:', imError); // 错误信息
+});
+```
+
+## 修改群名片
+
+> 设置群成员名片。
+
+- 群主：可设置所有群成员的名片。
+
+- 管理员：可设置自身和其他普通群成员的群名片。
+
+- 普通群成员：只能设置自身群名片。
+
+```js
+tim.setGroupMemberNameCard(options)
+```
+
+参数`options`为`Object`类型，包含的属性值如下表所示：
+
+| 参数名  | 类型 |   描述
+| :--- | :---- | :---- 
+| `groupID` | String |  群组的 ID
+| `userID`	| `String<optional>` | 可选，默认修改自身的群名片
+| `nameCard` | String |  -
+
+**修改群名片示例:**
+
+```js
+let promise = tim.setGroupMemberNameCard({ 
+  groupID: 'group1', 
+  userID: 'user1', 
+  nameCard: '用户名片' 
+});
+promise.then(function(imResponse) {
+  console.log(imResponse.data.group); // 设置后的群资料
+  console.log(imResponse.data.member); // 修改后的群成员资料
+}).catch(function(imError) {
+  console.warn('setGroupMemberNameCard error:', imError); // 设置群成员名片失败的相关信息
+});
+```
+
+## 修改自定义字段
+
+> 设置群成员自定义字段。
+
+:::warning
+普通群成员只能设置自己的自定义字段。
+:::
+
+```js
+tim.setGroupMemberCustomField(options)
+```
+
+参数`options`为`Object`类型，包含的属性值如下表所示：
+
+| 参数名  | 类型 |   描述
+| :--- | :---- | :---- 
+| `groupID` | String |  群组的 ID
+| `userID`	| `String<optional>` | 可选，不填则修改自己的群成员自定义字段
+| `memberCustomField` | `Array<Object>` |  群成员自定义字段
+
+其中`memberCustomField`包含的属性值如下表所示：
+
+| 参数名  | 类型 |   描述
+| :--- | :---- | :---- 
+| `key` | String |  自定义字段的 Key
+| `value` | `String<optional>` |  自定义字段的 Value
+
+**修改自定义字段示例:**
+
+```js
+let promise = tim.setGroupMemberCustomField({ 
+  groupID: 'group1', 
+  memberCustomField: [{
+    key: 'group_member_test', 
+    value: 'test'
+  }]
+});
+promise.then(function(imResponse) {
+  console.log(imResponse.data.group); // 设置后的群资料
+  console.log(imResponse.data.member); // 修改后的群成员资料
+}).catch(function(imError) {
+  console.warn('setGroupMemberCustomField error:', imError); // 设置群成员自定义字段失败的相关信息
+});
+```
+
+## 群提示消息
+
+> 当有用户被邀请加入群组或有用户被移出群组等事件发生时，群内会产生提示消息，接入侧可以根据需要展示给群组用户，或者忽略。
+
+群提示消息有多种类型，详细描述请参见 [`Message.GroupTipPayload`](https://imsdk-1252463788.file.myqcloud.com/IM_DOC/Web/Message.html?_ga=1.172719974.453947682.1548379635#.GroupTipPayload)。
+
+| 参数名  | 类型 |   描述
+| :--- | :---- | :---- 
+| `operatorID` | String |  执行该操作的用户 ID
+| `operationType`	| Number	| 操作类型
+| `userIDList`	| `Array<String>`	| 相关的 userID 列表
+| `newGroupProfile`	| Object | 若是群资料变更，该字段存放变更的群资料
+
+其中`operationType`属性如下:
+
+| 操作类型  | 值 |  含义
+| :--- | :---- | :---- 
+| `TIM.TYPES.GRP_TIP_MBR_JOIN` | 1 |  有成员加群
+| `TIM.TYPES.GRP_TIP_MBR_QUIT` | 2 |  有群成员退群
+| `TIM.TYPES.GRP_TIP_MBR_KICKED_OUT` | 3 |  有群成员被踢出群
+| `TIM.TYPES.GRP_TIP_MBR_SET_ADMIN` | 4 |  有群成员被设为管理员
+| `TIM.TYPES.GRP_TIP_MBR_CANCELED_ADMIN` | 5 |  有群成员被撤销管理员
+| `TIM.TYPES.GRP_TIP_GRP_PROFILE_UPDATED` | 6 |  群组资料变更
+| `TIM.TYPES.GRP_TIP_MBR_PROFILE_UPDATED` | 7 |  群成员资料变更，例如：群成员被禁言
+
+群提示消息的 `content` 结构。系统会在恰当的时机，向全体群成员发出群提示消息。例如：有群成员退群/进群，系统会给所有群成员发对应的群提示消息。
+
+## 群系统通知
+
+当有用户申请加群等事件发生时，管理员会收到申请加群等系统消息。管理员同意或拒绝加群申请，IM SDK 会将相应的消息通过群系统通知消息发送给接入侧，由接入侧展示给用户。
+
+群系统通知消息有多种类型，详细描述请参见 [群系统通知类型常量及含义](https://imsdk-1252463788.file.myqcloud.com/IM_DOC/Web/Message.html?_ga=1.65789419.453947682.1548379635#.GroupSystemNoticePayload)。
+
+```js
+let onGroupSystemNoticeReceived = function(event) {
+  const type = event.data.type; // 群系统通知的类型，详情请参见 Message.GroupSystemNoticePayload 
+  const message = event.data.message; // 群系统通知的消息实例，详情请参见 Message
+  console.log(message.payload); // 消息内容. 群系统通知 payload 结构描述
+};
+tim.on(TIM.EVENT.GROUP_SYSTEM_NOTICE_RECEIVED, onGroupSystemNoticeReceived);
+```
+
+| 操作类型  | 值 |  含义
+| :--- | :---- | :---- 
+| operatorID | String	| 执行该操作的用户 ID
+| operationType	| Number	| 操作类型
+| groupProfile	| Object	| 相关的群组资料
+| handleMessage	| Object	| 处理的附言,例如，user1 申请加入进群需要验证的 group1 时，若 `user1` 填写了申请加群的附言，则 `group1` 的管理员会在相应群系统通知中看到该字段
+
+**`operationType`属性群系统通知类型常量及含义详细如下:**
+
+| 操作类型  | 值 |  含义
+| :--- | :---- | :---- 
+| 1	| 有用户申请加群	| 群管理员/群主接收
+| 2	| 申请加群被同意	| 申请加群的用户接收
+| 3	| 申请加群被拒绝	| 申请加群的用户接收
+| 4	| 被踢出群组	| 被踢出的用户接收
+| 5	| 群组被解散	| 全体群成员接收
+| 6	| 创建群组	| 创建者接收
+| 7	| 邀请加群	| 被邀请者接收
+| 8	| 退群	| 退群者接收
+| 9	| 设置管理员	| 被设置方接收
+| 10 | 	取消管理员	| 被取消方接收
+| 255 | 用户自定义通知	| 默认全员接收
+
+群系统通知的 content 结构。系统会在恰当的时机，向特定用户发出群系统通知。例如，user1 被踢出群组，系统会给 user1 发送对应的群系统消息。
+
 ## 登出
 
 登出即时通信 IM，通常在切换帐号的时候调用，清除登录态以及内存中的所有数据。
