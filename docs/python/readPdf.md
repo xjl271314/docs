@@ -18,12 +18,7 @@ def pyMuPDF_fitz(pdfPath, imagePath):
     startTime_pdf2img = datetime.datetime.now()
     # 打开pdf文件 返回一个fitz.Document('xx.pdf') 对象
     pdfDoc = fitz.open(pdfPath)
-<<<<<<< HEAD
     print('当前pdf文件总共 %s 页, 开始转化' % pdfDoc.pageCount)
-=======
-    print(pdfDoc.pageCount)
-
->>>>>>> b56cd2627ac5ea32742d334a0abc434ca4b27093
     for pg in range(pdfDoc.pageCount):
         page = pdfDoc[pg]
         rotate = int(0)
