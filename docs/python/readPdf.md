@@ -2,12 +2,15 @@
 
 - 2020.06.18
 
+这里采用两步的方式，先将pdf转化为图片，再将图片转化为文字
+
+## pdf转图片
+
 ```py
 '''
 pip install PyMuPDF
 pip install fitz
 '''
-
 import sys, fitz, os, datetime
 
 def pyMuPDF_fitz(pdfPath, imagePath):
@@ -15,7 +18,12 @@ def pyMuPDF_fitz(pdfPath, imagePath):
     startTime_pdf2img = datetime.datetime.now()
     # 打开pdf文件 返回一个fitz.Document('xx.pdf') 对象
     pdfDoc = fitz.open(pdfPath)
+<<<<<<< HEAD
     print('当前pdf文件总共 %s 页, 开始转化' % pdfDoc.pageCount)
+=======
+    print(pdfDoc.pageCount)
+
+>>>>>>> b56cd2627ac5ea32742d334a0abc434ca4b27093
     for pg in range(pdfDoc.pageCount):
         page = pdfDoc[pg]
         rotate = int(0)
