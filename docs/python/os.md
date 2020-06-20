@@ -106,6 +106,55 @@ print(os.path.getsize(file))
 # /Users/xujianglong/python3-project/test.py  116B
 ```
 
+### 遍历一个目录内各个子目录和子文件
+
+`os.walk(top, [, topdown=True[, onerror=None[, followlinks=False]]])` 用来遍历一个目录内各个子目录和子文件, 返回一个三元`tupple(dirpath, dirnames, filenames)`。
+
+**其中参数解释如下:**
+
+| 参数名  | 参数类型 | 是否必选 | 默认值 | 参数描述
+| :--- | :---- | :---- | :---- | :----
+| `top` | `string` | 是 | - | 需要遍历的目录路径地址
+| `topdown`| `boolean` | 可选 | True | 为 True，则优先遍历 top 目录，否则优先遍历 top 的子目录(默认为开启)。如果 topdown 参数为 True，walk 会遍历top文件夹，与top 文件夹中每一个子目录。
+| `onerror` |	`function` | 可选 | - | 需要一个 callable 对象，当 walk 需要异常时，会调用。
+| `followlinks` |	`boolean` | 可选 | False | 如果为 True，则会遍历目录下的快捷方式(linux 下是软连接 symbolic link )实际所指的目录(默认关闭)，如果为 False，则优先遍历 top 的子目录。
+
+
+**其中返回值的解释如下:**
+
+- `dirpath` 是一个`string`，代表目录的路径，
+
+- `dirnames` 是一个`list`，包含了`dirpath`下所有子目录的名字。
+
+- `filenames` 是一个`list`，包含了非目录文件的名字。
+
+:::tip
+这些名字不包含路径信息，如果需要得到全路径，需要使用`os.path.join(dirpath, name)`.
+:::
+
+```py
+import os
+
+for root, dirs, files in os.walk(self.file_path):
+    for name in files:
+        print('file name is %s' % name)
+
+```
+
+### 将文件的名称和扩展名分离
+
+`os.path.splitext(path)` 将文件的名称和扩展名分离出来，默认返回`(fname,fextension)元组`，可做分片操作。
+
+```py
+import os
+
+path_01='E:\images\1.png'
+path_02='E:\images\aa'
+res_01=os.path.splitext(path_01) # ('E:\images\1', '.png')
+res_02=os.path.splitext(path_02) # ('E:\images\aa', '')
+
+```
+
 ## 时间相关
 
 

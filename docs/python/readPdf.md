@@ -73,3 +73,6 @@ if __name__ == "__main__":
     pic_path = './'
     pyMuPDF_fitz(pdf_path, pic_path)
 ```
+
+## 从图片中提取文字
+

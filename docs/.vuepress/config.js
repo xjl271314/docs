@@ -239,12 +239,14 @@ module.exports = {
           '/python/pillow',
           '/python/os',
           '/python/selenium',
+          '/python/utils',
           {
             title:'文件处理相关',
             children:[
               '/python/autoRenameImgs',
               '/python/jsonToCsv',
               '/python/readPdf',
+              '/python/tinyPng',
             ]
           }
         ]
