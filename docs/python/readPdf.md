@@ -11,14 +11,32 @@
 pip install PyMuPDF
 pip install fitz
 '''
-import sys, fitz, os, datetime
 
-def pyMuPDF_fitz(pdfPath, imagePath):
+import sys, fitz, os, datetime, time
+
+def pyMuPDF_fitz(pdf_path, pic_path):
+    '''
+        从pdf中提取图片
+        :param pdf_path: pdf的路径
+        :param pic_path: 图片保存的路径
+        :return: 无return
+    '''
     # 开始时间 2020-06-19 16:44:54.457168
     startTime_pdf2img = datetime.datetime.now()
+    '''
+        使用正则表达式查找PDF中的图片
+
+        checkXO = r"/Type(?= */XObject)"
+        checkIM = r"/Subtype(?= */Image)"
+    '''
     # 打开pdf文件 返回一个fitz.Document('xx.pdf') 对象
-    pdfDoc = fitz.open(pdfPath)
+    pdfDoc = fitz.open(pdf_path)
     print('当前pdf文件总共 %s 页, 开始转化' % pdfDoc.pageCount)
+    # 获取对象数量长度
+    lenXREF = pdfDoc._getXrefLength()
+    # 打印PDF的信息
+    print("文件名:{}, 页数: {}, 对象: {}".format(pdf_path, len(pdfDoc), lenXREF - 1))
+
     for pg in range(pdfDoc.pageCount):
         page = pdfDoc[pg]
         rotate = int(0)
@@ -29,18 +47,29 @@ def pyMuPDF_fitz(pdfPath, imagePath):
         mat = fitz.Matrix(zoom_x, zoom_y).preRotate(rotate)
         pix = page.getPixmap(matrix=mat, alpha=False)
 
+        print(pix.n)
         # 判断存放图片的文件夹是否存在
-        if not os.path.exists(imagePath):
+        if not os.path.exists(pic_path):
             # 若图片文件夹不存在就创建
-            os.makedirs(imagePath)
+            os.makedirs(pic_path)
 
-        pix.writePNG(imagePath+'/'+'images_%s.png' % pg)#将图片写入指定的文件夹内
+        # 如果 pix.n<5,可以直接将图片写入指定的文件夹内
+        if pix.n < 5:
+            pix.writePNG(pic_path+'/'+'images_%s.png' % pg)
+        # 否则先转换CMYK
+        else:
+            pix0 = fitz.Pixmap(fitz.csRGB, pix)
+            pix0.writePNG(pic_path+'/'+'images_%s.png' % pg)
+            pix0 = None
+        # 释放资源
+        pix = None
 
-    endTime_pdf2img = datetime.datetime.now()#结束时间
+    # 结束时间
+    endTime_pdf2img = datetime.datetime.now()
     print('转化完成总共耗时:',(endTime_pdf2img - startTime_pdf2img).seconds, 's')
 
 if __name__ == "__main__":
-    pdfPath = 'react.pdf'
-    imagePath = './react'
-    pyMuPDF_fitz(pdfPath, imagePath)
+    pdf_path = 'webpack.pdf'
+    pic_path = './'
+    pyMuPDF_fitz(pdf_path, pic_path)
 ```
