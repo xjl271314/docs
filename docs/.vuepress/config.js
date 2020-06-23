@@ -86,6 +86,7 @@ module.exports = {
         title: "javaScript高级技巧",
         collapsable: true,
         children: [
+          "/javascriptHigh/tips",
           "/javascriptHigh/mutationObserver",
           "/javascriptHigh/createTypes",
         ]
@@ -240,9 +241,11 @@ module.exports = {
           '/python/os',
           '/python/selenium',
           '/python/utils',
+          '/python/pandas',
           {
             title:'文件处理相关',
             children:[
+              '/python/downloadImgs',
               '/python/autoRenameImgs',
               '/python/jsonToCsv',
               '/python/readPdf',
