@@ -1,6 +1,5 @@
 import ElementUI from "element-ui";
 import ViLike from 'vilike';
-import Statistic from './components/statistic'
 import "./public/styles/element-variables.scss";
 
 export default ({

@@ -5,15 +5,14 @@ module.exports = {
   description: '博客 分享 读后感 成长规划',
   dest: './dist',
   base: '/my-blogs/',
-  repo: '',
   head: [
     ['link', { rel: 'icon', href: `/images/favicon.png` }],
     ['meta', { name: 'theme-color', content: '#00adb5' }],
     ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
     ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }],
     ['meta', { name: 'msapplication-TileColor', content: '#00adb5' }],
-    ['meta', {name:'description', itemprop: 'description', content: '常用的js方法，js_tricks' }],
-    ['meta', { itemprop: 'name', content: 'js_trick' }],
+    ['meta', {name:'description', itemprop: 'description', content: '前端工程师成长路线' }],
+    ['meta', { itemprop: 'name', content: '前端工程师成长路线' }],
     ['meta', { itemprop: 'image', content: '/js_tricks/images/favicon.png' }],
     ['script', {type: 'text/javascript', src: 'https://cdn.jsdelivr.net/gh/bmob/hydrogen-js-sdk@2.2.3/dist/Bmob-2.2.3.min.js'}],
   ],
@@ -26,6 +25,7 @@ module.exports = {
   },
   plugins: [
     require('./plugins/copy/index'),
+    require('./plugins/statistic/index'),
     '@vuepress/back-to-top',
     '@vuepress/active-header-links',
     ['@vuepress/last-updated',{
@@ -33,13 +33,13 @@ module.exports = {
         moment.locale(lang)
         return moment(timestamp).format('YYYY-MM-DD HH:mm:SS')
       }
-    }]
+    }],
+    ['@vuepress/register-components'],
   ],
   themeConfig: {
     nav: [
       { text: 'css tricks', link: '' },
-      { text: 'blog', link: '' },
-      { text: 'GitHub', link: '' },
+      { text: 'js tricks', link: '' },
     ],
     sidebar: [
       '/dom/',
@@ -307,6 +307,14 @@ module.exports = {
       },
     ],
     lastUpdated: '上次更新时间' ,
+    // 假定 GitHub。也可以是一个完整的 GitLab 网址
+    repo: 'https://github.com/xjl271314/my-blogs',
+    // 如果你的文档不在仓库的根部
+    // docsDir: 'docs',
+    // 可选，默认为 master
+    docsBranch: 'master',
+    // 默认为 true，设置为 false 来禁用
+    editLinks: false
   }
 }
 
