@@ -4,7 +4,7 @@ module.exports = {
   title: '前端工程师成长路线',
   description: '博客 分享 读后感 成长规划',
   dest: './dist',
-  base: '/blogs/',
+  base: '/my-blogs/',
   repo: '',
   head: [
     ['link', { rel: 'icon', href: `/images/favicon.png` }],
@@ -15,6 +15,7 @@ module.exports = {
     ['meta', {name:'description', itemprop: 'description', content: '常用的js方法，js_tricks' }],
     ['meta', { itemprop: 'name', content: 'js_trick' }],
     ['meta', { itemprop: 'image', content: '/js_tricks/images/favicon.png' }],
+    ['script', {type: 'text/javascript', src: 'https://cdn.jsdelivr.net/gh/bmob/hydrogen-js-sdk@2.2.3/dist/Bmob-2.2.3.min.js'}],
   ],
   markdown: {
     anchor: { permalink: false },

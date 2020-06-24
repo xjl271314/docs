@@ -1,4 +1,6 @@
 import ElementUI from "element-ui";
+import ViLike from 'vilike';
+import Statistic from './components/statistic'
 import "./public/styles/element-variables.scss";
 
 export default ({
@@ -8,6 +10,19 @@ export default ({
   siteData // 站点元数据
 }) => {
   Vue.use(ElementUI);
+  Vue.use(ViLike);
 };
 
+// 请自行修改相关配置信息
+ViLike.configure({
+  secretKey: 'cfba00864a7da46d',
+  safeKey: '331023',
+  table: 'statistic',
+  key: 'skey',
+  visit: 'visit',
+  like: 'like'
+});
+
+// 初始化
+ViLike.init();
 
