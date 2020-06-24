@@ -1,16 +1,89 @@
-<style lang="scss" scoped>
-  .statistic-container{
-
+<style lang="scss">
+.statistic-container {
+  display: flex;
+  align-items: center;
+  font-family: "Avenir Next", Avenir, "Helvetica Neue", Helvetica, Arial,
+    sans-serif;
+  *,
+  *::after,
+  *::before {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
   }
+  font-size: 16px;
+}
+.icobutton {
+  font-size: 0.8em;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  color: #c0c1c3;
+  border: 0;
+  background: none;
+  overflow: visible;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.icobutton .fa {
+  display: block;
+  padding: 0 0.1em;
+}
+
+.icobutton__text {
+  font-size: 0.75em;
+  position: absolute;
+  top: 100%;
+  left: -50%;
+  width: 200%;
+  text-align: center;
+  line-height: 1.5;
+  color: #a6a6a6;
+}
+
+.icobutton__text--side {
+  top: 0;
+  left: 100%;
+  width: 100%;
+  width: auto;
+  padding: 0 0 0 0.25em;
+}
+
+/* fix for mo.js */
+.icobutton svg {
+  left: 0;
+}
+
+.icobutton:hover,
+.icobutton:focus,
+.icobutton:disabled {
+  outline: none;
+  color: rgb(152, 138, 222);
+}
+
+/* Unicorn */
+.icobutton--unicorn svg {
+  fill: #c0c1c3;
+}
 </style>
 <template>
-  <div class="statistic-container">
+  <div refs="container" class="statistic-container">
     <span>访问量：{{ this.visitNum }}</span>
     <span>喜欢：{{ this.likeNum }}</span>
-    <button @click="handleLike" :disabled="isDisabled">点赞</button>
+    <!-- 点赞按钮 -->
+    <button
+      ref="button"
+      class="icobutton icobutton--thumbs-up"
+      @click="handleLike"
+      :disabled="isDisabled"
+    >
+      <span ref="span" class="fa fa-thumbs-up"></span>
+    </button>
   </div>
 </template>
+
 <script>
+import mojs from "./mo.min.js";
+
 export default {
   name: "Statistic",
   data() {
@@ -32,16 +105,130 @@ export default {
     }
   },
   mounted() {
-    ViLike.get(this.key, (visit, like, islike) => {
-      // 访问量
-      this.visitNum = visit;
-      // 点赞数
-      this.likeNum = like;
-      // 点赞按钮逻辑
-      if (islike) {
-        this.isDisabled = true;
+    setTimeout(() => {
+      ViLike.get(this.key, (visit, like, islike) => {
+        // 访问量
+        this.visitNum = visit;
+        // 点赞数
+        this.likeNum = like;
+        // 点赞按钮逻辑
+        if (islike) {
+          this.isDisabled = true;
+        }
+      });
+      // 将点赞等显示在上次更新左侧
+      const footer = document.querySelector('footer');
+      // 构造点赞的效果
+      const $button = this.$refs.button;
+      const $span = this.$refs.span;
+
+      function extend(a, b) {
+        for (var key in b) {
+          if (b.hasOwnProperty(key)) {
+            a[key] = b[key];
+          }
+        }
+        return a;
       }
-    });
+
+      function Animocon(el, options) {
+        this.options = extend({}, this.options);
+        extend(this.options, options);
+
+        this.checked = false;
+
+        this.timeline = new mojs.Timeline();
+
+        for (var i = 0, len = this.options.tweens.length; i < len; ++i) {
+          this.timeline.add(this.options.tweens[i]);
+        }
+
+        var self = this;
+        el.addEventListener("click", function() {
+          console.log(11111);
+          if (!self.isDisabled) {
+            self.options.onCheck();
+            self.timeline.start();
+          }
+          self.checked = !self.checked;
+        });
+      }
+
+      Animocon.prototype.options = {
+        tweens: [
+          new mojs.Burst({
+            shape: "circle",
+            isRunLess: true
+          })
+        ],
+        onCheck: function() {
+          return false;
+        },
+        onUnCheck: function() {
+          return false;
+        }
+      };
+      new Animocon($button, {
+        tweens: [
+          // burst animation
+          new mojs.Burst({
+            parent: $button,
+            duration: 1700,
+            shape: "circle",
+            fill: "#C0C1C3",
+            x: "50%",
+            y: "50%",
+            opacity: 0.6,
+            childOptions: { radius: { 15: 0 } },
+            radius: { 30: 90 },
+            count: 6,
+            isRunLess: true,
+            easing: mojs.easing.bezier(0.1, 1, 0.3, 1)
+          }),
+          // ring animation
+          new mojs.Transit({
+            parent: $button,
+            duration: 700,
+            type: "circle",
+            radius: { 0: 60 },
+            fill: "transparent",
+            stroke: "#C0C1C3",
+            strokeWidth: { 20: 0 },
+            opacity: 0.6,
+            x: "50%",
+            y: "50%",
+            isRunLess: true,
+            easing: mojs.easing.sin.out
+          }),
+          // icon scale animation
+          new mojs.Tween({
+            duration: 1200,
+            onUpdate: function(progress) {
+              if (progress > 0.3) {
+                var elasticOutProgress = mojs.easing.elastic.out(
+                  1.43 * progress - 0.43
+                );
+                $span.style.WebkitTransform = $span.style.transform =
+                  "scale3d(" +
+                  elasticOutProgress +
+                  "," +
+                  elasticOutProgress +
+                  ",1)";
+              } else {
+                $span.style.WebkitTransform = $span.style.transform =
+                  "scale3d(0,0,1)";
+              }
+            }
+          })
+        ],
+        onCheck: function() {
+          $button.style.color = "#988ADE";
+        },
+        onUnCheck: function() {
+          $button.style.color = "#C0C1C3";
+        }
+      });
+    }, 500);
   }
 };
 </script>

@@ -1,6 +1,7 @@
 import ElementUI from "element-ui";
 import ViLike from 'vilike';
 import "./public/styles/element-variables.scss";
+import "./public/styles/overide.scss";
 
 export default ({
   Vue, // VuePress 正在使用的 Vue 构造函数
