@@ -11,9 +11,17 @@
     box-sizing: border-box;
   }
   font-size: 16px;
+  >span{
+      margin-right: 1em;
+      >span{
+          font-weight: 400;
+          color: #aaa;
+          padding-left: .25em;
+      }
+  }
 }
 .icobutton {
-  font-size: 0.8em;
+  font-size: 1.2em;
   position: relative;
   margin: 0;
   padding: 0;
@@ -67,8 +75,8 @@
 </style>
 <template>
   <div refs="container" class="statistic-container">
-    <span>访问量：{{ this.visitNum }}</span>
-    <span>喜欢：{{ this.likeNum }}</span>
+    <span>访问量:<span>{{ this.visitNum }}</span></span>
+    <span>Star:<span>{{ this.likeNum }}</span></span>
     <!-- 点赞按钮 -->
     <button
       ref="button"
@@ -105,7 +113,6 @@ export default {
     }
   },
   mounted() {
-    setTimeout(() => {
       ViLike.get(this.key, (visit, like, islike) => {
         // 访问量
         this.visitNum = visit;
@@ -116,10 +123,6 @@ export default {
           this.isDisabled = true;
         }
       });
-      // 构造点赞的效果
-      const $button = this.$refs.button;
-      const $span = this.$refs.span;
-
       function extend(a, b) {
         for (var key in b) {
           if (b.hasOwnProperty(key)) {
@@ -225,7 +228,6 @@ export default {
           $button.style.color = "#C0C1C3";
         }
       });
-    }, 500);
   }
 };
 </script>

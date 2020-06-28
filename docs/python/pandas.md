@@ -9,10 +9,11 @@
 
 
 # 数据结构
-Pandas有两个主要数据结构Series（一维）和DataFrame（二维）
+Pandas有两个主要数据结构`Series（一维`）和`DataFrame（二维）`
 
 - Series
-```python
+
+```py
 import numpy as np
 import pandas as pd
 
