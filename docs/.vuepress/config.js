@@ -231,7 +231,8 @@ module.exports = {
           '/node/jwt',
           '/node/async',
           '/node/childProcess',
-          '/node/egg'
+          '/node/egg',
+          '/node/puppeteer'
         ]
       },
       {
