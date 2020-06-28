@@ -75,7 +75,7 @@
 </style>
 <template>
   <div refs="container" class="statistic-container">
-    <span>访问量:<span>{{ this.visitNum }}</span></span>
+    <span>全局访问量:<span>{{ this.visitNum }}</span></span>
     <span>Star:<span>{{ this.likeNum }}</span></span>
     <!-- 点赞按钮 -->
     <button
@@ -123,6 +123,8 @@ export default {
           this.isDisabled = true;
         }
       });
+
+      const $button = this.$refs.button;
       function extend(a, b) {
         for (var key in b) {
           if (b.hasOwnProperty(key)) {
