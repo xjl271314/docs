@@ -28,7 +28,6 @@ module.exports = {
   },
   plugins: [
     require('./plugins/copy/index'),
-    require('./plugins/statistic/index'),
     '@vuepress/back-to-top',
     '@vuepress/active-header-links',
     ['@vuepress/last-updated',{

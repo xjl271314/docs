@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import mojs from "./mo.min.js";
+import mojs from "../util/mo.min.js";
 
 export default {
   name: "Statistic",
@@ -116,8 +116,6 @@ export default {
           this.isDisabled = true;
         }
       });
-      // 将点赞等显示在上次更新左侧
-      const footer = document.querySelector('footer');
       // 构造点赞的效果
       const $button = this.$refs.button;
       const $span = this.$refs.span;
@@ -145,7 +143,6 @@ export default {
 
         var self = this;
         el.addEventListener("click", function() {
-          console.log(11111);
           if (!self.isDisabled) {
             self.options.onCheck();
             self.timeline.start();
