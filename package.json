@@ -26,6 +26,7 @@
     "@mojs/core": "^0.288.2",
     "chalk": "^4.1.0",
     "clipboard": "^2.0.6",
+    "hydrogen-js-sdk": "^2.2.4",
     "markdown-it-include": "^1.0.0",
     "markdown-it-mermaid": "^0.2.5",
     "moment": "^2.25.3",

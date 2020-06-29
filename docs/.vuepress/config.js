@@ -15,7 +15,7 @@ module.exports = {
     ['meta', {name:'description', itemprop: 'description', content: '前端工程师成长路线' }],
     ['meta', { itemprop: 'name', content: '前端工程师成长路线' }],
     ['meta', { itemprop: 'image', content: '/js_tricks/images/favicon.png' }],
-    ['script', {type: 'text/javascript', src: 'https://cdn.jsdelivr.net/gh/bmob/hydrogen-js-sdk@2.2.3/dist/Bmob-2.2.3.min.js'}],
+    ['script', {type: 'text/javascript', src: 'https://cdn.jsdelivr.net/gh/bmob/hydrogen-js-sdk/dist/Bmob-2.2.4.min.js'}],
     
   ],
   markdown: {
