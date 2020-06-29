@@ -30,7 +30,7 @@ logfile : logfile/var/log/redis/redis_6380.log
 rdbfile : dbfilenamedump_6380.rdb
 ```
 
-## 启动多个redis实例
+## 启动命令
 
 ```
 #redis-server/usr/local/redis/redis6380.conf
