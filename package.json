@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx vuepress dev docs",
-    "docs:build": "node ./build/addComment.js &&  vuepress build docs  && node ./build/delComment.js",
+    "docs:build": "vuepress build docs",
     "deploy": "gh-pages -d dist",
     "deploy:build": "npm run docs:build && gh-pages -d dist"
   },
