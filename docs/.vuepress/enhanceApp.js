@@ -1,6 +1,6 @@
 import ElementUI from "element-ui";
 import ViLike from 'vilike';
-import Bmob from "hydrogen-js-sdk";
+// import Bmob from "hydrogen-js-sdk";
 import "./public/styles/element-variables.scss";
 import "./public/styles/overide.scss";
 
@@ -11,8 +11,8 @@ export default ({
   siteData // 站点元数据
 }) => {
   Vue.use(ElementUI);
-  Vue.use(Bmob);
   Vue.use(ViLike);
+  // Vue.prototype.Bmob = Bmob;
 };
 
 // 请自行修改相关配置信息

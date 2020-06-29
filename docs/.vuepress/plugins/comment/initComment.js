@@ -9,8 +9,9 @@ export default function initComment() {
   body.appendChild(script);
   script.onload = () => {
     const commentConfig = Object.assign(CONFIG.gitalk, {
-       id: `${location.pathname}`
+       id: `/my-blogs${location.pathname}`
     });
+    console.log('commentConfig', commentConfig)
     const gitalk = new Gitalk(commentConfig);
     gitalk.render("gitalk-container");
   };
