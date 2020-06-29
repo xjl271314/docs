@@ -7,13 +7,17 @@
 git clone https://github.com/xjl271314/my-blogs.git
 
 ## 安装
-npm install  ||  yarn install
+npm install  或者  yarn install
 
 ## 启动
 npm run dev
 
 ## 打包
 npm run docs:build
+
+## 直接访问
+
+https://xjl271314.github.io/my-blogs
 
 
 

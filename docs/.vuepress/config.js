@@ -5,7 +5,6 @@ module.exports = {
   description: '博客 分享 读后感 成长规划',
   dest: './dist',
   base: '/my-blogs/',
-  repo: 'https://github.com/xjl271314/my-blogs',
   head: [
     ['link', { rel: 'icon', href: '/images/favicon.png' }],
     ["link", { rel: "stylesheet", href: "https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" }],
