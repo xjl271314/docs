@@ -617,8 +617,8 @@ export default {
         clientID: "5abdb21756dd51231626",
         clientSecret: "00634da3e12045cc04c6ea7c3774383531c8e425",
         repo: "js_tricks",
-        owner: "QiShaoXuan",
-        admin: ["QiShaoXuan"],
+        owner: "xjl271314",
+        admin: ["xjl271314"],
         id: location.pathname,
         distractionFreeMode: false
       }
