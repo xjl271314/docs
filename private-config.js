@@ -7,7 +7,7 @@ var gitalk = new Gitalk({
     repo: 'xjl271314.github.io-my-blogs',
     owner: 'xjl271314',
     admin: ['xjl271314'],
-    id: md5(window.location.pathname), 
+    id: md5(location.pathname), 
     distractionFreeMode: false
 })
 
