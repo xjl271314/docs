@@ -4,7 +4,6 @@ module.exports = {
   title: '前端工程师成长路线',
   description: '博客 分享 读后感 成长规划',
   dest: './dist',
-  base: '/my-blogs/',
   head: [
     ['link', { rel: 'icon', href: '/images/favicon.png' }],
     ["link", { rel: "stylesheet", href: "https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" }],
@@ -18,7 +17,7 @@ module.exports = {
     ['script', {type: 'text/javascript', src: 'https://cdn.jsdelivr.net/gh/bmob/hydrogen-js-sdk/dist/Bmob-2.2.4.min.js'}],
     
   ],
-  repo:"https://github.com/xjl271314/my-blogs",
+  repo:"https://github.com/xjl271314/xjl271314.github.io",
   markdown: {
     anchor: { permalink: false },
     toc: { includeLevel: [1, 2, 3] },
