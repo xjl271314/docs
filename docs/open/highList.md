@@ -304,7 +304,8 @@ const VirtualList = props =>{
         <div ref={listContainer} onScroll={listScroll} className="infinite-list-container">
             {/* 容器内的占位，高度为总列表高度，用于形成滚动条 */}
             <div className="infinite-list-phantom" style={{ height: listHeight}}></div>
-            <div className="infinite-list" style={{transform:[`translateY(${transferOffset}px)`]}}>{
+            <div className="infinite-list" style={{ transform:[`translateY(${transferOffset}px)`]}}>
+            {
                 visibleList.map((item, index) => <div key={index} id={item} ref={n=>listRefs[index] = n} className="infinite-list-item">我是列表项{item}</div>)
             }</div>
         </div>
