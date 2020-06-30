@@ -14,10 +14,11 @@ module.exports = {
     ['meta', { name: 'msapplication-TileColor', content: '#00adb5' }],
     ['meta', {name:'description', itemprop: 'description', content: '前端工程师成长路线' }],
     ['meta', { itemprop: 'name', content: '前端工程师成长路线' }],
-    ['meta', { itemprop: 'image', content: '/js_tricks/images/favicon.png' }],
+    ['meta', { itemprop: 'image', content: '/my-blogs/images/favicon.png' }],
     ['script', {type: 'text/javascript', src: 'https://cdn.jsdelivr.net/gh/bmob/hydrogen-js-sdk/dist/Bmob-2.2.4.min.js'}],
     
   ],
+  repo:"https://github.com/xjl271314/my-blogs",
   markdown: {
     anchor: { permalink: false },
     toc: { includeLevel: [1, 2, 3] },
