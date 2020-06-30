@@ -79,7 +79,7 @@ def transCsv2Json(csvpath = 'demo.csv', jsonpath = 'demo.json'):
 
 ## demo.csv
 
-```csv
+```
 id,name,age,gender
 1001,Tomy,12,female
 1002,Lucy,14,female

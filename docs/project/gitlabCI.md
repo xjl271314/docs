@@ -43,7 +43,7 @@
 以`macOs`为例子,完整的安装地址参考:[官方下载地址](https://docs.gitlab.com/runner/install/)
 
 - 方式1
-```ssh
+```
 sudo curl --output /usr/local/bin/gitlab-runner https://gitlab-runner-downloads.s3.amazonaws.com/latest/binaries/gitlab-runner-darwin-amd64
 
 sudo chmod +x /usr/local/bin/gitlab-runner
@@ -55,7 +55,7 @@ gitlab-runner start
 
 - 方式2
 
-```ssh
+```
 brew install gitlab-runner
 
 brew services start gitlab-runner
