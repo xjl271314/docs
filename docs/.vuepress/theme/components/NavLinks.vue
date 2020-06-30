@@ -6,7 +6,6 @@
     <!-- user links -->
     <div
       v-for="item in userLinks"
-      :key="item.link"
       class="nav-item"
     >
       <DropdownLink

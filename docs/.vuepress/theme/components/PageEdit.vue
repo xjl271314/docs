@@ -12,7 +12,7 @@
       <OutboundLink />
     </div>
     <!-- 点赞阅读显示 -->
-    <Statistic />
+    <!-- <Statistic /> -->
 
     <div
       v-if="lastUpdated"
@@ -26,12 +26,12 @@
 
 <script>
 import isNil from 'lodash/isNil'
-import Statistic from './Statistic';
+// import Statistic from './Statistic';
 import { endingSlashRE, outboundRE } from '../util'
 
 export default {
   name: 'PageEdit',
-  components: { Statistic },
+  // components: { Statistic },
 
   computed: {
     lastUpdated () {

@@ -1,6 +1,5 @@
 const CONFIG = require("../../../../config.js");
 
-console.log(CONFIG,2222)
 export default function initComment() {
   const body = document.querySelector(".gitalk-container");
   const script = document.createElement("script");
@@ -9,7 +8,7 @@ export default function initComment() {
   body.appendChild(script);
   script.onload = () => {
     const commentConfig = Object.assign(CONFIG.gitalk, {
-       id: `/my-blogs${location.pathname}`
+      //  id: `/my-blogs${location.pathname}`
     });
     console.log('commentConfig', commentConfig)
     const gitalk = new Gitalk(commentConfig);

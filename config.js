@@ -1,11 +1,8 @@
 const chalk = require("chalk");
-
-let config = {
-  gitalk: {}
-}
+const config = require('./private-config');
 
 try{
-  config = require('./private-config');
+  console.log('config success!')
 }
 catch (e) {
   console.log(chalk.red('You are not owner of this project'));
