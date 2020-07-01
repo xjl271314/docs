@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>git相关知识 | 前端工程师成长路线</title>
+    <meta name="generator" content="VuePress 1.5.0">
+    <link rel="icon" href="/docs/images/favicon.png">
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/bmob/hydrogen-js-sdk/dist/Bmob-2.2.4.min.js"></script>
+    <meta name="description" content="博客 分享 读后感 成长规划">
+    <meta name="theme-color" content="#00adb5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="msapplication-TileColor" content="#00adb5">
+    <meta itemprop="name" content="前端工程师成长路线">
+    <meta itemprop="image" content="/my-blogs/images/favicon.png">
+    <link rel="preload" href="/docs/assets/css/0.styles.574402e1.css" as="style"><link rel="preload" href="/docs/assets/js/app.8bb7f38c.js" as="script"><link rel="preload" href="/docs/assets/js/2.346c741e.js" as="script"><link rel="preload" href="/docs/assets/js/52.036a427b.js" as="script"><link rel="prefetch" href="/docs/assets/js/10.448efd45.js"><link rel="prefetch" href="/docs/assets/js/100.52b29356.js"><link rel="prefetch" href="/docs/assets/js/101.cd1f4c36.js"><link rel="prefetch" href="/docs/assets/js/102.59e88705.js"><link rel="prefetch" href="/docs/assets/js/103.2b54d112.js"><link rel="prefetch" href="/docs/assets/js/104.fae1d084.js"><link rel="prefetch" href="/docs/assets/js/105.1932bb9c.js"><link rel="prefetch" href="/docs/assets/js/106.4b8b8f95.js"><link rel="prefetch" href="/docs/assets/js/107.b9781ba6.js"><link rel="prefetch" href="/docs/assets/js/108.f69c6b38.js"><link rel="prefetch" href="/docs/assets/js/109.c8643528.js"><link rel="prefetch" href="/docs/assets/js/11.6b84f53c.js"><link rel="prefetch" href="/docs/assets/js/110.07d25ba7.js"><link rel="prefetch" href="/docs/assets/js/111.31f2b11f.js"><link rel="prefetch" href="/docs/assets/js/112.f349742f.js"><link rel="prefetch" href="/docs/assets/js/113.3fec3968.js"><link rel="prefetch" href="/docs/assets/js/114.08a5fea8.js"><link rel="prefetch" href="/docs/assets/js/115.f09e85c3.js"><link rel="prefetch" href="/docs/assets/js/116.f6da850c.js"><link rel="prefetch" href="/docs/assets/js/117.e5ff7776.js"><link rel="prefetch" href="/docs/assets/js/118.d3ba055c.js"><link rel="prefetch" href="/docs/assets/js/119.f98dd6ab.js"><link rel="prefetch" href="/docs/assets/js/12.8bcafd6e.js"><link rel="prefetch" href="/docs/assets/js/120.745a3e22.js"><link rel="prefetch" href="/docs/assets/js/121.eac2116d.js"><link rel="prefetch" href="/docs/assets/js/122.9e915c21.js"><link rel="prefetch" href="/docs/assets/js/123.1e6bec5d.js"><link rel="prefetch" href="/docs/assets/js/124.037e80df.js"><link rel="prefetch" href="/docs/assets/js/125.c21814b1.js"><link rel="prefetch" href="/docs/assets/js/126.6456119c.js"><link rel="prefetch" href="/docs/assets/js/127.0c09c34f.js"><link rel="prefetch" href="/docs/assets/js/128.3346daee.js"><link rel="prefetch" href="/docs/assets/js/129.f351ddb2.js"><link rel="prefetch" href="/docs/assets/js/13.4455f4e8.js"><link rel="prefetch" href="/docs/assets/js/130.0245f34b.js"><link rel="prefetch" href="/docs/assets/js/131.17edd525.js"><link rel="prefetch" href="/docs/assets/js/132.59c9d301.js"><link rel="prefetch" href="/docs/assets/js/133.884b352a.js"><link rel="prefetch" href="/docs/assets/js/134.4f12eb2c.js"><link rel="prefetch" href="/docs/assets/js/135.4ad34e04.js"><link rel="prefetch" href="/docs/assets/js/136.617c9a61.js"><link rel="prefetch" href="/docs/assets/js/137.1f919695.js"><link rel="prefetch" href="/docs/assets/js/138.4f1db5b4.js"><link rel="prefetch" href="/docs/assets/js/139.c8b01cd3.js"><link rel="prefetch" href="/docs/assets/js/14.3b0be226.js"><link rel="prefetch" href="/docs/assets/js/140.334825bd.js"><link rel="prefetch" href="/docs/assets/js/141.6841867e.js"><link rel="prefetch" href="/docs/assets/js/142.e72d2063.js"><link rel="prefetch" href="/docs/assets/js/143.70cd8cce.js"><link rel="prefetch" href="/docs/assets/js/144.75e9018e.js"><link rel="prefetch" href="/docs/assets/js/145.624f7426.js"><link rel="prefetch" href="/docs/assets/js/146.92b228fe.js"><link rel="prefetch" href="/docs/assets/js/147.d0275c5e.js"><link rel="prefetch" href="/docs/assets/js/148.7b0425f7.js"><link rel="prefetch" href="/docs/assets/js/149.92928bf2.js"><link rel="prefetch" href="/docs/assets/js/15.4b5d7343.js"><link rel="prefetch" href="/docs/assets/js/150.75888041.js"><link rel="prefetch" href="/docs/assets/js/151.70152a0e.js"><link rel="prefetch" href="/docs/assets/js/152.81c27cf2.js"><link rel="prefetch" href="/docs/assets/js/153.d5b7922b.js"><link rel="prefetch" href="/docs/assets/js/154.639b55a5.js"><link rel="prefetch" href="/docs/assets/js/155.d602a5bb.js"><link rel="prefetch" href="/docs/assets/js/156.b6966e82.js"><link rel="prefetch" href="/docs/assets/js/157.2e40a616.js"><link rel="prefetch" href="/docs/assets/js/158.f5e0ae1f.js"><link rel="prefetch" href="/docs/assets/js/159.57509c24.js"><link rel="prefetch" href="/docs/assets/js/16.9d0963b3.js"><link rel="prefetch" href="/docs/assets/js/160.2e078fe2.js"><link rel="prefetch" href="/docs/assets/js/161.c0f6c9be.js"><link rel="prefetch" href="/docs/assets/js/162.d2a9c87b.js"><link rel="prefetch" href="/docs/assets/js/163.470653e8.js"><link rel="prefetch" href="/docs/assets/js/164.0ff827a4.js"><link rel="prefetch" href="/docs/assets/js/165.49df0c4a.js"><link rel="prefetch" href="/docs/assets/js/166.c0e049c3.js"><link rel="prefetch" href="/docs/assets/js/167.abc57592.js"><link rel="prefetch" href="/docs/assets/js/168.dfe496d2.js"><link rel="prefetch" href="/docs/assets/js/169.c0c8808d.js"><link rel="prefetch" href="/docs/assets/js/17.95b7e490.js"><link rel="prefetch" href="/docs/assets/js/170.af5fa4f7.js"><link rel="prefetch" href="/docs/assets/js/171.9aeb6fb0.js"><link rel="prefetch" href="/docs/assets/js/172.dbc06008.js"><link rel="prefetch" href="/docs/assets/js/173.d85d8eaf.js"><link rel="prefetch" href="/docs/assets/js/174.87137bbe.js"><link rel="prefetch" href="/docs/assets/js/175.04de97f1.js"><link rel="prefetch" href="/docs/assets/js/176.3c85bda2.js"><link rel="prefetch" href="/docs/assets/js/177.a5de78c2.js"><link rel="prefetch" href="/docs/assets/js/178.4a881e8c.js"><link rel="prefetch" href="/docs/assets/js/179.fe138678.js"><link rel="prefetch" href="/docs/assets/js/18.ca0afb77.js"><link rel="prefetch" href="/docs/assets/js/180.18ff978f.js"><link rel="prefetch" href="/docs/assets/js/19.981481df.js"><link rel="prefetch" href="/docs/assets/js/20.6e80cd2d.js"><link rel="prefetch" href="/docs/assets/js/21.c0ec8375.js"><link rel="prefetch" href="/docs/assets/js/22.648850d3.js"><link rel="prefetch" href="/docs/assets/js/23.73ed5316.js"><link rel="prefetch" href="/docs/assets/js/24.768a95fb.js"><link rel="prefetch" href="/docs/assets/js/25.b460e9a9.js"><link rel="prefetch" href="/docs/assets/js/26.61c56597.js"><link rel="prefetch" href="/docs/assets/js/27.2bbfe116.js"><link rel="prefetch" href="/docs/assets/js/28.efc0814f.js"><link rel="prefetch" href="/docs/assets/js/29.8bebb742.js"><link rel="prefetch" href="/docs/assets/js/3.f0b9dcd8.js"><link rel="prefetch" href="/docs/assets/js/30.e6180f81.js"><link rel="prefetch" href="/docs/assets/js/31.791f6adb.js"><link rel="prefetch" href="/docs/assets/js/32.59f79bfb.js"><link rel="prefetch" href="/docs/assets/js/33.24072082.js"><link rel="prefetch" href="/docs/assets/js/34.9cc3face.js"><link rel="prefetch" href="/docs/assets/js/35.f5942d3c.js"><link rel="prefetch" href="/docs/assets/js/36.9664a07b.js"><link rel="prefetch" href="/docs/assets/js/37.12a8e708.js"><link rel="prefetch" href="/docs/assets/js/38.0c48b0a9.js"><link rel="prefetch" href="/docs/assets/js/39.9d41280d.js"><link rel="prefetch" href="/docs/assets/js/4.0f806da2.js"><link rel="prefetch" href="/docs/assets/js/40.2ee80385.js"><link rel="prefetch" href="/docs/assets/js/41.fefef9e9.js"><link rel="prefetch" href="/docs/assets/js/42.f6d801aa.js"><link rel="prefetch" href="/docs/assets/js/43.51c3e56f.js"><link rel="prefetch" href="/docs/assets/js/44.a096b57c.js"><link rel="prefetch" href="/docs/assets/js/45.2d938602.js"><link rel="prefetch" href="/docs/assets/js/46.5462b19e.js"><link rel="prefetch" href="/docs/assets/js/47.3693a81a.js"><link rel="prefetch" href="/docs/assets/js/48.1d984385.js"><link rel="prefetch" href="/docs/assets/js/49.75eb0693.js"><link rel="prefetch" href="/docs/assets/js/5.7088cd54.js"><link rel="prefetch" href="/docs/assets/js/50.06ea30e6.js"><link rel="prefetch" href="/docs/assets/js/51.95767db4.js"><link rel="prefetch" href="/docs/assets/js/53.03e8160e.js"><link rel="prefetch" href="/docs/assets/js/54.3f89c021.js"><link rel="prefetch" href="/docs/assets/js/55.ee276a6b.js"><link rel="prefetch" href="/docs/assets/js/56.8f841dda.js"><link rel="prefetch" href="/docs/assets/js/57.ddc66f28.js"><link rel="prefetch" href="/docs/assets/js/58.8ffe2d5a.js"><link rel="prefetch" href="/docs/assets/js/59.5adb1a11.js"><link rel="prefetch" href="/docs/assets/js/6.aa27b4b3.js"><link rel="prefetch" href="/docs/assets/js/60.1152a6b2.js"><link rel="prefetch" href="/docs/assets/js/61.abef8004.js"><link rel="prefetch" href="/docs/assets/js/62.51c7286d.js"><link rel="prefetch" href="/docs/assets/js/63.73db51c7.js"><link rel="prefetch" href="/docs/assets/js/64.f121b763.js"><link rel="prefetch" href="/docs/assets/js/65.76ef0090.js"><link rel="prefetch" href="/docs/assets/js/66.a39ac5ac.js"><link rel="prefetch" href="/docs/assets/js/67.499d3620.js"><link rel="prefetch" href="/docs/assets/js/68.7c04c7a8.js"><link rel="prefetch" href="/docs/assets/js/69.e58396ea.js"><link rel="prefetch" href="/docs/assets/js/7.6653ed24.js"><link rel="prefetch" href="/docs/assets/js/70.2ce6d316.js"><link rel="prefetch" href="/docs/assets/js/71.80443b6f.js"><link rel="prefetch" href="/docs/assets/js/72.f224489d.js"><link rel="prefetch" href="/docs/assets/js/73.0f73eb62.js"><link rel="prefetch" href="/docs/assets/js/74.a6215b26.js"><link rel="prefetch" href="/docs/assets/js/75.1dd84ab6.js"><link rel="prefetch" href="/docs/assets/js/76.f706d67e.js"><link rel="prefetch" href="/docs/assets/js/77.583d7e47.js"><link rel="prefetch" href="/docs/assets/js/78.add671e4.js"><link rel="prefetch" href="/docs/assets/js/79.6fc1e8ae.js"><link rel="prefetch" href="/docs/assets/js/8.a8d55efb.js"><link rel="prefetch" href="/docs/assets/js/80.ac37b44e.js"><link rel="prefetch" href="/docs/assets/js/81.22269b9e.js"><link rel="prefetch" href="/docs/assets/js/82.5e87105a.js"><link rel="prefetch" href="/docs/assets/js/83.f55d61be.js"><link rel="prefetch" href="/docs/assets/js/84.3b7083e8.js"><link rel="prefetch" href="/docs/assets/js/85.d8377c9b.js"><link rel="prefetch" href="/docs/assets/js/86.28cdec66.js"><link rel="prefetch" href="/docs/assets/js/87.fd7dd7b0.js"><link rel="prefetch" href="/docs/assets/js/88.58af6bb1.js"><link rel="prefetch" href="/docs/assets/js/89.ed215de5.js"><link rel="prefetch" href="/docs/assets/js/9.7d808dd7.js"><link rel="prefetch" href="/docs/assets/js/90.c3b9fbf3.js"><link rel="prefetch" href="/docs/assets/js/91.c6810a41.js"><link rel="prefetch" href="/docs/assets/js/92.e69c17dd.js"><link rel="prefetch" href="/docs/assets/js/93.d9e89cf9.js"><link rel="prefetch" href="/docs/assets/js/94.ba85fb71.js"><link rel="prefetch" href="/docs/assets/js/95.94198768.js"><link rel="prefetch" href="/docs/assets/js/96.9307b34d.js"><link rel="prefetch" href="/docs/assets/js/97.01aac265.js"><link rel="prefetch" href="/docs/assets/js/98.26a09d18.js"><link rel="prefetch" href="/docs/assets/js/99.241e2c4b.js">
+    <link rel="stylesheet" href="/docs/assets/css/0.styles.574402e1.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/docs/" class="home-link router-link-active"><!----> <span class="site-name">前端工程师成长路线</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/docs/git/.html" class="nav-link">
+  css tricks
+</a></div><div class="nav-item"><a href="/docs/git/.html" class="nav-link">
+  js tricks
+</a></div> <a href="https://github.com/xjl271314/docs" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/docs/git/.html" class="nav-link">
+  css tricks
+</a></div><div class="nav-item"><a href="/docs/git/.html" class="nav-link">
+  js tricks
+</a></div> <a href="https://github.com/xjl271314/docs" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><a href="/docs/dom/" class="sidebar-link">文档对象模型DOM</a></li><li><a href="/docs/bom/" class="sidebar-link">浏览器对象 BOM</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>javaScript基础知识</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>javaScript高级技巧</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/docs/es/" class="sidebar-link">ES6到ES11特性总结</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>CSS相关知识</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Svg相关知识</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/docs/http/" class="sidebar-link">HTTP相关知识</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>前端工程化</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/docs/safe/" class="sidebar-link">Web安全问题</a></li><li><a href="/docs/git/" class="active sidebar-link">git相关知识</a><ul class="sidebar-sub-headers"></ul></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>nginx</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>TypeScript</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>移动端知识</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>React</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Vue</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Electron</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Mysql</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Node.js</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Python</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Redis</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/docs/bff/" class="sidebar-link">BFF</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>开放性问题</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>即时通讯</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>浏览器插件扩展</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>算法</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>工具</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="git相关知识">git相关知识</h1> <h3 id="新建代码库">新建代码库</h3> <div class="language-python extra-class"><pre class="language-python"><code><span class="token comment"># 在当前目录新建一个Git代码库</span>
+$ git init
+
+<span class="token comment"># 新建一个目录，将其初始化为Git代码库</span>
+$ git init <span class="token punctuation">[</span>project<span class="token operator">-</span>name<span class="token punctuation">]</span>
+
+<span class="token comment"># 下载一个项目和它的整个代码历史</span>
+$ git clone <span class="token punctuation">[</span>url<span class="token punctuation">]</span>
+
+</code></pre></div><h3 id="配置">配置</h3> <p><code>Git</code>的设置文件为<code>.gitconfig</code>，它可以在用户主目录下（全局配置），也可以在项目目录下（项目配置）。</p> <div class="language-python extra-class"><pre class="language-python"><code><span class="token comment"># 显示当前的Git配置</span>
+$ git config <span class="token operator">-</span><span class="token operator">-</span><span class="token builtin">list</span>
+
+<span class="token comment"># 编辑Git配置文件</span>
+$ git config <span class="token operator">-</span>e <span class="token punctuation">[</span><span class="token operator">-</span><span class="token operator">-</span><span class="token keyword">global</span><span class="token punctuation">]</span>
+
+<span class="token comment"># 设置提交代码时的用户信息</span>
+$ git config <span class="token punctuation">[</span><span class="token operator">-</span><span class="token operator">-</span><span class="token keyword">global</span><span class="token punctuation">]</span> user<span class="token punctuation">.</span>name <span class="token string">&quot;[name]&quot;</span>
+$ git config <span class="token punctuation">[</span><span class="token operator">-</span><span class="token operator">-</span><span class="token keyword">global</span><span class="token punctuation">]</span> user<span class="token punctuation">.</span>email <span class="token string">&quot;[email address]&quot;</span>
+</code></pre></div><h3 id="增加-删除文件">增加/删除文件</h3> <div class="language-python extra-class"><pre class="language-python"><code><span class="token comment"># 添加指定文件到暂存区</span>
+$ git add <span class="token punctuation">[</span>file1<span class="token punctuation">]</span> <span class="token punctuation">[</span>file2<span class="token punctuation">]</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+
+<span class="token comment"># 添加指定目录到暂存区，包括子目录</span>
+$ git add <span class="token punctuation">[</span><span class="token builtin">dir</span><span class="token punctuation">]</span>
+
+<span class="token comment"># 添加当前目录的所有文件到暂存区</span>
+$ git add <span class="token punctuation">.</span>
+
+<span class="token comment"># 添加每个变化前，都会要求确认</span>
+<span class="token comment"># 对于同一个文件的多处变化，可以实现分次提交</span>
+$ git add <span class="token operator">-</span>p
+
+<span class="token comment"># 删除工作区文件，并且将这次删除放入暂存区</span>
+$ git rm <span class="token punctuation">[</span>file1<span class="token punctuation">]</span> <span class="token punctuation">[</span>file2<span class="token punctuation">]</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+
+<span class="token comment"># 停止追踪指定文件，但该文件会保留在工作区</span>
+$ git rm <span class="token operator">-</span><span class="token operator">-</span>cached <span class="token punctuation">[</span><span class="token builtin">file</span><span class="token punctuation">]</span>
+
+<span class="token comment"># 改名文件，并且将这个改名放入暂存区</span>
+$ git mv <span class="token punctuation">[</span><span class="token builtin">file</span><span class="token operator">-</span>original<span class="token punctuation">]</span> <span class="token punctuation">[</span><span class="token builtin">file</span><span class="token operator">-</span>renamed<span class="token punctuation">]</span>
+</code></pre></div><h3 id="代码提交">代码提交</h3> <div class="language-python extra-class"><pre class="language-python"><code><span class="token comment"># 提交暂存区到仓库区</span>
+$ git commit <span class="token operator">-</span>m <span class="token punctuation">[</span>message<span class="token punctuation">]</span>
+
+<span class="token comment"># 提交暂存区的指定文件到仓库区</span>
+$ git commit <span class="token punctuation">[</span>file1<span class="token punctuation">]</span> <span class="token punctuation">[</span>file2<span class="token punctuation">]</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> <span class="token operator">-</span>m <span class="token punctuation">[</span>message<span class="token punctuation">]</span>
+
+<span class="token comment"># 提交工作区自上次commit之后的变化，直接到仓库区</span>
+$ git commit <span class="token operator">-</span>a
+
+<span class="token comment"># 提交时显示所有diff信息</span>
+$ git commit <span class="token operator">-</span>v
+
+<span class="token comment"># 使用一次新的commit，替代上一次提交</span>
+<span class="token comment"># 如果代码没有任何新变化，则用来改写上一次commit的提交信息</span>
+$ git commit <span class="token operator">-</span><span class="token operator">-</span>amend <span class="token operator">-</span>m <span class="token punctuation">[</span>message<span class="token punctuation">]</span>
+
+<span class="token comment"># 重做上一次commit，并包括指定文件的新变化</span>
+$ git commit <span class="token operator">-</span><span class="token operator">-</span>amend <span class="token punctuation">[</span>file1<span class="token punctuation">]</span> <span class="token punctuation">[</span>file2<span class="token punctuation">]</span> <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>
+
+<span class="token comment"># 快速合并commit</span>
+$ git reset <span class="token operator">-</span><span class="token operator">-</span>soft commitHash<span class="token punctuation">;</span> git add <span class="token punctuation">.</span><span class="token punctuation">;</span> git commit <span class="token operator">-</span>m <span class="token string">'提交信息'</span><span class="token punctuation">;</span> git push <span class="token operator">-</span>f
+</code></pre></div><h3 id="分支管理">分支管理</h3> <div class="language-python extra-class"><pre class="language-python"><code><span class="token comment"># 列出所有本地分支</span>
+$ git branch
+
+<span class="token comment"># 列出所有远程分支</span>
+$ git branch <span class="token operator">-</span>r
+
+<span class="token comment"># 列出所有本地分支和远程分支</span>
+$ git branch <span class="token operator">-</span>a
+
+<span class="token comment"># 新建一个分支，但依然停留在当前分支</span>
+$ git branch <span class="token punctuation">[</span>branch<span class="token operator">-</span>name<span class="token punctuation">]</span>
+
+<span class="token comment"># 新建一个分支，并切换到该分支</span>
+$ git checkout <span class="token operator">-</span>b <span class="token punctuation">[</span>branch<span class="token punctuation">]</span>
+
+<span class="token comment"># 新建一个分支，指向指定commit</span>
+$ git branch <span class="token punctuation">[</span>branch<span class="token punctuation">]</span> <span class="token punctuation">[</span>commit<span class="token punctuation">]</span>
+
+<span class="token comment"># 新建一个分支，与指定的远程分支建立追踪关系</span>
+$ git branch <span class="token operator">-</span><span class="token operator">-</span>track <span class="token punctuation">[</span>branch<span class="token punctuation">]</span> <span class="token punctuation">[</span>remote<span class="token operator">-</span>branch<span class="token punctuation">]</span>
+
+<span class="token comment"># 切换到指定分支，并更新工作区</span>
+$ git checkout <span class="token punctuation">[</span>branch<span class="token operator">-</span>name<span class="token punctuation">]</span>
+
+<span class="token comment"># 切换到上一个分支</span>
+$ git checkout <span class="token operator">-</span>
+
+<span class="token comment"># 建立追踪关系，在现有分支与指定的远程分支之间</span>
+$ git branch <span class="token operator">-</span><span class="token operator">-</span><span class="token builtin">set</span><span class="token operator">-</span>upstream <span class="token punctuation">[</span>branch<span class="token punctuation">]</span> <span class="token punctuation">[</span>remote<span class="token operator">-</span>branch<span class="token punctuation">]</span>
+
+<span class="token comment"># 合并指定分支到当前分支</span>
+$ git merge <span class="token punctuation">[</span>branch<span class="token punctuation">]</span>
+
+<span class="token comment"># 选择一个commit，合并进当前分支</span>
+$ git cherry<span class="token operator">-</span>pick <span class="token punctuation">[</span>commit<span class="token punctuation">]</span>
+
+<span class="token comment"># 删除分支</span>
+$ git branch <span class="token operator">-</span>d <span class="token punctuation">[</span>branch<span class="token operator">-</span>name<span class="token punctuation">]</span>
+
+<span class="token comment"># 删除远程分支</span>
+$ git push origin <span class="token operator">-</span><span class="token operator">-</span>delete <span class="token punctuation">[</span>branch<span class="token operator">-</span>name<span class="token punctuation">]</span>
+$ git branch <span class="token operator">-</span>dr <span class="token punctuation">[</span>remote<span class="token operator">/</span>branch<span class="token punctuation">]</span>
+
+<span class="token comment"># 本地存在一个分支，名称叫：develop_chen，但远程没有怎么办？</span>
+$ git push origin develop_chen
+
+这样就在远程建立一个和本地一样的分支 
+
+$ git branch <span class="token operator">-</span><span class="token operator">-</span><span class="token builtin">set</span><span class="token operator">-</span>upstream<span class="token operator">-</span>to<span class="token operator">=</span>origin<span class="token operator">/</span>develop  develop  本地分支和远程分支简历跟踪关系
+
+<span class="token comment"># 获取指定分支/commit上的文件内容</span>
+$ git checkout commitHash<span class="token operator">/</span>branchName <span class="token operator">-</span><span class="token operator">-</span> <span class="token builtin">dir</span><span class="token operator">/</span>path<span class="token operator">/</span><span class="token keyword">or</span><span class="token operator">/</span><span class="token builtin">file</span><span class="token operator">/</span>path
+
+<span class="token comment"># 以某个分支为标准快速解决冲突</span>
+$ git merge develop <span class="token operator">-</span><span class="token operator">-</span>strategy<span class="token operator">-</span>option theirs<span class="token operator">/</span>ours
+</code></pre></div><h3 id="标签相关">标签相关</h3> <div class="language-python extra-class"><pre class="language-python"><code><span class="token comment"># 列出所有tag</span>
+$ git tag
+
+<span class="token comment"># 新建一个tag在当前commit</span>
+$ git tag <span class="token punctuation">[</span>tag<span class="token punctuation">]</span>
+
+<span class="token comment"># 新建一个tag在指定commit</span>
+$ git tag <span class="token punctuation">[</span>tag<span class="token punctuation">]</span> <span class="token punctuation">[</span>commit<span class="token punctuation">]</span>
+
+<span class="token comment"># 删除本地tag</span>
+$ git tag <span class="token operator">-</span>d <span class="token punctuation">[</span>tag<span class="token punctuation">]</span>
+
+<span class="token comment"># 删除远程tag</span>
+$ git push origin <span class="token punctuation">:</span>refs<span class="token operator">/</span>tags<span class="token operator">/</span><span class="token punctuation">[</span>tagName<span class="token punctuation">]</span>
+
+<span class="token comment"># 查看tag信息</span>
+$ git show <span class="token punctuation">[</span>tag<span class="token punctuation">]</span>
+
+<span class="token comment"># 提交指定tag</span>
+$ git push <span class="token punctuation">[</span>remote<span class="token punctuation">]</span> <span class="token punctuation">[</span>tag<span class="token punctuation">]</span>
+
+<span class="token comment"># 提交所有tag</span>
+$ git push <span class="token punctuation">[</span>remote<span class="token punctuation">]</span> <span class="token operator">-</span><span class="token operator">-</span>tags
+
+<span class="token comment"># 新建一个分支，指向某个tag</span>
+$ git checkout <span class="token operator">-</span>b <span class="token punctuation">[</span>branch<span class="token punctuation">]</span> <span class="token punctuation">[</span>tag<span class="token punctuation">]</span>
+</code></pre></div><h3 id="查看信息">查看信息</h3> <div class="language-python extra-class"><pre class="language-python"><code><span class="token comment"># 显示有变更的文件</span>
+$ git status
+
+<span class="token comment"># 显示当前分支的版本历史</span>
+$ git log
+
+<span class="token comment"># 显示commit历史，以及每次commit发生变更的文件</span>
+$ git log <span class="token operator">-</span><span class="token operator">-</span>stat
+
+<span class="token comment"># 搜索提交历史，根据关键词</span>
+$ git log <span class="token operator">-</span>S <span class="token punctuation">[</span>keyword<span class="token punctuation">]</span>
+
+<span class="token comment"># 显示某个commit之后的所有变动，每个commit占据一行</span>
+$ git log <span class="token punctuation">[</span>tag<span class="token punctuation">]</span> HEAD <span class="token operator">-</span><span class="token operator">-</span>pretty<span class="token operator">=</span><span class="token builtin">format</span><span class="token punctuation">:</span><span class="token operator">%</span>s
+
+<span class="token comment"># 显示某个commit之后的所有变动，其&quot;提交说明&quot;必须符合搜索条件</span>
+$ git log <span class="token punctuation">[</span>tag<span class="token punctuation">]</span> HEAD <span class="token operator">-</span><span class="token operator">-</span>grep feature
+
+<span class="token comment"># 显示某个文件的版本历史，包括文件改名</span>
+$ git log <span class="token operator">-</span><span class="token operator">-</span>follow <span class="token punctuation">[</span><span class="token builtin">file</span><span class="token punctuation">]</span>
+$ git whatchanged <span class="token punctuation">[</span><span class="token builtin">file</span><span class="token punctuation">]</span>
+
+<span class="token comment"># 显示指定文件相关的每一次diff</span>
+$ git log <span class="token operator">-</span>p <span class="token punctuation">[</span><span class="token builtin">file</span><span class="token punctuation">]</span>
+
+<span class="token comment"># 显示过去5次提交</span>
+$ git log <span class="token operator">-</span><span class="token number">5</span> <span class="token operator">-</span><span class="token operator">-</span>pretty <span class="token operator">-</span><span class="token operator">-</span>oneline
+
+<span class="token comment"># 显示所有提交过的用户，按提交次数排序</span>
+$ git shortlog <span class="token operator">-</span>sn
+
+<span class="token comment"># 显示指定文件是什么人在什么时间修改过</span>
+$ git blame <span class="token punctuation">[</span><span class="token builtin">file</span><span class="token punctuation">]</span>
+
+<span class="token comment"># 显示暂存区和工作区的代码差异</span>
+$ git diff
+
+<span class="token comment"># 显示暂存区和上一个commit的差异</span>
+$ git diff <span class="token operator">-</span><span class="token operator">-</span>cached <span class="token punctuation">[</span><span class="token builtin">file</span><span class="token punctuation">]</span>
+
+<span class="token comment"># 显示工作区与当前分支最新commit之间的差异</span>
+$ git diff HEAD
+
+<span class="token comment"># 显示两次提交之间的差异</span>
+$ git diff <span class="token punctuation">[</span>first<span class="token operator">-</span>branch<span class="token punctuation">]</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">[</span>second<span class="token operator">-</span>branch<span class="token punctuation">]</span>
+
+<span class="token comment"># 显示今天你写了多少行代码</span>
+$ git diff <span class="token operator">-</span><span class="token operator">-</span>shortstat <span class="token string">&quot;@{0 day ago}&quot;</span>
+
+<span class="token comment"># 显示某次提交的元数据和内容变化</span>
+$ git show <span class="token punctuation">[</span>commit<span class="token punctuation">]</span>
+
+<span class="token comment"># 显示某次提交发生变化的文件</span>
+$ git show <span class="token operator">-</span><span class="token operator">-</span>name<span class="token operator">-</span>only <span class="token punctuation">[</span>commit<span class="token punctuation">]</span>
+
+<span class="token comment"># 显示某次提交时，某个文件的内容</span>
+$ git show <span class="token punctuation">[</span>commit<span class="token punctuation">]</span><span class="token punctuation">:</span><span class="token punctuation">[</span>filename<span class="token punctuation">]</span>
+
+<span class="token comment"># 显示当前分支的最近几次提交</span>
+$ git reflog
+
+<span class="token comment"># 分支merge/rebase操作后，后悔了怎么办？</span>
+$ git reflog <span class="token operator">-</span><span class="token operator">-</span><span class="token builtin">all</span> <span class="token operator">-</span><span class="token operator">-</span>date<span class="token operator">=</span>iso
+
+<span class="token comment"># 从本地master拉取代码更新当前分支：branch 一般为master</span>
+$ git rebase <span class="token punctuation">[</span>branch<span class="token punctuation">]</span>
+</code></pre></div><h3 id="远程同步">远程同步</h3> <div class="language-python extra-class"><pre class="language-python"><code>$ git remote update  <span class="token operator">-</span><span class="token operator">-</span>更新远程仓储
+<span class="token comment"># 下载远程仓库的所有变动</span>
+$ git fetch <span class="token punctuation">[</span>remote<span class="token punctuation">]</span>
+
+<span class="token comment"># 显示所有远程仓库</span>
+$ git remote <span class="token operator">-</span>v
+
+<span class="token comment"># 显示某个远程仓库的信息</span>
+$ git remote show <span class="token punctuation">[</span>remote<span class="token punctuation">]</span>
+
+<span class="token comment"># 增加一个新的远程仓库，并命名</span>
+$ git remote add <span class="token punctuation">[</span>shortname<span class="token punctuation">]</span> <span class="token punctuation">[</span>url<span class="token punctuation">]</span>
+
+<span class="token comment"># 取回远程仓库的变化，并与本地分支合并</span>
+$ git pull <span class="token punctuation">[</span>remote<span class="token punctuation">]</span> <span class="token punctuation">[</span>branch<span class="token punctuation">]</span>
+
+<span class="token comment"># 上传本地指定分支到远程仓库</span>
+$ git push <span class="token punctuation">[</span>remote<span class="token punctuation">]</span> <span class="token punctuation">[</span>branch<span class="token punctuation">]</span>
+
+<span class="token comment"># 强行推送当前分支到远程仓库，即使有冲突</span>
+$ git push <span class="token punctuation">[</span>remote<span class="token punctuation">]</span> <span class="token operator">-</span><span class="token operator">-</span>force
+
+<span class="token comment"># 推送所有分支到远程仓库</span>
+$ git push <span class="token punctuation">[</span>remote<span class="token punctuation">]</span> <span class="token operator">-</span><span class="token operator">-</span><span class="token builtin">all</span>
+</code></pre></div><h3 id="撤销">撤销</h3> <div class="language-python extra-class"><pre class="language-python"><code><span class="token comment"># 恢复暂存区的指定文件到工作区</span>
+$ git checkout <span class="token punctuation">[</span><span class="token builtin">file</span><span class="token punctuation">]</span>
+
+<span class="token comment"># 恢复某个commit的指定文件到暂存区和工作区</span>
+$ git checkout <span class="token punctuation">[</span>commitHash<span class="token punctuation">]</span> <span class="token punctuation">[</span><span class="token builtin">file</span><span class="token punctuation">]</span>
+
+<span class="token comment"># 恢复暂存区的所有文件到工作区</span>
+$ git checkout <span class="token punctuation">.</span>
+
+<span class="token comment"># 重置暂存区的指定文件，与上一次commit保持一致，但工作区不变</span>
+$ git reset <span class="token punctuation">[</span><span class="token builtin">file</span><span class="token punctuation">]</span>
+
+<span class="token comment"># 重置暂存区与工作区，与上一次commit保持一致</span>
+$ git reset <span class="token operator">-</span><span class="token operator">-</span>hard
+
+<span class="token comment"># 重置当前分支的指针为指定commit，同时重置暂存区，但工作区不变</span>
+$ git reset <span class="token punctuation">[</span>commitHash<span class="token punctuation">]</span>
+
+<span class="token comment"># 回滚到指定commit 重置当前分支的HEAD为指定commit，同时重置暂存区和工作区，与指定commit一致</span>
+$ git reset <span class="token operator">-</span><span class="token operator">-</span>hard <span class="token punctuation">[</span>commitHash<span class="token punctuation">]</span>
+
+<span class="token comment"># 重置当前HEAD为指定commit，但保持暂存区和工作区不变</span>
+$ git reset <span class="token operator">-</span><span class="token operator">-</span>keep <span class="token punctuation">[</span>commitHash<span class="token punctuation">]</span>
+
+<span class="token comment"># 新建一个commit，用来撤销指定commit</span>
+<span class="token comment"># 后者的所有变化都将被前者抵消，并且应用到当前分支</span>
+$ git revert <span class="token punctuation">[</span>commitHash<span class="token punctuation">]</span>
+
+<span class="token comment"># 暂时将未提交的变化移除，稍后再移入</span>
+$ git stash
+$ git stash pop
+</code></pre></div><h3 id="合并两个分支：merge">合并两个分支：Merge</h3> <div class="language-python extra-class"><pre class="language-python"><code><span class="token comment"># 将开发分支代码合入到master中</span>
+
+git checkout dev           <span class="token comment">#切换到dev开发分支</span>
+git pull
+git checkout master
+git merge dev              <span class="token comment">#合并dev分支到master上</span>
+git push origin master     <span class="token comment">#将代码推到master上</span>
+
+<span class="token comment"># 将master的代码同步更新到开发分支中</span>
+
+git checkout master
+git pull
+git checkout dev
+git merge master
+git pull origin dev
+
+</code></pre></div><h3 id="将一个分支下的多个commit合并成一个">将一个分支下的多个commit合并成一个</h3> <p>场景：有时候我们修改一个Bug或者一段代码的时候，commit 一次之后，发现 Bug 没改对或者这段代码需要再优化之类的，改完之后又 commit 了一次或多次，这样就会感觉提交历史不太美观（有点强迫症），这个时候我们就希望只想保留一次提交历史记录，合并为一个完整的提交。或者是为了上线方便错误回滚，将多次开发的commit合并成一个.https://www.jianshu.com/p/571153f5daa1</p> <blockquote><p>git rebase 命令：将多次commit合并，只保留一次提交历史记录。</p></blockquote> <div class="language-js extra-class"><pre class="language-js"><code><span class="token number">1</span>、<span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">git log</span><span class="token template-punctuation string">`</span></span> 查看提交历史记录
+
+<span class="token function">选取到需要合并的指定记录</span><span class="token punctuation">(</span>一般是最早提交记录<span class="token punctuation">)</span>
+
+<span class="token number">2.</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">git rebase -i 10b73908</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">(</span><span class="token operator">-</span>i 后面跟的是提交记录的hash值<span class="token punctuation">)</span>
+
+<span class="token number">3.</span> 修改指定行的第一个单词 <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">pick</span><span class="token template-punctuation string">`</span></span> 为 <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">squash or s</span><span class="token template-punctuation string">`</span></span>，然后 输入：<span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">wq or x</span><span class="token template-punctuation string">`</span></span> <span class="token function">保存退出</span>
+
+<span class="token punctuation">(</span><span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">pick</span><span class="token template-punctuation string">`</span></span> 的意思是要执行这个 <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">commit</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">,</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">squash</span><span class="token template-punctuation string">`</span></span> 的意识是这个 <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">commit</span><span class="token template-punctuation string">`</span></span> 会被合并到前一个 <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">commit</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span>
+
+<span class="token number">4.</span> git 会压缩提交历史，若有冲突，需要进行修改，修改的时候保留最新的历史记录，修改完之后输入以下命令：
+
+<span class="token number">5.</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">git add .</span><span class="token template-punctuation string">`</span></span>
+
+<span class="token number">6.</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">git rebase --continue</span><span class="token template-punctuation string">`</span></span>
+
+<span class="token number">7.</span> 若想退出放弃此次压缩，执行命令：<span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">git rebase --abort</span><span class="token template-punctuation string">`</span></span>
+
+<span class="token number">8.</span> 若无冲突 <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">or</span><span class="token template-punctuation string">`</span></span> 冲突已 <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">fix</span><span class="token template-punctuation string">`</span></span>，则会出现一个 <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">commit message</span><span class="token template-punctuation string">`</span></span> 编辑页面，修改 <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">commit message</span><span class="token template-punctuation string">`</span></span> ，然后 输入：<span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">wq or x</span><span class="token template-punctuation string">`</span></span> 保存退出。
+
+<span class="token number">9.</span> 同步到远程 git 仓库 <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">git push -f</span><span class="token template-punctuation string">`</span></span>
+
+</code></pre></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">上次更新时间:</span> <span class="time">2020-06-04 12:10:00</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/docs/safe/" class="prev">
+        Web安全问题
+      </a></span> <span class="next"><a href="/docs/nginx/base.html">
+        Nginx相关知识
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"><div class="gitalk-container"><div id="gitalk-container"></div></div><div></div><!----></div></div>
+    <script src="/docs/assets/js/app.8bb7f38c.js" defer></script><script src="/docs/assets/js/2.346c741e.js" defer></script><script src="/docs/assets/js/52.036a427b.js" defer></script>
+  </body>
+</html>

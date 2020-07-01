@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>selenium 常用操作 | 前端工程师成长路线</title>
+    <meta name="generator" content="VuePress 1.5.0">
+    <link rel="icon" href="/docs/images/favicon.png">
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/bmob/hydrogen-js-sdk/dist/Bmob-2.2.4.min.js"></script>
+    <meta name="description" content="博客 分享 读后感 成长规划">
+    <meta name="theme-color" content="#00adb5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="msapplication-TileColor" content="#00adb5">
+    <meta itemprop="name" content="前端工程师成长路线">
+    <meta itemprop="image" content="/my-blogs/images/favicon.png">
+    <link rel="preload" href="/docs/assets/css/0.styles.574402e1.css" as="style"><link rel="preload" href="/docs/assets/js/app.8bb7f38c.js" as="script"><link rel="preload" href="/docs/assets/js/2.346c741e.js" as="script"><link rel="preload" href="/docs/assets/js/137.1f919695.js" as="script"><link rel="prefetch" href="/docs/assets/js/10.448efd45.js"><link rel="prefetch" href="/docs/assets/js/100.52b29356.js"><link rel="prefetch" href="/docs/assets/js/101.cd1f4c36.js"><link rel="prefetch" href="/docs/assets/js/102.59e88705.js"><link rel="prefetch" href="/docs/assets/js/103.2b54d112.js"><link rel="prefetch" href="/docs/assets/js/104.fae1d084.js"><link rel="prefetch" href="/docs/assets/js/105.1932bb9c.js"><link rel="prefetch" href="/docs/assets/js/106.4b8b8f95.js"><link rel="prefetch" href="/docs/assets/js/107.b9781ba6.js"><link rel="prefetch" href="/docs/assets/js/108.f69c6b38.js"><link rel="prefetch" href="/docs/assets/js/109.c8643528.js"><link rel="prefetch" href="/docs/assets/js/11.6b84f53c.js"><link rel="prefetch" href="/docs/assets/js/110.07d25ba7.js"><link rel="prefetch" href="/docs/assets/js/111.31f2b11f.js"><link rel="prefetch" href="/docs/assets/js/112.f349742f.js"><link rel="prefetch" href="/docs/assets/js/113.3fec3968.js"><link rel="prefetch" href="/docs/assets/js/114.08a5fea8.js"><link rel="prefetch" href="/docs/assets/js/115.f09e85c3.js"><link rel="prefetch" href="/docs/assets/js/116.f6da850c.js"><link rel="prefetch" href="/docs/assets/js/117.e5ff7776.js"><link rel="prefetch" href="/docs/assets/js/118.d3ba055c.js"><link rel="prefetch" href="/docs/assets/js/119.f98dd6ab.js"><link rel="prefetch" href="/docs/assets/js/12.8bcafd6e.js"><link rel="prefetch" href="/docs/assets/js/120.745a3e22.js"><link rel="prefetch" href="/docs/assets/js/121.eac2116d.js"><link rel="prefetch" href="/docs/assets/js/122.9e915c21.js"><link rel="prefetch" href="/docs/assets/js/123.1e6bec5d.js"><link rel="prefetch" href="/docs/assets/js/124.037e80df.js"><link rel="prefetch" href="/docs/assets/js/125.c21814b1.js"><link rel="prefetch" href="/docs/assets/js/126.6456119c.js"><link rel="prefetch" href="/docs/assets/js/127.0c09c34f.js"><link rel="prefetch" href="/docs/assets/js/128.3346daee.js"><link rel="prefetch" href="/docs/assets/js/129.f351ddb2.js"><link rel="prefetch" href="/docs/assets/js/13.4455f4e8.js"><link rel="prefetch" href="/docs/assets/js/130.0245f34b.js"><link rel="prefetch" href="/docs/assets/js/131.17edd525.js"><link rel="prefetch" href="/docs/assets/js/132.59c9d301.js"><link rel="prefetch" href="/docs/assets/js/133.884b352a.js"><link rel="prefetch" href="/docs/assets/js/134.4f12eb2c.js"><link rel="prefetch" href="/docs/assets/js/135.4ad34e04.js"><link rel="prefetch" href="/docs/assets/js/136.617c9a61.js"><link rel="prefetch" href="/docs/assets/js/138.4f1db5b4.js"><link rel="prefetch" href="/docs/assets/js/139.c8b01cd3.js"><link rel="prefetch" href="/docs/assets/js/14.3b0be226.js"><link rel="prefetch" href="/docs/assets/js/140.334825bd.js"><link rel="prefetch" href="/docs/assets/js/141.6841867e.js"><link rel="prefetch" href="/docs/assets/js/142.e72d2063.js"><link rel="prefetch" href="/docs/assets/js/143.70cd8cce.js"><link rel="prefetch" href="/docs/assets/js/144.75e9018e.js"><link rel="prefetch" href="/docs/assets/js/145.624f7426.js"><link rel="prefetch" href="/docs/assets/js/146.92b228fe.js"><link rel="prefetch" href="/docs/assets/js/147.d0275c5e.js"><link rel="prefetch" href="/docs/assets/js/148.7b0425f7.js"><link rel="prefetch" href="/docs/assets/js/149.92928bf2.js"><link rel="prefetch" href="/docs/assets/js/15.4b5d7343.js"><link rel="prefetch" href="/docs/assets/js/150.75888041.js"><link rel="prefetch" href="/docs/assets/js/151.70152a0e.js"><link rel="prefetch" href="/docs/assets/js/152.81c27cf2.js"><link rel="prefetch" href="/docs/assets/js/153.d5b7922b.js"><link rel="prefetch" href="/docs/assets/js/154.639b55a5.js"><link rel="prefetch" href="/docs/assets/js/155.d602a5bb.js"><link rel="prefetch" href="/docs/assets/js/156.b6966e82.js"><link rel="prefetch" href="/docs/assets/js/157.2e40a616.js"><link rel="prefetch" href="/docs/assets/js/158.f5e0ae1f.js"><link rel="prefetch" href="/docs/assets/js/159.57509c24.js"><link rel="prefetch" href="/docs/assets/js/16.9d0963b3.js"><link rel="prefetch" href="/docs/assets/js/160.2e078fe2.js"><link rel="prefetch" href="/docs/assets/js/161.c0f6c9be.js"><link rel="prefetch" href="/docs/assets/js/162.d2a9c87b.js"><link rel="prefetch" href="/docs/assets/js/163.470653e8.js"><link rel="prefetch" href="/docs/assets/js/164.0ff827a4.js"><link rel="prefetch" href="/docs/assets/js/165.49df0c4a.js"><link rel="prefetch" href="/docs/assets/js/166.c0e049c3.js"><link rel="prefetch" href="/docs/assets/js/167.abc57592.js"><link rel="prefetch" href="/docs/assets/js/168.dfe496d2.js"><link rel="prefetch" href="/docs/assets/js/169.c0c8808d.js"><link rel="prefetch" href="/docs/assets/js/17.95b7e490.js"><link rel="prefetch" href="/docs/assets/js/170.af5fa4f7.js"><link rel="prefetch" href="/docs/assets/js/171.9aeb6fb0.js"><link rel="prefetch" href="/docs/assets/js/172.dbc06008.js"><link rel="prefetch" href="/docs/assets/js/173.d85d8eaf.js"><link rel="prefetch" href="/docs/assets/js/174.87137bbe.js"><link rel="prefetch" href="/docs/assets/js/175.04de97f1.js"><link rel="prefetch" href="/docs/assets/js/176.3c85bda2.js"><link rel="prefetch" href="/docs/assets/js/177.a5de78c2.js"><link rel="prefetch" href="/docs/assets/js/178.4a881e8c.js"><link rel="prefetch" href="/docs/assets/js/179.fe138678.js"><link rel="prefetch" href="/docs/assets/js/18.ca0afb77.js"><link rel="prefetch" href="/docs/assets/js/180.18ff978f.js"><link rel="prefetch" href="/docs/assets/js/19.981481df.js"><link rel="prefetch" href="/docs/assets/js/20.6e80cd2d.js"><link rel="prefetch" href="/docs/assets/js/21.c0ec8375.js"><link rel="prefetch" href="/docs/assets/js/22.648850d3.js"><link rel="prefetch" href="/docs/assets/js/23.73ed5316.js"><link rel="prefetch" href="/docs/assets/js/24.768a95fb.js"><link rel="prefetch" href="/docs/assets/js/25.b460e9a9.js"><link rel="prefetch" href="/docs/assets/js/26.61c56597.js"><link rel="prefetch" href="/docs/assets/js/27.2bbfe116.js"><link rel="prefetch" href="/docs/assets/js/28.efc0814f.js"><link rel="prefetch" href="/docs/assets/js/29.8bebb742.js"><link rel="prefetch" href="/docs/assets/js/3.f0b9dcd8.js"><link rel="prefetch" href="/docs/assets/js/30.e6180f81.js"><link rel="prefetch" href="/docs/assets/js/31.791f6adb.js"><link rel="prefetch" href="/docs/assets/js/32.59f79bfb.js"><link rel="prefetch" href="/docs/assets/js/33.24072082.js"><link rel="prefetch" href="/docs/assets/js/34.9cc3face.js"><link rel="prefetch" href="/docs/assets/js/35.f5942d3c.js"><link rel="prefetch" href="/docs/assets/js/36.9664a07b.js"><link rel="prefetch" href="/docs/assets/js/37.12a8e708.js"><link rel="prefetch" href="/docs/assets/js/38.0c48b0a9.js"><link rel="prefetch" href="/docs/assets/js/39.9d41280d.js"><link rel="prefetch" href="/docs/assets/js/4.0f806da2.js"><link rel="prefetch" href="/docs/assets/js/40.2ee80385.js"><link rel="prefetch" href="/docs/assets/js/41.fefef9e9.js"><link rel="prefetch" href="/docs/assets/js/42.f6d801aa.js"><link rel="prefetch" href="/docs/assets/js/43.51c3e56f.js"><link rel="prefetch" href="/docs/assets/js/44.a096b57c.js"><link rel="prefetch" href="/docs/assets/js/45.2d938602.js"><link rel="prefetch" href="/docs/assets/js/46.5462b19e.js"><link rel="prefetch" href="/docs/assets/js/47.3693a81a.js"><link rel="prefetch" href="/docs/assets/js/48.1d984385.js"><link rel="prefetch" href="/docs/assets/js/49.75eb0693.js"><link rel="prefetch" href="/docs/assets/js/5.7088cd54.js"><link rel="prefetch" href="/docs/assets/js/50.06ea30e6.js"><link rel="prefetch" href="/docs/assets/js/51.95767db4.js"><link rel="prefetch" href="/docs/assets/js/52.036a427b.js"><link rel="prefetch" href="/docs/assets/js/53.03e8160e.js"><link rel="prefetch" href="/docs/assets/js/54.3f89c021.js"><link rel="prefetch" href="/docs/assets/js/55.ee276a6b.js"><link rel="prefetch" href="/docs/assets/js/56.8f841dda.js"><link rel="prefetch" href="/docs/assets/js/57.ddc66f28.js"><link rel="prefetch" href="/docs/assets/js/58.8ffe2d5a.js"><link rel="prefetch" href="/docs/assets/js/59.5adb1a11.js"><link rel="prefetch" href="/docs/assets/js/6.aa27b4b3.js"><link rel="prefetch" href="/docs/assets/js/60.1152a6b2.js"><link rel="prefetch" href="/docs/assets/js/61.abef8004.js"><link rel="prefetch" href="/docs/assets/js/62.51c7286d.js"><link rel="prefetch" href="/docs/assets/js/63.73db51c7.js"><link rel="prefetch" href="/docs/assets/js/64.f121b763.js"><link rel="prefetch" href="/docs/assets/js/65.76ef0090.js"><link rel="prefetch" href="/docs/assets/js/66.a39ac5ac.js"><link rel="prefetch" href="/docs/assets/js/67.499d3620.js"><link rel="prefetch" href="/docs/assets/js/68.7c04c7a8.js"><link rel="prefetch" href="/docs/assets/js/69.e58396ea.js"><link rel="prefetch" href="/docs/assets/js/7.6653ed24.js"><link rel="prefetch" href="/docs/assets/js/70.2ce6d316.js"><link rel="prefetch" href="/docs/assets/js/71.80443b6f.js"><link rel="prefetch" href="/docs/assets/js/72.f224489d.js"><link rel="prefetch" href="/docs/assets/js/73.0f73eb62.js"><link rel="prefetch" href="/docs/assets/js/74.a6215b26.js"><link rel="prefetch" href="/docs/assets/js/75.1dd84ab6.js"><link rel="prefetch" href="/docs/assets/js/76.f706d67e.js"><link rel="prefetch" href="/docs/assets/js/77.583d7e47.js"><link rel="prefetch" href="/docs/assets/js/78.add671e4.js"><link rel="prefetch" href="/docs/assets/js/79.6fc1e8ae.js"><link rel="prefetch" href="/docs/assets/js/8.a8d55efb.js"><link rel="prefetch" href="/docs/assets/js/80.ac37b44e.js"><link rel="prefetch" href="/docs/assets/js/81.22269b9e.js"><link rel="prefetch" href="/docs/assets/js/82.5e87105a.js"><link rel="prefetch" href="/docs/assets/js/83.f55d61be.js"><link rel="prefetch" href="/docs/assets/js/84.3b7083e8.js"><link rel="prefetch" href="/docs/assets/js/85.d8377c9b.js"><link rel="prefetch" href="/docs/assets/js/86.28cdec66.js"><link rel="prefetch" href="/docs/assets/js/87.fd7dd7b0.js"><link rel="prefetch" href="/docs/assets/js/88.58af6bb1.js"><link rel="prefetch" href="/docs/assets/js/89.ed215de5.js"><link rel="prefetch" href="/docs/assets/js/9.7d808dd7.js"><link rel="prefetch" href="/docs/assets/js/90.c3b9fbf3.js"><link rel="prefetch" href="/docs/assets/js/91.c6810a41.js"><link rel="prefetch" href="/docs/assets/js/92.e69c17dd.js"><link rel="prefetch" href="/docs/assets/js/93.d9e89cf9.js"><link rel="prefetch" href="/docs/assets/js/94.ba85fb71.js"><link rel="prefetch" href="/docs/assets/js/95.94198768.js"><link rel="prefetch" href="/docs/assets/js/96.9307b34d.js"><link rel="prefetch" href="/docs/assets/js/97.01aac265.js"><link rel="prefetch" href="/docs/assets/js/98.26a09d18.js"><link rel="prefetch" href="/docs/assets/js/99.241e2c4b.js">
+    <link rel="stylesheet" href="/docs/assets/css/0.styles.574402e1.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/docs/" class="home-link router-link-active"><!----> <span class="site-name">前端工程师成长路线</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/docs/python/.html" class="nav-link">
+  css tricks
+</a></div><div class="nav-item"><a href="/docs/python/.html" class="nav-link">
+  js tricks
+</a></div> <a href="https://github.com/xjl271314/docs" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/docs/python/.html" class="nav-link">
+  css tricks
+</a></div><div class="nav-item"><a href="/docs/python/.html" class="nav-link">
+  js tricks
+</a></div> <a href="https://github.com/xjl271314/docs" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><a href="/docs/dom/" class="sidebar-link">文档对象模型DOM</a></li><li><a href="/docs/bom/" class="sidebar-link">浏览器对象 BOM</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>javaScript基础知识</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>javaScript高级技巧</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/docs/es/" class="sidebar-link">ES6到ES11特性总结</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>CSS相关知识</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Svg相关知识</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/docs/http/" class="sidebar-link">HTTP相关知识</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>前端工程化</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/docs/safe/" class="sidebar-link">Web安全问题</a></li><li><a href="/docs/git/" class="sidebar-link">git相关知识</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>nginx</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>TypeScript</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>移动端知识</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>React</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Vue</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Electron</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Mysql</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Node.js</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>Python</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/docs/python/base.html" class="sidebar-link">基础知识</a></li><li><a href="/docs/python/pip.html" class="sidebar-link">解决pip安装超时</a></li><li><a href="/docs/python/pillow.html" class="sidebar-link">Pillow的介绍与使用</a></li><li><a href="/docs/python/os.html" class="sidebar-link">os模块使用详解</a></li><li><a href="/docs/python/selenium.html" class="active sidebar-link">selenium 常用操作</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#安装与配置" class="sidebar-link">安装与配置</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#基本使用" class="sidebar-link">基本使用</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#xpath知识补充" class="sidebar-link">Xpath知识补充</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#匹配单个标签" class="sidebar-link">匹配单个标签</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#匹配多个标签" class="sidebar-link">匹配多个标签</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#父子、兄弟、相邻节点定位方式详解" class="sidebar-link">父子、兄弟、相邻节点定位方式详解</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#模拟鼠标操作" class="sidebar-link">模拟鼠标操作</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#模拟键盘操作" class="sidebar-link">模拟键盘操作</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#处理多个窗口" class="sidebar-link">处理多个窗口</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#执行js脚本" class="sidebar-link">执行js脚本</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#处理显示和隐式等待" class="sidebar-link">处理显示和隐式等待</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#一些常用的user-agent" class="sidebar-link">一些常用的user-agent</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#处理登录后的cookie" class="sidebar-link">处理登录后的cookie</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#常用构造滑块验证移动规矩" class="sidebar-link">常用构造滑块验证移动规矩</a></li><li class="sidebar-sub-header"><a href="/docs/python/selenium.html#多进程爬虫示例" class="sidebar-link">多进程爬虫示例</a></li></ul></li><li><a href="/docs/python/utils.html" class="sidebar-link">常用工具函数</a></li><li><a href="/docs/python/pandas.html" class="sidebar-link">pandas 概述</a></li><li><section class="sidebar-group collapsable is-sub-group depth-1"><p class="sidebar-heading"><span>文件处理相关</span> <span class="arrow right"></span></p> <!----></section></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Redis</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/docs/bff/" class="sidebar-link">BFF</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>开放性问题</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>即时通讯</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>浏览器插件扩展</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>算法</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>工具</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="selenium-常用操作">selenium 常用操作</h1> <ul><li>2020.06.16</li></ul> <blockquote><p><code>selenium</code>是一款自动化测试利器，可以自动化模拟人的浏览器操作行为，所以也常用于网络爬虫。</p></blockquote> <h2 id="安装与配置">安装与配置</h2> <h3 id="安装">安装</h3> <div class="language-py extra-class"><pre class="language-py"><code>pip install selenium
+</code></pre></div><h3 id="配置">配置</h3> <p>当我们使用<code>selenium</code>用来爬取数据的时候，需要安装对应浏览器下的driver插件。</p> <p>以<code>Chrome</code>为例，需要到 <code>http://chromedriver.chromium.org/downloads</code>下载的时候注意当前的浏览器版本和<code>driver</code>插件版本需要对应 否则无法正常的运行。</p> <h2 id="基本使用">基本使用</h2> <p>罗列一些常用的方法。</p> <div class="language-py extra-class"><pre class="language-py"><code><span class="token comment"># 导入webdriver模块</span>
+<span class="token keyword">from</span> selenium <span class="token keyword">import</span> webdriver   
+
+<span class="token comment"># firefox加载器地址</span>
+firefox_path <span class="token operator">=</span> <span class="token string">r'/Users/xjlmacbookpro/geckodriver'</span>
+
+<span class="token comment"># 限制图片的加载</span>
+fp <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>FirefoxProfile<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token comment"># 设置不显示图片</span>
+fp<span class="token punctuation">.</span>set_preference<span class="token punctuation">(</span><span class="token string">&quot;permissions.default.image&quot;</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span>
+<span class="token comment"># 设置可以执行javascript脚本</span>
+fp<span class="token punctuation">.</span>set_preference<span class="token punctuation">(</span><span class="token string">&quot;javascript.enabled&quot;</span><span class="token punctuation">,</span> <span class="token boolean">True</span><span class="token punctuation">)</span>
+<span class="token comment"># 配置firefox drive</span>
+driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Firefox<span class="token punctuation">(</span>firefox_profile<span class="token operator">=</span>fp<span class="token punctuation">,</span> executable_path<span class="token operator">=</span>firefox_path<span class="token punctuation">)</span>
+<span class="token comment"># 隐性等待，最长等20秒 20秒之内只要找到了就执行 20秒后未找到 就超时</span>
+driver<span class="token punctuation">.</span>implicitly_wait<span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span>
+<span class="token comment"># 获取指定url地址</span>
+driver<span class="token punctuation">.</span>get<span class="token punctuation">(</span>url<span class="token punctuation">)</span>
+
+<span class="token comment"># chromedriver 加载器地址</span>
+chrome_path <span class="token operator">=</span> <span class="token string">r'/Users/xjlmacbookpro/chromedriver'</span>
+
+<span class="token comment"># 设置chrome启动参数</span>
+options <span class="token operator">=</span> init_chrome_options<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token comment"># 设置driver</span>
+driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Chrome<span class="token punctuation">(</span>executable_path<span class="token operator">=</span>chrome_path<span class="token punctuation">,</span> chrome_options<span class="token operator">=</span>options<span class="token punctuation">)</span>
+<span class="token comment"># 打开指定url</span>
+driver<span class="token punctuation">.</span>get<span class="token punctuation">(</span>url<span class="token punctuation">)</span>
+
+<span class="token comment"># 返回爬取需要设置的chrome扩展</span>
+<span class="token keyword">def</span> <span class="token function">init_chrome_options</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    options <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>ChromeOptions<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token comment"># 去掉chrome正在受到自动测试软件的控制的 提示</span>
+    options<span class="token punctuation">.</span>add_argument<span class="token punctuation">(</span><span class="token string">'disable-infobars'</span><span class="token punctuation">)</span>
+    <span class="token comment"># 启动浏览器最大化</span>
+    options<span class="token punctuation">.</span>add_argument<span class="token punctuation">(</span><span class="token string">&quot;--start-maximized&quot;</span><span class="token punctuation">)</span>
+    <span class="token comment"># 设置user-agent</span>
+    options<span class="token punctuation">.</span>add_argument<span class="token punctuation">(</span>
+        <span class="token string">'user-agent=&quot;Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.75 Safari/537.36&quot;'</span><span class="token punctuation">)</span>
+    <span class="token comment"># 设置Content-Type</span>
+    options<span class="token punctuation">.</span>add_argument<span class="token punctuation">(</span>
+        <span class="token string">'content-type=&quot;application/x-www-form-urlencoded; charset=UTF-8&quot;'</span><span class="token punctuation">)</span>
+    <span class="token comment"># 设置以开发者模式打开</span>
+    options<span class="token punctuation">.</span>add_experimental_option<span class="token punctuation">(</span><span class="token string">'excludeSwitches'</span><span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token string">'enable-automation'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">return</span> options
+
+<span class="token comment"># 关闭页面</span>
+driver<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span> 
+
+<span class="token comment"># 关闭整个浏览器</span>
+driver<span class="token punctuation">.</span>quit<span class="token punctuation">(</span><span class="token punctuation">)</span> 
+</code></pre></div><h2 id="xpath知识补充">Xpath知识补充</h2> <blockquote><p><code>xpath</code>是<code>XML路径语言</code>，它可以用来确定<code>xml</code>文档中的元素位置，通过元素的路径来完成对元素的查找。<code>HTML</code>就是<code>XML</code>的一种实现方式，所以<code>xpath</code>是一种非常强大的定位方式。</p></blockquote> <p><code>xpath</code>也分几种不同类型的定位方法。</p> <ul><li><code>绝对路径定位</code>。这种定位方式是利用html标签名的层级关系来定位元素的绝对路径，一般从<code>&lt;html&gt;</code>标签开始依次往下进行查找。</li></ul> <div class="language-py extra-class"><pre class="language-py"><code>driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;/html/body/div[1]/div[1]/div/div[1]/div/form/span[1]/input&quot;</span><span class="token punctuation">)</span>
+</code></pre></div><ul><li><code>相对路径定位</code>。从根元素写起，当元素层级很深的时候，路径写的会很长，阅读性不好，也很难维护。这时推荐使用相对路径，这种是利用元素属性来进行xpath定位。</li></ul> <div class="language-py extra-class"><pre class="language-py"><code><span class="token comment"># 表示 整个文档当中的id属性为id的input标签 默认为第一个  * 第一个“//” 表示 在整个文档中 </span>
+driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//input[@id='id']&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 指定页面中的第二个 input框 没有就报错 所以查找的时候 可以使用 try ... except ....</span>
+driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//input[2]&quot;</span><span class="token punctuation">)</span> 
+
+<span class="token comment"># 返回input的父节点 form 标签</span>
+driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//form//input/..&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 返回form下input的当前节点</span>
+driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//form//input/.&quot;</span><span class="token punctuation">)</span>
+</code></pre></div><h2 id="匹配单个标签">匹配单个标签</h2> <p>selenium提供了多种方式可以找到指定的元素。</p> <div class="language-py extra-class"><pre class="language-py"><code>driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Chrome<span class="token punctuation">(</span>executable_path<span class="token operator">=</span>chrome_path<span class="token punctuation">,</span> chrome_options<span class="token operator">=</span>options<span class="token punctuation">)</span>
+
+<span class="token comment"># 通过id定位</span>
+driver<span class="token punctuation">.</span>find_element_by_id<span class="token punctuation">(</span><span class="token string">&quot;id&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过name属性定位</span>
+driver<span class="token punctuation">.</span>find_element_by_name<span class="token punctuation">(</span><span class="token string">&quot;name&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过class属性定位</span>
+driver<span class="token punctuation">.</span>find_element_by_class_name<span class="token punctuation">(</span><span class="token string">&quot;classname&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过标签类型名定位</span>
+driver<span class="token punctuation">.</span>find_element_by_tag_name<span class="token punctuation">(</span><span class="token string">&quot;tagname&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过匹配a标签内部的text文本属性来定位 仅支持a标签</span>
+driver<span class="token punctuation">.</span>find_element_by_link_text<span class="token punctuation">(</span><span class="token string">&quot;a标签中的内容 准确定位&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过匹配a标签内部的text文本属性来定位 仅支持a标签 采用模糊查询 比如a标签内 康师傅 可以用康来模糊匹配</span>
+driver<span class="token punctuation">.</span>find_element_by_partial_link_text<span class="token punctuation">(</span><span class="token string">&quot;a标签中的内容 模糊定位 &quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过强大的xpath进行定位</span>
+driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;xpath&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过css表达式进行定位</span>
+driver<span class="token punctuation">.</span>find_element_by_css_selector<span class="token punctuation">(</span><span class="token string">&quot;css表达式&quot;</span><span class="token punctuation">)</span>
+</code></pre></div><h2 id="匹配多个标签">匹配多个标签</h2> <p>上述匹配单个标签的方法均存在对应的匹配多标签的方法,匹配多个标签常用于处理一些列表及共性的元素。</p> <div class="language-py extra-class"><pre class="language-py"><code>driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Chrome<span class="token punctuation">(</span>executable_path<span class="token operator">=</span>chrome_path<span class="token punctuation">,</span> chrome_options<span class="token operator">=</span>options<span class="token punctuation">)</span>
+
+<span class="token comment"># 通过id定位</span>
+driver<span class="token punctuation">.</span>find_elements_by_id<span class="token punctuation">(</span><span class="token string">&quot;id&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过name属性定位</span>
+driver<span class="token punctuation">.</span>find_elements_by_name<span class="token punctuation">(</span><span class="token string">&quot;name&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过class属性定位</span>
+driver<span class="token punctuation">.</span>find_elements_by_class_name<span class="token punctuation">(</span><span class="token string">&quot;classname&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过标签类型名定位</span>
+driver<span class="token punctuation">.</span>find_elements_by_tag_name<span class="token punctuation">(</span><span class="token string">&quot;tagname&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过匹配a标签内部的text文本属性来定位 仅支持a标签</span>
+driver<span class="token punctuation">.</span>find_elements_by_link_text<span class="token punctuation">(</span><span class="token string">&quot;a标签中的内容 准确定位&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过匹配a标签内部的text文本属性来定位 仅支持a标签 采用模糊查询 比如a标签内 康师傅 可以用康来模糊匹配</span>
+driver<span class="token punctuation">.</span>find_elements_by_partial_link_text<span class="token punctuation">(</span><span class="token string">&quot;a标签中的内容 模糊定位 &quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过强大的xpath进行定位</span>
+driver<span class="token punctuation">.</span>find_elements_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;xpath&quot;</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 通过css表达式进行定位</span>
+driver<span class="token punctuation">.</span>find_elements_by_css_selector<span class="token punctuation">(</span><span class="token string">&quot;css表达式&quot;</span><span class="token punctuation">)</span>
+</code></pre></div><h2 id="父子、兄弟、相邻节点定位方式详解">父子、兄弟、相邻节点定位方式详解</h2> <p>有些时候我们经常需要通过定位某个元素，然后找到对应的相邻节点等。</p> <h3 id="_1-由父节点定位子节点">1. 由父节点定位子节点</h3> <p>最简单的肯定就是由父节点定位子节点了，举个例子：</p> <div class="language-html extra-class"><pre class="language-html"><code><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>A<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token comment">&lt;!--父节点定位子节点--&gt;</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>B<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">&gt;</span></span>parent to child<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre></div><p>想要根据 B节点 定位无id的子节点，代码示例如下:</p> <div class="language-py extra-class"><pre class="language-py"><code><span class="token comment"># -*- coding: utf-8 -*-</span>
+<span class="token keyword">from</span> selenium <span class="token keyword">import</span> webdriver
+
+driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Chrome<span class="token punctuation">(</span>executable_path<span class="token operator">=</span>chrome_path<span class="token punctuation">,</span> chrome_options<span class="token operator">=</span>options<span class="token punctuation">)</span>
+driver<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'test.html'</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 1.串联寻找</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_id<span class="token punctuation">(</span><span class="token string">'B'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>find_element_by_tag_name<span class="token punctuation">(</span><span class="token string">'div'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+<span class="token comment"># 2.xpath父子关系寻找</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//div[@id='B']/div&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+<span class="token comment"># 3.css selector父子关系寻找</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_css_selector<span class="token punctuation">(</span><span class="token string">'div#B&gt;div'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+<span class="token comment"># 4.css selector nth-child</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_css_selector<span class="token punctuation">(</span><span class="token string">'div#B div:nth-child(1)'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+<span class="token comment"># 5.css selector nth-of-type</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_css_selector<span class="token punctuation">(</span><span class="token string">'div#B div:nth-of-type(1)'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+<span class="token comment"># 6.xpath轴 child</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//div[@id='B']/child::div&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+driver<span class="token punctuation">.</span>quit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre></div><h3 id="_2-由子节点定位父节点">2. 由子节点定位父节点</h3> <p>由子节点想要定位到父节点就有点难度了，对以下代码：</p> <div class="language-html extra-class"><pre class="language-html"><code><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>A<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token comment">&lt;!--子节点定位父节点--&gt;</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">&gt;</span></span>child to parent
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">&gt;</span></span>
+                <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>C<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre></div><p>我们想要由 C节点 定位其两层父节点的div，示例代码如下：</p> <div class="language-py extra-class"><pre class="language-py"><code><span class="token comment"># -*- coding: utf-8 -*-</span>
+<span class="token keyword">from</span> selenium <span class="token keyword">import</span> webdriver
+
+driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Chrome<span class="token punctuation">(</span>executable_path<span class="token operator">=</span>chrome_path<span class="token punctuation">,</span> chrome_options<span class="token operator">=</span>options<span class="token punctuation">)</span>
+driver<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'test.html'</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 1.xpath: `.`代表当前节点; '..'代表父节点</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//div[@id='C']/../..&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+<span class="token comment"># 2.xpath轴 parent</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//div[@id='C']/parent::*/parent::div&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+driver<span class="token punctuation">.</span>quit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre></div><h3 id="_3-由弟弟节点定位哥哥节点">3. 由弟弟节点定位哥哥节点</h3> <p>我们这里要定位的是兄弟节点了。如以下：</p> <div class="language-html extra-class"><pre class="language-html"><code><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>A<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span>
+    <span class="token comment">&lt;!--下面两个节点用于兄弟节点定位--&gt;</span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">&gt;</span></span>brother 1<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">id</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>D<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span><span class="token punctuation">&gt;</span></span>brother 2<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre></div><p>怎么通过 D节点 定位其哥哥节点呢？看代码示例：</p> <div class="language-py extra-class"><pre class="language-py"><code><span class="token comment"># -*- coding: utf-8 -*-</span>
+<span class="token keyword">from</span> selenium <span class="token keyword">import</span> webdriver
+
+driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Chrome<span class="token punctuation">(</span>executable_path<span class="token operator">=</span>chrome_path<span class="token punctuation">,</span> chrome_options<span class="token operator">=</span>options<span class="token punctuation">)</span>
+driver<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token string">'test.html'</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 1.xpath,通过父节点获取其哥哥节点</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//div[@id='D']/../div[1]&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+<span class="token comment"># 2.xpath轴 preceding-sibling 能够获取当前节点的所有同级哥哥节点，注意括号里的标号，1 代表着离当前节点最近的一个哥哥节点，数字越大表示离当前节点越远</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//div[@id='D']/preceding-sibling::div[1]&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+driver<span class="token punctuation">.</span>quit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre></div><h3 id="_4-由哥哥节点定位弟弟节点">4. 由哥哥节点定位弟弟节点</h3> <p>通过 D节点 定位其弟弟节点，看代码示例：</p> <div class="language-py extra-class"><pre class="language-py"><code><span class="token comment"># -*- coding: utf-8 -*-</span>
+<span class="token keyword">from</span> selenium <span class="token keyword">import</span> webdriver
+
+driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Chrome<span class="token punctuation">(</span>executable_path<span class="token operator">=</span>chrome_path<span class="token punctuation">,</span> chrome_options<span class="token operator">=</span>options<span class="token punctuation">)</span>
+driver<span class="token punctuation">.</span>get<span class="token punctuation">(</span>test<span class="token punctuation">.</span>html'<span class="token punctuation">)</span>
+
+<span class="token comment"># 1.xpath，通过父节点获取其弟弟节点</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//div[@id='D']/../div[3]&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+<span class="token comment"># 2.xpath轴 following-sibling 获取当前节点的所有同级弟弟节点，同样，1 代表离当前节点最近的一个弟弟节点，数字越大表示离当前节点越远</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//div[@id='D']/following-sibling::div[1]&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+<span class="token comment"># 3.xpath轴 following</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_xpath<span class="token punctuation">(</span><span class="token string">&quot;//div[@id='D']/following::*&quot;</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+<span class="token comment"># 4.css selector +</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_css_selector<span class="token punctuation">(</span><span class="token string">'div#D + div'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+<span class="token comment"># 5.css selector ~</span>
+<span class="token keyword">print</span> driver<span class="token punctuation">.</span>find_element_by_css_selector<span class="token punctuation">(</span><span class="token string">'div#D ~ div'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>text
+
+driver<span class="token punctuation">.</span>quit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre></div><h3 id="xpath、css定位速查表">XPath、CSS定位速查表</h3> <table><thead><tr><th style="text-align:left;">描述</th> <th style="text-align:left;">XPath</th> <th style="text-align:left;">CSS</th></tr></thead> <tbody><tr><td style="text-align:left;">直接子元素</td> <td style="text-align:left;">//div/p</td> <td style="text-align:left;">div &gt; p</td></tr> <tr><td style="text-align:left;">子元素或后代元素</td> <td style="text-align:left;">//div//p</td> <td style="text-align:left;">div p</td></tr> <tr><td style="text-align:left;">以id定位</td> <td style="text-align:left;">//div[@id=’idValue’]//a</td> <td style="text-align:left;">div#idValue a</td></tr> <tr><td style="text-align:left;">以class定位</td> <td style="text-align:left;">//div[@class=’classValue’]//a</td> <td style="text-align:left;">div.classValue a</td></tr> <tr><td style="text-align:left;">同级弟弟元素</td> <td style="text-align:left;">//ul/li[@class=’first’]/following-sibling::li</td> <td style="text-align:left;">ul&gt;li.first + li</td></tr> <tr><td style="text-align:left;">属性</td> <td style="text-align:left;">//form/input[@name=’username’]</td> <td style="text-align:left;">form input[name=’username’]</td></tr> <tr><td style="text-align:left;">多个属性</td> <td style="text-align:left;">//input[@name=’continue’ and @type=‘button’]</td> <td style="text-align:left;">input[name=’continue’][type=’button’]</td></tr> <tr><td style="text-align:left;">第n个子元素</td> <td style="text-align:left;">//ul[@id=’list’]/li[n]</td> <td style="text-align:left;">ul#list li:nth-child(n)</td></tr> <tr><td style="text-align:left;">第1个子元素</td> <td style="text-align:left;">//ul[@id=’list’]/li[1]</td> <td style="text-align:left;">ul#list li:first-child</td></tr> <tr><td style="text-align:left;">最后1个子元素</td> <td style="text-align:left;">//ul[@id=’list’]/li[last()]</td> <td style="text-align:left;">ul#list li:last-child</td></tr> <tr><td style="text-align:left;">属性包含某字段</td> <td style="text-align:left;">//div[contains(@title,’Title’)]</td> <td style="text-align:left;">div[title*=”Title”]</td></tr> <tr><td style="text-align:left;">属性以某字段开头</td> <td style="text-align:left;">//input[starts-with(@name,’user’)]</td> <td style="text-align:left;">input[name^=”user”]</td></tr> <tr><td style="text-align:left;">属性以某字段结尾</td> <td style="text-align:left;">//input[ends-with(@name,’name’)]</td> <td style="text-align:left;">input[name$=”name”]</td></tr> <tr><td style="text-align:left;">text中包含某字段</td> <td style="text-align:left;">//div[contains(text(), 'text')]</td> <td style="text-align:left;">无法定位</td></tr> <tr><td style="text-align:left;">元素有某属性</td> <td style="text-align:left;">//div[@title]</td> <td style="text-align:left;">div[title]</td></tr> <tr><td style="text-align:left;">父节点</td> <td style="text-align:left;">//div/..</td> <td style="text-align:left;">无法定位</td></tr> <tr><td style="text-align:left;">同级哥哥节点</td> <td style="text-align:left;">//li/preceding-sibling::div[1]</td> <td style="text-align:left;">无法定位</td></tr></tbody></table> <p><strong>使用selenium爬取数据的时候有时需要一些交互比如点击、滚动、缩放等，这时候就要使用到其提供的模拟事件。</strong></p> <h2 id="模拟鼠标操作">模拟鼠标操作</h2> <div class="language-py extra-class"><pre class="language-py"><code><span class="token keyword">from</span> selenium <span class="token keyword">import</span> webdriver
+<span class="token comment"># 鼠标事件模块</span>
+<span class="token keyword">from</span> selenium<span class="token punctuation">.</span>webdriver <span class="token keyword">import</span> ActionChains
+
+driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Chrome<span class="token punctuation">(</span>executable_path<span class="token operator">=</span>chrome_path<span class="token punctuation">,</span> chrome_options<span class="token operator">=</span>options<span class="token punctuation">)</span>
+
+obj <span class="token operator">=</span> driver<span class="token punctuation">.</span>find_element_by_tag_name<span class="token punctuation">(</span><span class="token string">'a'</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 存储当前行为</span>
+action <span class="token operator">=</span> ActionChains<span class="token punctuation">(</span>driver<span class="token punctuation">)</span>
+
+<span class="token comment"># 模拟a标签的hover事件</span>
+action<span class="token punctuation">.</span>move_to_element<span class="token punctuation">(</span>obj<span class="token punctuation">)</span><span class="token punctuation">.</span>perform<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 鼠标移动到指定的坐标上，参数接受 driverElement, x, y 模拟单击事件</span>
+action<span class="token punctuation">.</span>move_to_element_with_offset<span class="token punctuation">(</span>obj<span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">.</span>click<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>perform<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 鼠标移动到指定的坐标上，参数接受 driverElement, x, y 模拟双击事件</span>
+action<span class="token punctuation">.</span>move_to_element_with_offset<span class="token punctuation">(</span>obj<span class="token punctuation">,</span> <span class="token number">5</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">.</span>double_click<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>perform<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 模拟鼠标右击</span>
+action<span class="token punctuation">.</span>move_to_element<span class="token punctuation">(</span>obj<span class="token punctuation">)</span><span class="token punctuation">.</span>countext_lick<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>perform<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 模拟元素拖动</span>
+action<span class="token punctuation">.</span>move_to_element<span class="token punctuation">(</span>obj<span class="token punctuation">)</span><span class="token punctuation">.</span>drag_and_drop<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>perform<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 模拟按住鼠标左键不动</span>
+action<span class="token punctuation">.</span>move_to_element<span class="token punctuation">(</span>obj<span class="token punctuation">)</span><span class="token punctuation">.</span>click_and_hold<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>perform<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre></div><h2 id="模拟键盘操作">模拟键盘操作</h2> <div class="language-py extra-class"><pre class="language-py"><code><span class="token comment"># 键盘事件</span>
+<span class="token keyword">from</span> selenium<span class="token punctuation">.</span>webdriver<span class="token punctuation">.</span>common<span class="token punctuation">.</span>keys <span class="token keyword">import</span> Keys
+
+<span class="token comment"># 用户名输入框</span>
+account_input <span class="token operator">=</span> driver<span class="token punctuation">.</span>find_element_by_css_selector<span class="token punctuation">(</span><span class="token string">'input#account'</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 清空输入框</span>
+account_input<span class="token punctuation">.</span>clear<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 输入自定义内容</span>
+account_input<span class="token punctuation">.</span>send_keys<span class="token punctuation">(</span><span class="token string">'112233'</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 输入退格键</span>
+account_input<span class="token punctuation">.</span>send_keys<span class="token punctuation">(</span>Keys<span class="token punctuation">.</span>BACK_SPANCE<span class="token punctuation">)</span>  
+
+<span class="token comment"># 执行自定义指令</span>
+account_input<span class="token punctuation">.</span>send_keys<span class="token punctuation">(</span>Keys<span class="token punctuation">.</span>CONTRL<span class="token punctuation">,</span><span class="token string">'a'</span><span class="token punctuation">)</span>  <span class="token comment"># 全选</span>
+ 
+account_input<span class="token punctuation">.</span>send_keys<span class="token punctuation">(</span>Keys<span class="token punctuation">.</span>CONTRL<span class="token punctuation">,</span><span class="token string">'v'</span><span class="token punctuation">)</span>  <span class="token comment"># 粘贴</span>
+ 
+account_input<span class="token punctuation">.</span>send_keys<span class="token punctuation">(</span>Keys<span class="token punctuation">.</span>CONTRL<span class="token punctuation">,</span><span class="token string">'c'</span><span class="token punctuation">)</span>  <span class="token comment"># 复制</span>
+ 
+account_input<span class="token punctuation">.</span>send_keys<span class="token punctuation">(</span>Keys<span class="token punctuation">.</span>CONTRL<span class="token punctuation">,</span><span class="token string">'x'</span><span class="token punctuation">)</span>  <span class="token comment"># 剪切</span>
+ 
+account_input<span class="token punctuation">.</span>send_keys<span class="token punctuation">(</span>Keys<span class="token punctuation">.</span>ENTER<span class="token punctuation">)</span>       <span class="token comment"># 回车</span>
+</code></pre></div><h2 id="处理多个窗口">处理多个窗口</h2> <p>有的时候我们在打开的第一个页面点击了一个链接跳转到了另外的页面上，我们的driver窗口默认还是停留在上个窗口，这时候执行相应的元素获取是获取不到的，我们需要将指针移到当前的窗口上。</p> <div class="language-py extra-class"><pre class="language-py"><code>driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Chrome<span class="token punctuation">(</span>executable_path<span class="token operator">=</span>chrome_path<span class="token punctuation">,</span> chrome_options<span class="token operator">=</span>options<span class="token punctuation">)</span>
+
+<span class="token comment"># 当前的句柄</span>
+driver<span class="token punctuation">.</span>window_handles
+
+<span class="token comment"># 重置为当前窗口的句柄</span>
+driver<span class="token punctuation">.</span>switch_to<span class="token punctuation">.</span>window<span class="token punctuation">(</span>driver<span class="token punctuation">.</span>current_window_handle<span class="token punctuation">)</span>
+
+<span class="token comment"># 由于window_handles 是一个数组 也可以使用下标访问当前地址</span>
+driver<span class="token punctuation">.</span>switch_to<span class="token punctuation">.</span>window<span class="token punctuation">(</span>driver<span class="token punctuation">.</span>window_handles<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span> 
+</code></pre></div><h2 id="执行js脚本">执行js脚本</h2> <p>有时候我们需要模拟的行为需要用到脚本。</p> <div class="language-py extra-class"><pre class="language-py"><code>driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Chrome<span class="token punctuation">(</span>executable_path<span class="token operator">=</span>chrome_path<span class="token punctuation">,</span> chrome_options<span class="token operator">=</span>options<span class="token punctuation">)</span>
+
+<span class="token comment"># 滚动350px</span>
+driver<span class="token punctuation">.</span>execute_script<span class="token punctuation">(</span><span class="token string">'document.body.scrollTop=350'</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 滚动页面到底部</span>
+driver<span class="token punctuation">.</span>execute_script<span class="token punctuation">(</span><span class="token string">&quot;window.scrollTo(0, document.body.scrollHeight);&quot;</span><span class="token punctuation">)</span>
+</code></pre></div><h2 id="处理显示和隐式等待">处理显示和隐式等待</h2> <p>有的时候我们的元素是懒加载或者其他操作后才会显示的，这种情况下去定位元素最好等待一会再执行。</p> <div class="language-py extra-class"><pre class="language-py"><code><span class="token triple-quoted-string string">'''
+    显示等待使用selenium.webdriver.support.excepted_condition期望条件 和 selenium.webdriver.support.ui.webDriverWait配合完成
+'''</span>
+<span class="token keyword">from</span> selenium<span class="token punctuation">.</span>webdriver<span class="token punctuation">.</span>support<span class="token punctuation">.</span>ui <span class="token keyword">import</span> WebDriverWait
+<span class="token keyword">from</span> selenium<span class="token punctuation">.</span>webdriver<span class="token punctuation">.</span>support <span class="token keyword">import</span> expected_conditions <span class="token keyword">as</span> EC
+<span class="token keyword">from</span> selenium<span class="token punctuation">.</span>webdriver<span class="token punctuation">.</span>common<span class="token punctuation">.</span>by <span class="token keyword">import</span> By
+
+driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Chrome<span class="token punctuation">(</span>executable_path<span class="token operator">=</span>chrome_path<span class="token punctuation">,</span> chrome_options<span class="token operator">=</span>options<span class="token punctuation">)</span>
+
+<span class="token comment"># 设置隐式等待时间 </span>
+driver<span class="token punctuation">.</span>implicitly_wait<span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span>  
+
+<span class="token comment"># 在30s内 每隔0.5s扫描一次知道 .cat-bd 元素加载完成 为什么是0.5s扫描一次————&gt;因为源码中默认为0.5s</span>
+WebDriverWait<span class="token punctuation">(</span>driver<span class="token punctuation">,</span> <span class="token number">30</span><span class="token punctuation">)</span><span class="token punctuation">.</span>until<span class="token punctuation">(</span>EC<span class="token punctuation">.</span>presence_of_element_located<span class="token punctuation">(</span><span class="token punctuation">(</span>By<span class="token punctuation">.</span>CLASS_NAME<span class="token punctuation">,</span> <span class="token string">'cat-bd'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+WebDriverWait<span class="token punctuation">(</span>driver<span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">.</span>until<span class="token punctuation">(</span>EC<span class="token punctuation">.</span>presence_of_element_located<span class="token punctuation">(</span><span class="token punctuation">(</span>By<span class="token punctuation">.</span>CSS_SELECTOR<span class="token punctuation">,</span><span class="token string">'#description img'</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+</code></pre></div><h2 id="一些常用的user-agent">一些常用的user-agent</h2> <div class="language-py extra-class"><pre class="language-py"><code>mobile_agents <span class="token operator">=</span> <span class="token punctuation">[</span>
+    <span class="token string">&quot;Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1&quot;</span><span class="token punctuation">,</span>
+    <span class="token string">&quot;Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5&quot;</span><span class="token punctuation">,</span>
+    <span class="token string">&quot;Mozilla/5.0 (iPod; U; CPU iPhone OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5&quot;</span><span class="token punctuation">,</span>
+    <span class="token string">&quot;Mozilla/5.0 (iPad; U; CPU OS 4_3_3 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8J2 Safari/6533.18.5&quot;</span><span class="token punctuation">,</span>
+    <span class="token string">&quot;Mozilla/5.0 (Linux; U; Android 2.3.7; en-us; Nexus One Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1&quot;</span><span class="token punctuation">,</span>
+    <span class="token string">&quot;Opera/9.80 (Android 2.3.4; Linux; Opera Mobi/build-1107180945; U; en-GB) Presto/2.8.149 Version/11.10&quot;</span><span class="token punctuation">,</span>
+    <span class="token string">&quot;MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1&quot;</span><span class="token punctuation">,</span>
+    <span class="token string">&quot;Mozilla/5.0 (Linux; U; Android 3.0; en-us; Xoom Build/HRI39) AppleWebKit/534.13 (KHTML, like Gecko) Version/4.0 Safari/534.13&quot;</span><span class="token punctuation">,</span>
+    <span class="token string">&quot;UCWEB7.0.2.37/28/999&quot;</span><span class="token punctuation">,</span>
+    <span class="token string">&quot;Mozilla/4.0 (compatible; MSIE 6.0; ) Opera/UCWEB7.0.2.37/28/999&quot;</span>
+<span class="token punctuation">]</span>
+
+</code></pre></div><h2 id="处理登录后的cookie">处理登录后的cookie</h2> <p>网站的登录等一些信息都会存在cookie，storage中，访问一些页面需要登录后才可以访问，这时我们的请求就应该带上所需的信息。</p> <div class="language-py extra-class"><pre class="language-py"><code><span class="token comment"># 获取所有的cookie</span>
+<span class="token keyword">for</span> cookie <span class="token keyword">in</span> driver<span class="token punctuation">.</span>get_cookies<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span>cookie<span class="token punctuation">)</span>
+    
+<span class="token comment"># 根据cookie的key获取value</span>
+value <span class="token operator">=</span> driver<span class="token punctuation">.</span>get_cookie<span class="token punctuation">(</span>key<span class="token punctuation">)</span>
+
+<span class="token comment"># 删除所有的cookie</span>
+driver<span class="token punctuation">.</span>delete_all_cookies<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># 删除某一个cookie</span>
+driver<span class="token punctuation">.</span>delete_cookie<span class="token punctuation">(</span>key<span class="token punctuation">)</span>
+
+</code></pre></div><p>一个完整的例子:</p> <div class="language-py extra-class"><pre class="language-py"><code><span class="token comment"># coding:utf-8</span>
+<span class="token comment"># 用webdriver登录并获取cookies，并用requests发送请求，以豆瓣为例</span>
+<span class="token keyword">from</span> selenium <span class="token keyword">import</span> webdriver
+<span class="token keyword">import</span> requests
+<span class="token keyword">import</span> time
+<span class="token keyword">import</span> json
+<span class="token keyword">import</span> sys
+<span class="token builtin">reload</span><span class="token punctuation">(</span>sys<span class="token punctuation">)</span>
+sys<span class="token punctuation">.</span>setdefaultencoding<span class="token punctuation">(</span><span class="token string">'utf-8'</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token comment"># 从命令行参数获取登录用户名和密码</span>
+    user_name <span class="token operator">=</span> sys<span class="token punctuation">.</span>argv<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span>
+    password <span class="token operator">=</span> sys<span class="token punctuation">.</span>argv<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span>
+
+    <span class="token comment"># 豆瓣登录页面URL</span>
+    login_url <span class="token operator">=</span> <span class="token string">'https://www.douban.com/accounts/login'</span>
+
+    <span class="token comment"># 获取chrome的配置</span>
+    opt <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>ChromeOptions<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token comment"># 在运行的时候不弹出浏览器窗口</span>
+    <span class="token comment"># opt.set_headless()</span>
+
+    <span class="token comment"># 获取driver对象</span>
+    driver <span class="token operator">=</span> webdriver<span class="token punctuation">.</span>Chrome<span class="token punctuation">(</span>chrome_options <span class="token operator">=</span> opt<span class="token punctuation">)</span>
+    <span class="token comment"># 打开登录页面</span>
+    driver<span class="token punctuation">.</span>get<span class="token punctuation">(</span>login_url<span class="token punctuation">)</span>
+
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'opened login page...'</span><span class="token punctuation">)</span>
+    
+    <span class="token comment"># 向浏览器发送用户名、密码，并点击登录按钮</span>
+    driver<span class="token punctuation">.</span>find_element_by_name<span class="token punctuation">(</span><span class="token string">'form_email'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>send_keys<span class="token punctuation">(</span>user_name<span class="token punctuation">)</span>
+    driver<span class="token punctuation">.</span>find_element_by_name<span class="token punctuation">(</span><span class="token string">'form_password'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>send_keys<span class="token punctuation">(</span>password<span class="token punctuation">)</span>
+    <span class="token comment"># 多次登录需要输入验证码，这里给一个手工输入验证码的时间</span>
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">6</span><span class="token punctuation">)</span>
+    driver<span class="token punctuation">.</span>find_element_by_class_name<span class="token punctuation">(</span><span class="token string">'btn-submit'</span><span class="token punctuation">)</span><span class="token punctuation">.</span>submit<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'submited...'</span><span class="token punctuation">)</span>
+    <span class="token comment"># 等待2秒钟</span>
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># 创建一个requests session对象</span>
+    s <span class="token operator">=</span> requests<span class="token punctuation">.</span>Session<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token comment"># 从driver中获取cookie列表（是一个列表，列表的每个元素都是一个字典）</span>
+    cookies <span class="token operator">=</span> driver<span class="token punctuation">.</span>get_cookies<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token comment"># 把cookies设置到session中</span>
+    <span class="token keyword">for</span> cookie <span class="token keyword">in</span> cookies<span class="token punctuation">:</span>
+        s<span class="token punctuation">.</span>cookies<span class="token punctuation">.</span><span class="token builtin">set</span><span class="token punctuation">(</span>cookie<span class="token punctuation">[</span><span class="token string">'name'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>cookie<span class="token punctuation">[</span><span class="token string">'value'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    <span class="token comment"># 关闭driver</span>
+    driver<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token comment"># 需要登录才能看到的页面URL</span>
+    page_url <span class="token operator">=</span> <span class="token string">'https://www.douban.com/accounts/'</span>
+    <span class="token comment"># 获取该页面的HTML</span>
+    resp <span class="token operator">=</span> s<span class="token punctuation">.</span>get<span class="token punctuation">(</span>page_url<span class="token punctuation">)</span>
+    resp<span class="token punctuation">.</span>encoding <span class="token operator">=</span> <span class="token string">'utf-8'</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'status_code = {0}'</span><span class="token punctuation">.</span><span class="token builtin">format</span><span class="token punctuation">(</span>resp<span class="token punctuation">.</span>status_code<span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token comment"># 将网页内容存入文件</span>
+    <span class="token keyword">with</span> <span class="token builtin">open</span><span class="token punctuation">(</span><span class="token string">'html.txt'</span><span class="token punctuation">,</span><span class="token string">'w+'</span><span class="token punctuation">)</span> <span class="token keyword">as</span>  fout<span class="token punctuation">:</span>
+        fout<span class="token punctuation">.</span>write<span class="token punctuation">(</span>resp<span class="token punctuation">.</span>text<span class="token punctuation">)</span>
+    
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'end'</span><span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
+    main<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre></div><h2 id="常用构造滑块验证移动规矩">常用构造滑块验证移动规矩</h2> <div class="language-py extra-class"><pre class="language-py"><code><span class="token keyword">def</span> <span class="token function">get_track</span><span class="token punctuation">(</span>distance<span class="token punctuation">)</span><span class="token punctuation">:</span>
+	track <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+	current <span class="token operator">=</span> <span class="token number">0</span>
+	mid <span class="token operator">=</span> distance <span class="token operator">*</span> <span class="token number">3</span> <span class="token operator">/</span> <span class="token number">4</span>
+	t <span class="token operator">=</span> <span class="token number">0.2</span>
+	v <span class="token operator">=</span> <span class="token number">0</span>
+	<span class="token keyword">while</span> current <span class="token operator">&lt;</span> distance<span class="token punctuation">:</span>
+		<span class="token keyword">if</span> current <span class="token operator">&lt;</span> mid<span class="token punctuation">:</span>
+			a <span class="token operator">=</span> <span class="token number">2</span>
+		<span class="token keyword">else</span><span class="token punctuation">:</span>
+			a <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">3</span>
+		v0 <span class="token operator">=</span> v
+		v <span class="token operator">=</span> v0 <span class="token operator">+</span> a <span class="token operator">*</span> t
+		move <span class="token operator">=</span> v0 <span class="token operator">*</span> t <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">/</span> <span class="token number">2</span> <span class="token operator">*</span> a <span class="token operator">*</span> t <span class="token operator">*</span> t
+		current <span class="token operator">+=</span> move
+		track<span class="token punctuation">.</span>append<span class="token punctuation">(</span><span class="token builtin">round</span><span class="token punctuation">(</span>move<span class="token punctuation">)</span><span class="token punctuation">)</span>
+	<span class="token keyword">return</span> track
+</code></pre></div><h2 id="多进程爬虫示例">多进程爬虫示例</h2> <ul><li>2020.06.28</li></ul> <div class="language-py extra-class"><pre class="language-py"><code><span class="token triple-quoted-string string">'''
+    1.开多个进程，并行运行多个chrome浏览器。
+    2.将所有的关键字放入同一个queue中，其他进程从中获取关键字，进行搜索数据。
+'''</span>
+<span class="token keyword">import</span> configure
+<span class="token keyword">import</span> multiprocessing
+<span class="token keyword">import</span> time
+
+<span class="token comment"># 由mark标记是哪个进程执行的动作</span>
+<span class="token keyword">def</span> <span class="token function">getkeyWordFunc</span><span class="token punctuation">(</span>queue<span class="token punctuation">,</span> lock<span class="token punctuation">,</span> mark<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">while</span> <span class="token keyword">not</span> queue<span class="token punctuation">.</span>empty<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token comment"># def get(self, block=True, timeout=None):</span>
+        keyWord <span class="token operator">=</span> queue<span class="token punctuation">.</span>get<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+        <span class="token comment"># 加锁，是为了防止散乱的打印。 保护一些临界状态</span>
+        <span class="token comment"># 多个进程运行的状态下，如果同一时刻都调用到print，那么显示的打印结果将会混乱</span>
+        lock<span class="token punctuation">.</span>acquire<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f&quot;keyWord = </span><span class="token interpolation"><span class="token punctuation">{</span>keyWord<span class="token punctuation">}</span></span><span class="token string">, markProcess = </span><span class="token interpolation"><span class="token punctuation">{</span>mark<span class="token punctuation">}</span></span><span class="token string">&quot;</span></span><span class="token punctuation">)</span>
+        lock<span class="token punctuation">.</span>release<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+
+<span class="token keyword">if</span> __name__ <span class="token operator">==</span> <span class="token string">'__main__'</span><span class="token punctuation">:</span>
+    lock <span class="token operator">=</span> multiprocessing<span class="token punctuation">.</span>Lock<span class="token punctuation">(</span><span class="token punctuation">)</span>       <span class="token comment"># 进程锁</span>
+    queue <span class="token operator">=</span> multiprocessing<span class="token punctuation">.</span>Queue<span class="token punctuation">(</span><span class="token number">150</span><span class="token punctuation">)</span>  <span class="token comment"># 队列，用于存放所有的初始关键字</span>
+
+    <span class="token keyword">for</span> keyWord<span class="token punctuation">,</span> keyWordValue <span class="token keyword">in</span> configure<span class="token punctuation">.</span>keySearchWords<span class="token punctuation">.</span>items<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f&quot;keyWord = </span><span class="token interpolation"><span class="token punctuation">{</span>keyWord<span class="token punctuation">}</span></span><span class="token string">&quot;</span></span><span class="token punctuation">)</span>
+        <span class="token comment"># 如果queue定的太小，剩下的放不进去，程序就会block住，等待队列有空余空间</span>
+        <span class="token comment"># def put(self, obj, block=True, timeout=None):</span>
+        queue<span class="token punctuation">.</span>put<span class="token punctuation">(</span>keyWord<span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f&quot;queueBefore = </span><span class="token interpolation"><span class="token punctuation">{</span>queue<span class="token punctuation">}</span></span><span class="token string">&quot;</span></span><span class="token punctuation">)</span>
+
+    getKeyProcessLst <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+    <span class="token comment"># 生成两个进程，并启动</span>
+    <span class="token keyword">for</span> i <span class="token keyword">in</span> <span class="token builtin">range</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+        <span class="token comment"># 携带的args 必须是python原有的数据类型，不能是自定义的。否则会出现下面的error（见后面）</span>
+        process <span class="token operator">=</span> multiprocessing<span class="token punctuation">.</span>Process<span class="token punctuation">(</span>target <span class="token operator">=</span> getkeyWordFunc<span class="token punctuation">,</span> args <span class="token operator">=</span> <span class="token punctuation">(</span>queue<span class="token punctuation">,</span> lock<span class="token punctuation">,</span> i<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        process<span class="token punctuation">.</span>start<span class="token punctuation">(</span><span class="token punctuation">)</span>
+        getKeyProcessLst<span class="token punctuation">.</span>append<span class="token punctuation">(</span>process<span class="token punctuation">)</span>
+
+    <span class="token comment"># 守护线程</span>
+    <span class="token comment"># join 等待线程终止，如果不使用join方法对每个线程做等待终止，那么线程在运行过程中，可能会去执行最后的打印</span>
+    <span class="token comment"># 如果没有join，父进程就不会阻塞，启动子进程之后，父进程就直接执行最后的打印了</span>
+    <span class="token keyword">for</span> p <span class="token keyword">in</span> getKeyProcessLst<span class="token punctuation">:</span>
+        p<span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f&quot;queueAfter = </span><span class="token interpolation"><span class="token punctuation">{</span>queue<span class="token punctuation">}</span></span><span class="token string">&quot;</span></span><span class="token punctuation">)</span>
+    queue<span class="token punctuation">.</span>close<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f&quot;all queue used.&quot;</span></span><span class="token punctuation">)</span>
+</code></pre></div></div> <footer class="page-edit"><!----> <div class="last-updated"><span class="prefix">上次更新时间:</span> <span class="time">2020-06-28 11:35:00</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/docs/python/os.html" class="prev">
+        os模块使用详解
+      </a></span> <span class="next"><a href="/docs/python/utils.html">
+        常用工具函数
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"><div class="gitalk-container"><div id="gitalk-container"></div></div><div></div><!----></div></div>
+    <script src="/docs/assets/js/app.8bb7f38c.js" defer></script><script src="/docs/assets/js/2.346c741e.js" defer></script><script src="/docs/assets/js/137.1f919695.js" defer></script>
+  </body>
+</html>
