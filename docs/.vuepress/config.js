@@ -163,6 +163,7 @@ module.exports = {
           "/mobile/meta",
           "/mobile/tips",
           "/mobile/wxShare",
+          "/mobile/live",
           "/mobile/h5live",
           "/mobile/h5liveProblems"
         ]
