@@ -14,10 +14,10 @@
 
 ## 传统直播
 
-传统直播技术使用的传输协议是`RMTP`和`HLS`。
+传统直播技术使用的传输协议是`RTMP`和`HLS`。
 
 
-### RMTP
+### RTMP
 
 > `Real Time Messaging Protocol（简称 RTMP）`是 `Macromedia` 开发的一套视频直播协议，现在属于 `Adobe`。这套方案需要搭建专门的 `RTMP` 流媒体服务如 `Adobe Media Server`，并且在浏览器中只能使用 `Flash` 实现播放器。它的实时性非常好，延迟很小，但无法支持移动端 WEB 播放是它的硬伤。
 
