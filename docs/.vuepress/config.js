@@ -160,6 +160,7 @@ module.exports = {
         title: "移动端知识",
         collapsable: true,
         children: [
+          "/mobile/hybrid",
           "/mobile/meta",
           "/mobile/tips",
           "/mobile/wxShare",
