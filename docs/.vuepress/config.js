@@ -248,6 +248,7 @@ module.exports = {
           '/python/selenium',
           '/python/utils',
           '/python/pandas',
+          '/python/numpy',
           {
             title:'文件处理相关',
             children:[
