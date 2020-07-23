@@ -160,8 +160,103 @@ np.argsort(a)
 # 二维数组
 b = np.array([[1,4,3],[4,5,1],[2,3,2]])
 
-# axis = 0 表示按列排序 axis = -1 表示按行排列
+# axis = 0 表示按列排序 axis = 1 表示按行排列
 b.sort(axis=0)
 ```
+
+## 数组的组合
+
+- 2020.07.23
+
+> 数组的组合可以分为: `水平组合(hstack)`、`垂直组合(vstack)`、`深度组合(dstack)`、`列组合(colume_stack)`、`行组合(row_stack)`等。
+
+```py
+import numpy as np
+
+# [[0 1][2 3][4 5]]
+a = np.arange(6).reshape(3,2)
+
+# [[0 1 2][3 4 5][6 7 8]]
+b = np.arange(9).reshape(3,3)
+
+# [[0 1 2][3 4 5]]
+c = np.arange(6).reshape(2,3)
+
+'''
+水平组合 
+[[0 1 0 1 2]
+ [2 3 3 4 5]
+ [4 5 6 7 8]]
+'''
+np.hstack((a,b))
+np.concatenate((a,b),axis=1)
+np.append(a,b,axis=1)
+
+'''
+垂直组合
+[[0 1 2]
+ [3 4 5]
+ [6 7 8]
+ [0 1 2]
+ [3 4 5]]
+'''
+np.vstack((b,c))
+np.concatenate((b,c),axis=0)
+np.append(b,c,axis=0)
+
+'''
+直接组合
+[0 1 2 3 4 5 0 1 2 3 4 5]
+'''
+np.append(a,c)
+
+```
+## 数组的常用统计函数
+
+- 2020.07.23
+
+> 我们经常需要对数据进行一些统计处理,包括简单的均值、中值、方差、标准差、最大值、最小值等。
+
+```py
+import numpy as np
+
+# [0 1 2 3 4 5]
+a = np.arange(6)
+
+# 统计平均值 2.5
+np.mean(a)
+np.average(a)
+
+# 统计方差 2.9166666666666665
+np.var(a)
+
+# 统计标准差 1.707825127659933
+np.std(a)
+
+# 统计最大值 6
+np.max(a)
+
+# 统计最小值 0
+np.min(a)
+
+# 统计最大值所在的索引 6
+np.argmax(a)
+
+# 统计最小值所在的索引 0
+np.argmin(a)
+
+# 计算全距 即最大值与最小值的差 5
+np.ptp(a)
+
+# 计算百分位在统计对象中的值 4.5
+np.percentile(a,90)
+
+# 计算统计对象的中值 2.5
+np.median(a)
+
+# 计算统计对象的和 15
+np.sum(a)
+
+
 
 
