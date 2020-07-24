@@ -170,6 +170,11 @@ b.sort(axis=0)
 
 > 数组的组合可以分为: `水平组合(hstack)`、`垂直组合(vstack)`、`深度组合(dstack)`、`列组合(colume_stack)`、`行组合(row_stack)`等。
 
+
+### np.concatenate((a1, a2, ...), axis)
+
+> 沿指定轴连接相同形状的两个或多个数组,默认是沿着axis=0及列方向。
+
 ```py
 import numpy as np
 
@@ -256,7 +261,101 @@ np.median(a)
 
 # 计算统计对象的和 15
 np.sum(a)
+```
 
+## 数组的分割
 
+- 2020.07.24
 
+> 在实际应用中我们经常需要在原有数据中提取部分数据或者进行分类分割,这时需要对原数组进行分割。
 
+### np.split(ary, indices_or_sections, axis)
+
+| 参数名  | 参数描述
+| :--- | :---- 
+| `ary` | 被分割的输入数组
+| `indices_or_sections` | 可以是整数，表明要从输入数组创建的，等大小的子数组的数量。  如果此参数是一维数组，则其元素表明要创建新子数组的点。
+| `axis` | 分割的方向默认是沿0轴
+
+```py
+import numpy as np
+a = np.arange(9)
+
+# [0 1 2 3 4 5 6 7 8]
+print('第一个数组：')
+print(a,'\n')
+
+# [array([0, 1, 2]), array([3, 4, 5]), array([6, 7, 8])]
+print('将数组分为三个大小相等的子数组：')
+b = np.split(a,3)
+print(b,'\n')
+
+# [array([0, 1, 2, 3]), array([4, 5, 6]), array([7, 8])]
+print('将数组在一维数组中指定的位置分割：')
+b = np.split(a,[4,7])
+print(b)
+```
+
+### np.hsplit(ary, indices_or_sections)
+
+> `np.hsplit`是`split()`函数的特例，其中轴为 1 表示水平分割，无论输入数组的维度是什么。
+
+```py
+import numpy as np
+a = np.arange(16).reshape(4,4)
+
+print('第一个数组：')
+print(a,'\n')
+
+'''
+[[ 0  1  2  3]
+ [ 4  5  6  7]
+ [ 8  9 10 11]
+ [12 13 14 15]]
+'''
+
+print('水平分割后：')
+b = np.hsplit(a,2)
+print(b)
+
+'''
+[array([[ 0,  1],
+        [ 4,  5],
+        [ 8,  9],
+        [12, 13]]), 
+ array([[ 2,  3],
+        [ 6,  7],
+        [10, 11],
+        [14, 15]])]
+'''
+
+```
+### np.vsplit(ary, indices_or_sections)
+
+> `np.vsplit`是`split()`函数的特例，其中轴为 0 表示竖直分割，无论输入数组的维度是什么。
+
+```py
+import numpy as np
+a = np.arange(16).reshape(4,4)
+
+print('第一个数组：')
+print(a,'\n')
+
+'''
+[[ 0  1  2  3]
+ [ 4  5  6  7]
+ [ 8  9 10 11]
+ [12 13 14 15]]
+'''
+
+print('垂直分割后：')
+b = np.vsplit(a,2)
+print(b)
+
+'''
+[array([[0, 1, 2, 3],
+       [4, 5, 6, 7]]), 
+ array([[ 8,  9, 10, 11],
+       [12, 13, 14, 15]])]
+'''
+```
