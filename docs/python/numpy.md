@@ -274,7 +274,7 @@ np.sum(a)
 | 参数名  | 参数描述
 | :--- | :---- 
 | `ary` | 被分割的输入数组
-| `indices_or_sections` | 可以是整数，表明要从输入数组创建的，等大小的子数组的数量。  如果此参数是一维数组，则其元素表明要创建新子数组的点。
+| `indices_or_sections` | 可以是整数，表明要从输入数组创建的，等大小的子数组的数量。如果此参数是一维数组，表示从指定位置进行分割。
 | `axis` | 分割的方向默认是沿0轴
 
 ```py
@@ -357,5 +357,623 @@ print(b)
        [4, 5, 6, 7]]), 
  array([[ 8,  9, 10, 11],
        [12, 13, 14, 15]])]
+'''
+```
+
+## 数组的添加\删除
+
+- 2020.07.25
+
+### np.resize(ary, shape)
+
+> 返回指定大小的新数组。 如果新大小大于原始大小，则包含原始数组中的元素的重复副本。
+
+:::tip
+
+`np.resize(ary, shape)` 与 `np.reshape(ary, shape)` 都是为了改变数组的size。
+
+区别在于`resize`会直接修改原始数组的数据,而返回`None`。`reshape`方法不会修改原始数组的数据，而返回一个新的数组。
+
+:::
+
+```py
+import numpy as np
+
+a = np.arange(0, 6, 1)
+
+# [0 1 2 3 4 5] (6,)
+print('原始数组:\n', a.shape)
+
+b = np.resize(a,(2,3))
+c = np.reshape(a,(2,3))
+
+print('resiez后的数组:\n', b)
+
+'''
+ [[0 1 2]
+ [3 4 5]]
+'''
+
+print('reshapre后的数组:\n', c)
+
+'''
+ [[0 1 2]
+ [3 4 5]]
+'''
+
+d = np.resize(a,(3,3))
+print(d)
+
+'''
+[[0 1 2]
+ [3 4 5]
+ [0 1 2]]
+'''
+
+e = np.resize(a,(3,5))
+print(e)
+
+'''
+[[0 1 2 3 4]
+ [5 0 1 2 3]
+ [4 5 0 1 2]]
+'''
+```
+
+:::warning
+当原有的数组的shape不满足新的要求的时候会复制原有的值填充成指定的shape
+:::
+
+### np.append(ary, values, axis)
+
+> 在数组的末尾添加值,返回修改后的原数组的副本(不改变原数组)。此外，在指定axios的时候,输入数组的维度必须匹配否则将报错`ValueError`。
+
+| 参数名  | 参数描述
+| :--- | :---- 
+| `ary` | 输入的原始数组
+| `values` | 需要追加的数组
+| `axis` | 可选 不填的话数组和追加的数组始终返回降维后的一维数组
+
+```py
+import numpy as np
+
+# [0 1 2]
+a = np.linspace(0,2,3, dtype=int)
+print(a)
+
+# [array([3, 4, 5]), array([6, 7, 8])]   
+b = np.split(np.arange(3,9), 2)
+print(b)
+
+# [0 1 2 3 4 5 6 7 8]
+c = np.append(a, b)
+print(c)
+
+# err
+d = np.append(a, np.arange(0,2), axis=1)
+print(d)
+
+# [0 1 2 3 4 5]
+e = np.append(a, np.arange(3,6), axis=0)
+print(e)
+```
+
+### np.insert(arr, obj, values, axis)
+
+> 在指定索引之前，沿给定轴在数组中插入值,返回一个新的数组(不改变原始数组) 此外，如果未提供axis，则输入数组会被展开成一维数组。
+
+| 参数名  | 参数描述
+| :--- | :---- 
+| `ary` | 输入的原始数组
+| `obj` | 在原数组的对应索引位置插入
+| `values` | 需要追加的数组
+| `axis` | 可选 不填的话数组和追加的数组始终返回降维后的一维数组
+
+```py
+import numpy as np
+a = np.array([[1,2],[3,4],[5,6]])
+
+print('第一个数组：')
+print(a)
+print('\n')
+
+'''
+[[1 2]
+ [3 4]
+ [5 6]]
+'''  
+
+print('未传递 Axis 参数, 在插入之前输入数组会被展开。')
+print(np.insert(a,3,[11,12]))
+print('\n' ) 
+'''
+[ 1  2  3 11 12  4  5  6]
+'''
+
+print('传递了 Axis 参数。 会广播值数组来配输入数组。\n')
+
+print('沿轴 0 广播：')
+print(np.insert(a,1,[11],axis = 0))
+print('\n')  
+'''
+[[ 1  2]
+ [11 11]
+ [ 3  4]
+ [ 5  6]]
+'''
+
+print('沿轴 1 广播：')
+print(np.insert(a,1,11,axis = 1))
+'''
+[[ 1 11  2]
+ [ 3 11  4]
+ [ 5 11  6]]
+'''
+```
+
+### np.delete(arr, obj, axis)
+
+> 返回从输入数组中删除指定子数组的后的新数组,不改变原数组。 与`insert()`函数的情况一样，如果未提供axis参数，则将数组降维为一维。
+
+| 参数名  | 参数描述
+| :--- | :---- 
+| `ary` | 输入的原始数组
+| `obj` | 在原数组的对应索引位置删除
+| `axis` | 可选 不填始终返回降维后的一维数组
+
+```py
+import numpy as np
+a = np.arange(12).reshape(3,4)
+
+print('第一个数组：')
+print(a)
+print('\n' ) 
+'''
+[[0 1 2 3]
+ [4 5 6 7]
+ [8 9 10 11]]
+'''
+
+print('未传递 Axis 参数。 在插入之前输入数组会被展开。\n')
+
+print(np.delete(a,5))
+print('\n')
+'''
+[0 1 2 3 4 6 7 8 9 10 11]
+'''
+
+print('删除第二列：') 
+print(np.delete(a,1,axis = 1))
+print('\n')  
+'''
+[[0 2 3]
+ [4 6 7]
+ [8 10 11]]
+'''
+
+print('包含从数组中删除的替代值的切片：')
+a = np.array([1,2,3,4,5,6,7,8,9,10])
+print(np.delete(a, np.s_[::2]))
+'''
+[2 4 6 8 10]
+'''
+```
+
+### np.unique(arr, return_index, return_inverse, return_counts)
+
+> 返回对指定数组去重后的一个元组,包含去重数组和相关索引的数组。索引的性质取决于函数调用者返回参数的类型。
+
+| 参数名  | 参数描述
+| :--- | :---- 
+| `ary` | 输入的原始数组,如果不是一维数组则会展开
+| `return_index` | 如果为true，返回输入数组中的元素下标
+| `return_inverse` | 如果为true，返回去重数组的下标，它可以用于重构输入数组
+| `return_counts` | 如果为true，返回去重数组中的元素在原数组中的出现次数
+
+```py
+import numpy as np
+a = np.array([5,2,6,2,7,5,6,8,2,9]).reshape((2,5))
+
+print('原始数组\n')
+print(a)
+'''
+[[5 2]
+ [6 2]
+ [7 5]
+ [6 8]
+ [2 9]]
+'''
+
+b = np.unique(a)
+print('a去重后：')
+print(b)
+'''
+二维数组被转化成一维数组
+[2 5 6 7 8 9]
+'''
+
+print('去重后数组在原数组的索引数组：')
+u,indices = np.unique(a, return_index = True)
+print(indices)
+'''
+[1 0 2 4 7 9]
+'''
+
+print('去重的元素在原数组对应的索引：')
+u,indices = np.unique(a,return_inverse = True)
+print(indices)
+'''
+[1 0 2 0 3 1 2 4 0 5]
+'''
+
+print('返回去重元素的重复数量：')
+u,indices = np.unique(a,return_counts = True)
+print(indices)
+'''
+[3 2 2 1 1 1]
+'''
+```
+
+## 常用字符串函数
+
+- 2020.07.25
+
+### np.char.add(str1, str2)
+
+> 返回两个str或Unicode数组的逐个字符串连接后的结果
+
+```py
+import numpy as np 
+
+print('连接两个字符串：')
+print(np.char.add('hello',' world'))
+'''
+hello world
+'''
+
+print('连接两个字符串数组：')
+print(np.char.add(['hello'],[' world']))
+'''
+['hello world']
+'''
+```
+
+:::warning
+该方法仅支持两个字符串(数组)连接
+:::
+
+### np.char.multiply(str, count)
+
+> 返回给定参数的多重连接
+
+| 参数名  | 参数描述
+| :--- | :---- 
+| `str` | 需要处理的字符串
+| `count` | 重复的次数
+
+```py
+import numpy as np 
+print(np.char.multiply('hello ',3))
+
+'''
+hello hello hello
+'''
+```
+
+### np.char.center(str, width,fillchar)
+
+> 返回指定宽度的数组，以便输入字符串位于中心，并使用`fillchar`在左侧和右侧进行填充。
+
+| 参数名  | 参数描述
+| :--- | :---- 
+| `str` | 需要处理的字符串
+| `width` | 需要填充完成的长度
+| `fillchar` | 填充的字符
+
+```py
+import numpy as np 
+
+print(np.char.center('hello', 10, fillchar = '*'))
+'''
+总宽度为10 文本占位为5 其余 5位 *补充分别添加在两侧
+**hello***  
+'''
+
+print(np.char.center('hello', 11, fillchar = '-'))
+'''
+单数的时候默认多的补在右侧
+---hello---  
+'''
+```
+
+### np.char.capitalize(str)
+
+> 返回字符串的副本，其中第一个字母大写。
+
+```py
+import numpy as np 
+
+print(np.char.capitalize('hello world'))
+'''
+Hello world
+'''
+```
+
+### np.char.title(str)
+
+> 返回输入字符串的副本，其中每个单词的首字母都大写。
+
+```py
+import numpy as np 
+print(np.char.capitalize('hello world'))
+'''
+Hello World
+'''
+```
+
+### np.char.lower(str)
+
+> 返回一个数组，其元素转换为小写。它对每个元素调用`str.lower`。
+
+```py
+import numpy as np 
+print(np.char.lower('HELLO WORLD'))
+'''
+hello world
+'''
+```
+
+### np.char.upper(str)
+
+> 返回一个数组，其元素转换为大写。它对每个元素调用`str.upper`。
+
+```py
+import numpy as np 
+print(np.char.upper('hello world'))
+'''
+HELLO WORLD
+'''
+```
+
+### np.char.split(str, seq)
+
+> 返回输入字符串中的单词列表。 默认情况下，`空格`用作分隔符。 否则，指定的分隔符字符用于分割字符串。
+
+| 参数名  | 参数描述
+| :--- | :---- 
+| `str` | 需要处理的字符串
+| `seq` | 分隔符
+
+```py
+import numpy as np 
+
+print(np.char.split ('hello how are you?')) 
+'''
+['hello', 'how', 'are', 'you?']
+'''
+print(np.char.split ('Hello,python,numpy', sep = ','))
+'''
+['Hello', 'python', 'numpy']
+'''
+```
+
+### np.char.splitlines(str)
+
+> 返回数组中元素的单词列表，以换行符('\n'，'\r'，'\r\n'都会用作换行符)分割。
+
+```py
+import numpy as np 
+
+print(np.char.splitlines ('hello\rhow are you?')) 
+'''
+['hello', 'how are you?']
+'''
+
+print(np.char.splitlines ('Hello,python\nnumpy'))
+'''
+['Hello,python', 'numpy']
+'''
+```
+
+### np.char.join(seq, str)
+
+> 返回一个字符串，其中单个字符由特定的分隔符连接。
+
+```py
+import numpy as np 
+
+print(np.char.join(':','ymd')) 
+'''
+y:m:d
+'''
+print(np.char.join([':','-'],['abc','ymd']))
+'''
+['a:b:c' 'y-m-d']
+'''
+```
+
+### np.char.replace(str, old, new)
+
+> 返回被指定字符串替换后的副本。
+
+```py
+import numpy as np 
+
+print(np.char.replace ('Lxq is a good gril', 'good', 'pretty'))
+'''
+Lxq is a pretty gril
+'''
+```
+
+## 常用三角函数
+
+- 2020.07.25
+
+### np.sin()
+
+> 返回正弦值
+
+### np.cos()
+
+> 返回余弦值
+
+### np.tan()
+
+> 返回正切值
+
+```py
+# 1 弧度 = 360 / 2 π = 180 / π
+
+import numpy as np
+
+a = np.array([0,30,45,60,90])  
+
+print('不同角度的正弦值：') 
+
+# 通过乘 pi/180 转化为弧度  
+print(np.sin(a*np.pi/180),'\n')   
+'''
+[0. 0.5 0.70710678 0.8660254  1.] 
+'''
+
+print('数组中角度的余弦值：\n')   
+
+print(np.cos(a*np.pi/180))   
+'''
+[1.00000000e+00 8.66025404e-01 7.07106781e-01 5.00000000e-01
+ 6.12323400e-17]
+'''
+
+print('数组中角度的正切值：\n')  
+ 
+print(np.tan(a*np.pi/180)) 
+'''
+[0.00000000e+00 5.77350269e-01 1.00000000e+00 1.73205081e+00
+ 1.63312394e+16]
+'''
+```
+
+`arcsin`，`arccos`，和`arctan`函数返回给定角度的`sin`，`cos`和`tan`的反三角函数。 
+
+这些函数的结果可以通过`numpy.degrees()`函数通过将弧度制转换为角度制来验证。
+
+```py
+import numpy as np
+
+a = np.array([0,30,45,60,90])  
+
+print('含有正弦值的数组：\n')
+sin = np.around(np.sin(a*np.pi/180),2)  
+print(sin)
+'''
+[0.   0.5  0.71 0.87 1.  ]
+'''
+
+print('计算角度的反正弦，返回值以弧度为单位：\n')
+inv = np.around(np.arcsin(sin),2)  
+print(inv)
+'''
+[0.   0.52 0.79 1.06 1.57]
+'''
+
+print('通过转化为角度制来检查结果：\n')  
+print(np.around(np.degrees(inv)),2)   
+'''
+[ 0. 30. 45. 61. 90.] 2
+'''
+
+print('arccos 和 arctan 函数行为类似：\n')
+cos = np.cos(a*np.pi/180)  
+print(np.around(cos),2) 
+'''
+[1. 1. 1. 1. 0.] 2
+'''
+print('反余弦：\n')
+inv = np.arccos(cos)  
+print(np.around(inv),2) 
+'''
+[0. 1. 1. 1. 2.] 2
+'''
+
+print('角度制单位：\n')  
+print(np.around(np.degrees(inv)),2)   
+'''
+[ 0. 30. 45. 60. 90.] 2
+'''
+
+print('tan 函数：\n')
+tan = np.tan(a*np.pi/180)  
+print(np.around(tan),2) 
+'''
+[0.00000000e+00 1.00000000e+00 1.00000000e+00 2.00000000e+00
+ 1.63312394e+16] 2
+'''
+
+print('反正切：\n')
+inv = np.arctan(tan)  
+print(np.around(inv),2) 
+'''
+[0. 1. 1. 1. 2.] 2
+'''
+
+print('角度制单位：\n')  
+print(np.around(np.degrees(inv)),2) 
+'''
+[ 0. 30. 45. 60. 90.] 2
+'''
+```
+
+## 常用算数函数
+
+- 2020.07.25
+
+> 算术运算包括`add()`，`subtract()`，`multiply()`和`divide()`等方法，其中输入数组必须具有相同的形状或符合数组广播规则。
+
+
+```py
+import numpy as np 
+
+a = np.arange(4, dtype = np.float_).reshape(2,2)  
+
+print('第一个数组：\n')  
+print(a) 
+'''
+[[0. 1.]
+ [2. 3.]]
+'''
+
+print('第二个数组：\n') 
+b = np.array([10,10])  
+print(b) 
+'''
+[10 10]
+'''
+
+print('两个数组相加：\n')  
+print(np.add(a,b))  
+'''
+[[10. 11.]
+ [12. 13.]]
+'''
+
+print('两个数组相减：\n')  
+print(np.subtract(a,b))  
+'''
+[[-10.  -9.]
+ [ -8.  -7.]]
+'''
+
+print('两个数组相乘：\n')  
+print(np.multiply(a,b))  
+'''
+[[ 0. 10.]
+ [20. 30.]]
+'''
+
+print('两个数组相除：')  
+print(np.divide(a,b))
+'''
+[[0.  0.1]
+ [0.2 0.3]]
 '''
 ```
