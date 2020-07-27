@@ -1743,4 +1743,44 @@ npm i -g istanbul
 
 ## 构建包的持续集成和 Travis CI
 
+- 2020.07.27
+
+### 接入Travis CI
+
+1. https://travis-ci.org 使用Github账号登录
+
+2. 在https://travis-ci.org/account/repositories为项目开启
+
+3. 项目根目录下新增 .travis.yml
+
+
+具体流程可以参考[官方文档](https://docs.travis-ci.com/user/deployment/)
+
+## 发布构建包到npm
+
+- 2020.07.27
+
+### 添加用户
+
+> npm adduser
+
+### 升级版本
+
+- 升级补丁版本号: npm version patch
+
+- 升级小版本号: npm version minor
+
+- 升级大版本号: npm version major
+
+### 发布版本
+
+> npm publish
+
+:::tip
+发布的时候需要去搜索下 当前包名是否已经被使用。包里不要带上一些不相干的文件。
+:::
+
+
+
+
 

@@ -880,7 +880,7 @@ ReactDOM.render(<Counter />, document.getElementById('root'));
 :::tip
 在绝大多数情况下，`useEffectHook` 是更好的选择。
 
-唯一例外的就是需要根据新的 `UI` 来进行 `DOM`操作的场景。`useLayoutEffect`会保证在页面渲染前执行，也就是说页面渲染出来的是最终的效果。如果使用`useEffect`，页面很可能因为渲染了 `2` 次而出现抖动
+唯一例外的就是需要根据新的 `UI` 来进行 `DOM`操作的场景。`useLayoutEffect`会保证在页面渲染前执行，也就是说页面渲染出来的是最终的效果。如果使用`useEffect`，页面很可能因为渲染了 `2` 次而出现抖动。
 :::
 
 ## useRef
@@ -982,7 +982,6 @@ function useInterval(callback, delay = 1000) {
             }, delay)
             return () => {
               clearInterval(intervalFn.current.timer);
-              intervalFn.current = null;
             }
         }
     }, [delay])
