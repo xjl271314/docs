@@ -119,6 +119,13 @@ module.exports = {
       },
       '/http/',
       {
+        title: "PS相关知识",
+        collapsable: true,
+        children:[
+          '/ps/quick',
+        ]
+      },
+      {
         title: "前端工程化",
         collapsable: true,
         children: [
@@ -302,6 +309,13 @@ module.exports = {
         collapsable: true,
         children: [
           "/algorithm/cacheLRU",
+        ]
+      },
+      {
+        title: "LeetCode",
+        collapsable: true,
+        children: [
+          "/leetcode/algorithm",
         ]
       },
       {

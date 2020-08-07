@@ -1780,7 +1780,77 @@ npm i -g istanbul
 发布的时候需要去搜索下 当前包名是否已经被使用。包里不要带上一些不相干的文件。
 :::
 
+## 使用webpack内部的stats进行构建包的初步分析
 
+- 2020.07.28
 
+> webpack内部给我们提供了一个stats的功能,我们可以在script中配置。
 
+```json
+// package.json
+"scripts":{
+  "build:stats": "webpack --env production --json > stats.json"
+}
+...
+```
 
+在Node.js中使用
+
+```js
+const webpack = require('webpack');
+const config = require("./webpack.config.js")("production")
+
+webpack(config, (err, stats)=>{
+  if(err){
+    return console.error(err)
+  }
+  if(stats.hasErrors()){
+    return console.error(stats.toString("errors-only"))
+  }
+  console.log(stats)
+})
+```
+这种方式可以达到简单的分析效果 但是颗粒度太细,看不太出问题的所在。
+
+##  使用 speed-measure-webpack-plugin进行速度分析
+
+- 2020.07.28
+
+> 使用该插件可以直观的看到每个loader和插件执行耗时以及打包的总耗时。
+
+```js
+const SpeedMeasureWebpackPlugin = require('speed-measure-webpack-plugin');
+
+const smp = new SpeedMeasureWebpackPlugin();
+
+const webpackVonfig = smp.wrap({
+  plugins:[
+    // 需要分析的插件
+    new MyPlugin();
+    new MyOtherPlugin();
+  ]
+})
+```
+:::tip
+构建比较耗时的会显示为红色，构建较耗时的会显示为黄色,构建速度正常的会显示为绿色。
+:::
+
+##  使用 webpack-bundle-analyzer进行体积分析
+
+- 2020.07.29
+
+> 使用该插件可以分析项目内依赖的第三方模块文件的大小以及业务内组件代码的大小。
+
+```js
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+module.exports = {
+  plugins: [
+    new BundleAnalyzerPlugin();
+  ]
+}
+```
+
+构建完成后会在8888端口进行构建包大小的展示。
+
+## 
