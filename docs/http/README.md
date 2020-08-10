@@ -1054,3 +1054,46 @@ app.get('/home', (req, res) => {
 #### 如何判断 CNAME 是否正确配置？
 
 先在CDN 的 域名管理 中检查域名是否创建成功，如果已经创建成功，且已经按照步骤添加了 CNAME 解析，但是无法正常访问资源外链，或保持“等待 CNAME ”状态，可以通过以下方法检测本地的域名解析，如果域名长时间没有创建成功，您可以提交工单处理。
+
+## 在HTTPS站点中使用websocket
+
+- 2020.08.10
+
+> 在http中使用websocket需要配置对应的端口,在https中使用略有不同。
+
+1. 如果网站使用`HTTPS`，`WebSocket`必须要使用`wss`协议；
+
+2. 使用`wss`协议的连接请求必须只能写域名，而非IP+端口；
+
+3. 建议在`URL`域名后面为`websocket`定义一个路径，本例中是`/wss/`；
+
+### 前端代码
+
+```js
+const socket = new WebSocket("wss://www.xxx.cn/wss/");
+```
+
+### Nginx配置
+
+```nginx
+# 前提是要配置好HTTPS,然后只需要在HTTPS配置的server内加一个location即可
+
+# websockets
+location /wss/ {
+    proxy_pass http://xxx.xx.xx.xx:9999;            
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Real-IP $remote_addr;
+}
+```
+
+:::tip
+1. `location /wss/` {...}这里要格外注意！
+    - html中的url是 `wss://www.xxx.cn/wss/`，所以`Nginx`配置中一定要是 `/wss/`
+
+2. `proxy_pass`对应的最好是公网IP加端口号，我试过 `localhost`，`127.0.0.1`，域名都会失败
+
+3. `proxy_http_version` 1.1 版本号必须是1.1，这条配置必需
+:::

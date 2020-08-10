@@ -1853,4 +1853,113 @@ module.exports = {
 
 构建完成后会在8888端口进行构建包大小的展示。
 
-## 
+## 多进程/多实例并行压缩
+
+- 2020.08.07
+
+### 使用parallel-uglify-plugin
+
+```js
+const parallelUglifyPlugin = require('parallel-uglify-plugin');
+
+module.exports = {
+  plugins:[
+    new parallelUglifyPlugin({
+      uglifyJS:{
+        output:{
+          beautify: false,
+          comments: false,
+        },
+        compress:{
+          warning: false,
+          drop_console: true,
+          collapse_vars: true,
+          reduce_vars: true
+        }
+      }
+    })
+  ]
+}
+```
+
+### 使用 uglifyjs-webpack-plugin 并开启parallel参数
+
+```js
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+module.exports = {
+  plugin:[
+    new UglifyJsPlugin({
+      uglifyOptions:{
+        warnings: false,
+        parse: {},
+        compress: {},
+        mangle: true,
+        output: null,
+        toplevel: false,
+        nameCache: null,
+        ie8: false,
+        keep_names: false
+      },
+      parallel: true
+    })
+  ]
+}
+```
+
+### 使用terser-webpack-plugin开启parallel参数
+
+```js
+const TerserPlugin = require('terser-webpack-plugin');
+
+module.exports = {
+  optimization:{
+    minimizer:[
+      new TerserPlugin({
+          parallel: 4
+      })
+    ]
+  }
+}
+```
+
+## 通过设置Externals进行分包 
+
+- 2020.08.07
+
+### 使用html-webpack-externals-plugin
+
+```js
+const HtmlWebpackExternalsPlugin = require('html-webpack-externals-plugin');
+
+module.exports = {
+  plugin:[
+    new HtmlWebpackExternalsPlugin({
+      externals: [
+        {
+            module: 'react',
+            entry: 'react_cdn_url',
+            global: 'React'
+        },
+        {
+            module: 'react-dom',
+            entry: 'react_dom_url',
+            global: 'ReactDom'
+        }
+      ]
+    })
+  ]
+}
+```
+
+### 进一步分包:采用预编译资源模块
+
+> 思路: 将react、react-dom、redux、react-redux基础包和业务基础包打包成一个文件。
+
+方法: 使用 `DLLPlugin`进行分包,`DllReferencePlugin` 对 `manifest.json` 引用。
+
+
+
+
+
+
