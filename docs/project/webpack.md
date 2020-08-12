@@ -1958,8 +1958,92 @@ module.exports = {
 
 方法: 使用 `DLLPlugin`进行分包,`DllReferencePlugin` 对 `manifest.json` 引用。
 
+```js
+const path = require('path');
+const webpack = require('webpack');
 
+module.exports = {
+    context: process.cwd(),
+    resolve: {
+        extensions: ['.js', '.jsx', '.json', '.less', '.css', '.scss'],
+        modules: [__driname, 'node_modules']
+    },
+    entry: {
+        library: [
+            'react',
+            'react-dom',
+            'redux',
+            'react-redux'
+        ]
+    },
+    output: {
+        filename: '[name].dll.js',
+        path: path.resolve(__dirname, './build/library'),
+        library: '[name]'
+    },
+    plugins: [
+        new webpack.DLLPlugin({
+            name: '[name]',
+            path: './build/library/[name].json'
+        })
+    ]
+}
+```
+包构建完成后,在`webpack.config.js`中引入
 
+```js
+module.exports = {
+    plugins: [
+      new webpack.DllReferencePlugin({
+          manifest: require('./build/library/manifest.json')
+      })
+    ]
+};
+```
+
+引用效果,会在html文件中加入一个脚本。
+
+```html
+<script src="/build/library/library.dll.js"></script>
+```
+
+完整的配置示例:
+
+```js
+// webpack.dll.js
+const path = require('path');
+const webpack = require('webpack');
+
+module.exports = {
+    entry: {
+        library: [
+            'react',
+            'react-dom',
+            'redux',
+            'react-redux'
+        ]
+    },
+    output: {
+        filename: '[name]_[chunkhash].dll.js',
+        path: path.resolve(__dirname, './build/library'),
+        library: '[name]' // 暴露库的名字
+    },
+    plugins: [
+        new webpack.DLLPlugin({
+            name: '[name]_[hash]',
+            path: path.join(__dirname, 'build/library/[name].json')
+        })
+    ]
+}
+// webpack.config.js
+module.exports = {
+    plugins: [
+      new webpack.DllReferencePlugin({
+          manifest: require('./build/library/manifest.json')
+      })
+    ]
+};
+```
 
 
 
