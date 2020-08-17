@@ -2045,5 +2045,1823 @@ module.exports = {
 };
 ```
 
+### 充分医用缓存提升二次构建速度
+
+缓存思路:
+
+- `babel-loder` 开启缓存
+- `terser-webpack-plugin` 开启缓存
+- 使用 `cache-loader` 或者 `hard-source-webpack-plugin`
+
+```js
+// babel-loder 开启缓存
+
+loaders: ['babel-loader?cacheDirectory=true']
+
+// terser-webpack-plugin 开启缓存
+optimization: {
+    minizer: [
+        new TerserPlugin({
+            parallel: true, 
+            cache: true
+        })
+    ]
+}
+
+// hard-source-webpack-plugin(https://github.com/mzgoddard/hard-source-webpack-plugin)
+var HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+
+module.exports = {
+  context: // ...
+  entry: // ...
+  output: // ...
+  plugins: [
+    new HardSourceWebpackPlugin()
+  ]
+}
+```
+
+## 缩小构建目标
+
+- 2020.08.13
+
+> 尽可能的少构建模块。
+
+### 比如 `babel-loader` 不解析 `node_modules`
+
+```js
+module.exports = {
+  rules: {
+    test: '/\.js$',
+    loader: 'happypack/loader',
+    exclude: 'node_modules'
+  }
+}
+```
+
+### 减少文件搜索范围
+
+- 优化 `resolve.modules` 配置(减少模块搜索层级)
+- 优化 `resolve.mainFields` 配置
+- 优化 `resolve.extensions` 配置
+- 合理使用 `alias`
+
+```js
+module.exports ={
+  resolve: {
+    alias: {
+      react: path.resolve(__dirname, './node_modules/react/dist/react.min.js')
+    },
+    modules: [path.resolve(__dirname, 'node_modules')], // 先找项目内 找不到直接去node_modules找 以减少模块搜索的层级
+    extensions: ['.js'], // import一个文件没有后缀 优先查找.js文件 如果数组内配置较多 查找也比较耗时
+    mainFields: ['main']
+  }
+}
+```
+
+## Tree Shaking 在CSS中的优化
+
+- 2020.08.13
+
+之前的章节中已经介绍过`Tree Shaking` 的相关原理和在js中的使用,那么如何在`CSS`中也进行相应的优化呢?
+
+- `PurifyCSS`: 遍历代码,识别已经用到的CSS Class。
+
+- `uncss`: `HTML`需要通过`jsdom`加载,所有的样式通过`PostCss`解析,通过`document.querySelector`来识别在`html`文件里面不存在的选择器。
+
+这里将使用 [purgecss-webpack-plugin](https://github.com/FullHuman/purgecss-webpack-plugin) 配合 [mini-css-extract-plugin](https://github.com/webpack-contrib/mini-css-extract-plugin) 来使用。
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+module.exports = {
+  plugins: [
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: '[name].css',
+      chunkFilename: '[id].css',
+    }),
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: '/public/path/to/',
+            },
+          },
+          'css-loader',
+        ],
+      },
+    ],
+  },
+};
+
+// PurgecssPlugin
+const PurgecssPlugin = require('purgecss-webpack-plugin');
+
+const PATHS = {
+  src: path.join(__dirname, 'src'),
+}
+new PurgecssPlugin({
+  paths: glob.sync(`${PATHS.src}/**/*`, { nodir : true})
+})
+```
+
+## 使用webpack进行图片压缩
+
+- 2020.08.13
+
+要求: 基于 `Node`库的 `imagemin` 或者 `timypng API`
+
+使用: 配置 `image-webpack-plugin`
 
 
+### 使用Imagemin的有点分析
+
+- 有很多定制选项
+
+- 可以引入更多第三方优化插件，例如 pngquant
+
+- 可以处理多种图片格式
+
+```js
+return {
+  test: '/\.(png|svg|jpg|gif|blob)',
+  use: [{
+    loader: 'file-loader',
+    options: {
+      name: `${filename}img/[name]${hash}.[ext]`
+    }
+  },{
+    loader: 'image-webpack-loader',
+    options: {
+      mozjpeg: {
+        progressive: true,
+        quality: 65
+      },
+      optipng: {
+        enabled: false
+      },
+      pngquant: {
+        quality: '65-90',
+        speed: 4
+      },
+      gifsicle: {
+        interlaced: false
+      },
+      webp: {
+        quality: 75
+      }
+    }
+  }]
+}
+```
+
+### Imagemin的压缩原理
+
+- `pngquant`: 一款PNG压缩器,通过将图像转化为具有`alpha通道`(通常比24/32位PNG文件小60-80%)的更高效的8位PNG格式,可显著减小文件大小。
+
+- `pngcrush`: 其主要目的是通过尝试不同的压缩级别和PNG过滤方法来降低PNG IDAT数据流的大小。
+
+- `optipng`: 其设计灵感来自于`pngcrush`。`optipng`可将图像文件重新压缩为更小尺寸,而不会失去任何信息。
+
+- `tinypng`: 将24位png文件转化为更小有索引的8位图片,同时所有非必要的`metadata`也会被剥离掉。
+
+## 使用动态的Ployfill优化构建体积
+
+- 2020.08.14
+
+| 方案 | 优点  | 缺点 | 建议
+|:--------| :-------------|:--------|:--------
+| `babel-polyfill`	| React16官方推荐方案 | 1. 包体积约200K+,难以单独抽离Map、Set。 2. 项目里react是单独引用的cdn,如果用使用的话,需要单独构建一份放在react前加载。 | 不建议采用
+| `babel-plugin-transform-runtime` | 能只polyfill用到的类或方法,相对体积较小 | 不能polyfill原型上的方法,不适用于业务项目的复杂开发环境 | 不建议采用
+| `自己写Map、Set的polyfill` | 定制化高,体积小 | 1. 重复造轮子,容易在日后年久失修或者成为坑 2. 即使体积小,依然所以用户都要加载。 | 不建议采用
+| `polyfill-service` | 只给用户返回需要的polyfill,社区维护 | 部分国内奇葩浏览器UA可能无法识别(但是可以降级返回所需全部polyfill) | 推荐使用
+
+### Polyfill Service原理
+
+> 识别访问的`User Agent`,下发不同的 `Polyfill`
+
+```js
+<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+```
+
+## webpack启动过程分析
+
+- 2020.08.14
+
+**思考:**
+
+- 通过 `npm scripts` 运行 `webpack`
+  -开发环境: `npm run dev`
+  -生产环境: `npm run build`
+
+- 通过 webpack 直接运行
+  - `webpack entry.js bundle.js`
+
+**这个过程到底发生了什么???**
+
+### 1. 查找 webpack 入口文件
+
+> 在命令行运行以上命令后,`npm`会让命令行工具进入`node_modules/.bin` 目录查找是否存在 `webpack.sh(mac)` 或者 `webpack.cmd(windows)`文件,如果存在就执行,不存在就抛出错误。
+
+实际的入口文件是: `node_modules/webpack/bin/webpack.js` 找到之后执行其中的代码。
+
+### 2. 分析 webpack的入口文件 webpack.js到底做了什么事情
+
+```js
+#!/usr/bin/env node
+
+// @ts-ignore 正常执行的返回值
+process.exitCode = 0;
+
+/**
+ * 运行某个命令之后返回一个promise
+ * @param {string} command process to run
+ * @param {string[]} args commandline arguments
+ * @returns {Promise<void>} promise
+ */
+const runCommand = (command, args) => {
+	const cp = require("child_process");
+	return new Promise((resolve, reject) => {
+		const executedCommand = cp.spawn(command, args, {
+			stdio: "inherit",
+			shell: true
+		});
+
+		executedCommand.on("error", error => {
+			reject(error);
+		});
+
+		executedCommand.on("exit", code => {
+			if (code === 0) {
+				resolve();
+			} else {
+				reject();
+			}
+		});
+	});
+};
+
+/**
+ * 判断某个包是否安装
+ * @param {string} packageName name of the package
+ * @returns {boolean} is the package installed?
+ */
+const isInstalled = packageName => {
+	try {
+		require.resolve(packageName);
+
+		return true;
+	} catch (err) {
+		return false;
+	}
+};
+
+/**
+ * webpack可用的CLI:webpack-cli 和 webpack-command
+ * @typedef {Object} CliOption
+ * @property {string} name display name
+ * @property {string} package npm package name
+ * @property {string} binName name of the executable file
+ * @property {string} alias shortcut for choice
+ * @property {boolean} installed currently installed?
+ * @property {boolean} recommended is recommended
+ * @property {string} url homepage
+ * @property {string} description description
+ */
+
+/** @type {CliOption[]} */
+const CLIs = [
+	{
+		name: "webpack-cli",
+		package: "webpack-cli",
+		binName: "webpack-cli",
+		alias: "cli",
+		installed: isInstalled("webpack-cli"),
+		recommended: true,
+		url: "https://github.com/webpack/webpack-cli",
+		description: "The original webpack full-featured CLI."
+	},
+	{
+		name: "webpack-command",
+		package: "webpack-command",
+		binName: "webpack-command",
+		alias: "command",
+		installed: isInstalled("webpack-command"),
+		recommended: false,
+		url: "https://github.com/webpack-contrib/webpack-command",
+		description: "A lightweight, opinionated webpack CLI."
+	}
+];
+// 判断两个CLI是否安装了
+const installedClis = CLIs.filter(cli => cli.installed);
+// 根据安装的CLI数量进行处理
+if (installedClis.length === 0) {
+	const path = require("path");
+	const fs = require("fs");
+	const readLine = require("readline");
+
+	let notify =
+		"One CLI for webpack must be installed. These are recommended choices, delivered as separate packages:";
+
+	for (const item of CLIs) {
+		if (item.recommended) {
+			notify += `\n - ${item.name} (${item.url})\n   ${item.description}`;
+		}
+	}
+
+	console.error(notify);
+
+	const isYarn = fs.existsSync(path.resolve(process.cwd(), "yarn.lock"));
+
+	const packageManager = isYarn ? "yarn" : "npm";
+	const installOptions = [isYarn ? "add" : "install", "-D"];
+
+	console.error(
+		`We will use "${packageManager}" to install the CLI via "${packageManager} ${installOptions.join(
+			" "
+		)}".`
+	);
+
+	const question = `Do you want to install 'webpack-cli' (yes/no): `;
+
+	const questionInterface = readLine.createInterface({
+		input: process.stdin,
+		output: process.stderr
+	});
+	questionInterface.question(question, answer => {
+		questionInterface.close();
+
+		const normalizedAnswer = answer.toLowerCase().startsWith("y");
+
+		if (!normalizedAnswer) {
+			console.error(
+				"You need to install 'webpack-cli' to use webpack via CLI.\n" +
+					"You can also install the CLI manually."
+			);
+			process.exitCode = 1;
+
+			return;
+		}
+
+		const packageName = "webpack-cli";
+
+		console.log(
+			`Installing '${packageName}' (running '${packageManager} ${installOptions.join(
+				" "
+			)} ${packageName}')...`
+		);
+
+		runCommand(packageManager, installOptions.concat(packageName))
+			.then(() => {
+				require(packageName); //eslint-disable-line
+			})
+			.catch(error => {
+				console.error(error);
+				process.exitCode = 1;
+			});
+	});
+} else if (installedClis.length === 1) {
+	const path = require("path");
+	const pkgPath = require.resolve(`${installedClis[0].package}/package.json`);
+	// eslint-disable-next-line node/no-missing-require
+	const pkg = require(pkgPath);
+	// eslint-disable-next-line node/no-missing-require
+	require(path.resolve(
+		path.dirname(pkgPath),
+		pkg.bin[installedClis[0].binName]
+	));
+} else {
+	console.warn(
+		`You have installed ${installedClis
+			.map(item => item.name)
+			.join(
+				" and "
+			)} together. To work with the "webpack" command you need only one CLI package, please remove one of them or use them directly via their binary.`
+	);
+
+	// @ts-ignore
+	process.exitCode = 1;
+}
+```
+
+:::tip
+**webpack启动后的结果:**
+
+`webpack`最终找到 `webpack-cli(webpack-command)`这个`npm`包,并且执行`CLI`命令。
+:::
+
+## webpack-cli 源码阅读
+
+- 2020.08.14
+
+### webpack-cli做的事情
+
+1. 引入了`yargs`,对命令进行定制
+
+2. 分析命令行参数,对各个参数进行转换,组成编译配置项
+
+3. 引用`webpack`,根据配置项进行编译和构建
+
+### 1.从NON_COMPILATION_CDM分析出不需要编译的命令
+
+> `webpack-cli`处理不需要经过编译的命令
+
+```js
+#!/usr/bin/env node
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+
+const { NON_COMPILATION_ARGS } = require("./utils/constants");
+
+(function() {
+	// wrap in IIFE to be able to use return
+
+	const importLocal = require("import-local");
+	// Prefer the local installation of webpack-cli
+	if (importLocal(__filename)) {
+		return;
+	}
+
+	require("v8-compile-cache");
+
+	const ErrorHelpers = require("./utils/errorHelpers");
+
+	const NON_COMPILATION_CMD = process.argv.find(arg => {
+		if (arg === "serve") {
+			global.process.argv = global.process.argv.filter(a => a !== "serve");
+			process.argv = global.process.argv;
+		}
+		return NON_COMPILATION_ARGS.find(a => a === arg);
+	});
+
+	if (NON_COMPILATION_CMD) {
+		return require("./utils/prompt-command")(NON_COMPILATION_CMD, ...process.argv);
+	}
+
+	const yargs = require("yargs").usage(`webpack-cli ${require("../package.json").version}
+
+Usage: webpack-cli [options]
+       webpack-cli [options] --entry <entry> --output <output>
+       webpack-cli [options] <entries...> --output <output>
+       webpack-cli <command> [options]
+
+For more information, see https://webpack.js.org/api/cli/.`);
+
+	require("./config/config-yargs")(yargs);
+
+	// yargs will terminate the process early when the user uses help or version.
+	// This causes large help outputs to be cut short (https://github.com/nodejs/node/wiki/API-changes-between-v0.10-and-v4#process).
+	// To prevent this we use the yargs.parse API and exit the process normally
+	yargs.parse(process.argv.slice(2), (err, argv, output) => {
+		Error.stackTraceLimit = 30;
+
+		// arguments validation failed
+		if (err && output) {
+			console.error(output);
+			process.exitCode = 1;
+			return;
+		}
+
+		// help or version info
+		if (output) {
+			console.log(output);
+			return;
+		}
+
+		if (argv.verbose) {
+			argv["display"] = "verbose";
+		}
+
+		let options;
+		try {
+			options = require("./utils/convert-argv")(argv);
+		} catch (err) {
+			if (err.code === "MODULE_NOT_FOUND") {
+				const moduleName = err.message.split("'")[1];
+				let instructions = "";
+				let errorMessage = "";
+
+				if (moduleName === "webpack") {
+					errorMessage = `\n${moduleName} not installed`;
+					instructions = `Install webpack to start bundling: \u001b[32m\n  $ npm install --save-dev ${moduleName}\n`;
+
+					if (process.env.npm_execpath !== undefined && process.env.npm_execpath.includes("yarn")) {
+						instructions = `Install webpack to start bundling: \u001b[32m\n $ yarn add ${moduleName} --dev\n`;
+					}
+					Error.stackTraceLimit = 1;
+					console.error(`${errorMessage}\n\n${instructions}`);
+					process.exitCode = 1;
+					return;
+				}
+			}
+
+			if (err.name !== "ValidationError") {
+				throw err;
+			}
+
+			const stack = ErrorHelpers.cleanUpWebpackOptions(err.stack, err.message);
+			const message = err.message + "\n" + stack;
+
+			if (argv.color) {
+				console.error(`\u001b[1m\u001b[31m${message}\u001b[39m\u001b[22m`);
+			} else {
+				console.error(message);
+			}
+
+			process.exitCode = 1;
+			return;
+		}
+
+		/**
+		 * When --silent flag is present, an object with a no-op write method is
+		 * used in place of process.stout
+		 */
+		const stdout = argv.silent ? { write: () => {} } : process.stdout;
+
+		function ifArg(name, fn, init) {
+			if (Array.isArray(argv[name])) {
+				if (init) init();
+				argv[name].forEach(fn);
+			} else if (typeof argv[name] !== "undefined") {
+				if (init) init();
+				fn(argv[name], -1);
+			}
+		}
+
+		function processOptions(options) {
+			// process Promise
+			if (typeof options.then === "function") {
+				options.then(processOptions).catch(function(err) {
+					console.error(err.stack || err);
+					// eslint-disable-next-line no-process-exit
+					process.exit(1);
+				});
+				return;
+			}
+
+			const firstOptions = [].concat(options)[0];
+			const statsPresetToOptions = require("webpack").Stats.presetToOptions;
+
+			let outputOptions = options.stats;
+			if (typeof outputOptions === "boolean" || typeof outputOptions === "string") {
+				outputOptions = statsPresetToOptions(outputOptions);
+			} else if (!outputOptions) {
+				outputOptions = {};
+			}
+
+			ifArg("display", function(preset) {
+				outputOptions = statsPresetToOptions(preset);
+			});
+
+			outputOptions = Object.create(outputOptions);
+			if (Array.isArray(options) && !outputOptions.children) {
+				outputOptions.children = options.map(o => o.stats);
+			}
+			if (typeof outputOptions.context === "undefined") outputOptions.context = firstOptions.context;
+
+			ifArg("env", function(value) {
+				if (outputOptions.env) {
+					outputOptions._env = value;
+				}
+			});
+
+			ifArg("json", function(bool) {
+				if (bool) {
+					outputOptions.json = bool;
+					outputOptions.modules = bool;
+				}
+			});
+
+			if (typeof outputOptions.colors === "undefined") outputOptions.colors = require("supports-color").stdout;
+
+			ifArg("sort-modules-by", function(value) {
+				outputOptions.modulesSort = value;
+			});
+
+			ifArg("sort-chunks-by", function(value) {
+				outputOptions.chunksSort = value;
+			});
+
+			ifArg("sort-assets-by", function(value) {
+				outputOptions.assetsSort = value;
+			});
+
+			ifArg("display-exclude", function(value) {
+				outputOptions.exclude = value;
+			});
+
+			if (!outputOptions.json) {
+				if (typeof outputOptions.cached === "undefined") outputOptions.cached = false;
+				if (typeof outputOptions.cachedAssets === "undefined") outputOptions.cachedAssets = false;
+
+				ifArg("display-chunks", function(bool) {
+					if (bool) {
+						outputOptions.modules = false;
+						outputOptions.chunks = true;
+						outputOptions.chunkModules = true;
+					}
+				});
+
+				ifArg("display-entrypoints", function(bool) {
+					outputOptions.entrypoints = bool;
+				});
+
+				ifArg("display-reasons", function(bool) {
+					if (bool) outputOptions.reasons = true;
+				});
+
+				ifArg("display-depth", function(bool) {
+					if (bool) outputOptions.depth = true;
+				});
+
+				ifArg("display-used-exports", function(bool) {
+					if (bool) outputOptions.usedExports = true;
+				});
+
+				ifArg("display-provided-exports", function(bool) {
+					if (bool) outputOptions.providedExports = true;
+				});
+
+				ifArg("display-optimization-bailout", function(bool) {
+					if (bool) outputOptions.optimizationBailout = bool;
+				});
+
+				ifArg("display-error-details", function(bool) {
+					if (bool) outputOptions.errorDetails = true;
+				});
+
+				ifArg("display-origins", function(bool) {
+					if (bool) outputOptions.chunkOrigins = true;
+				});
+
+				ifArg("display-max-modules", function(value) {
+					outputOptions.maxModules = +value;
+				});
+
+				ifArg("display-cached", function(bool) {
+					if (bool) outputOptions.cached = true;
+				});
+
+				ifArg("display-cached-assets", function(bool) {
+					if (bool) outputOptions.cachedAssets = true;
+				});
+
+				if (!outputOptions.exclude) outputOptions.exclude = ["node_modules", "bower_components", "components"];
+
+				if (argv["display-modules"]) {
+					outputOptions.maxModules = Infinity;
+					outputOptions.exclude = undefined;
+					outputOptions.modules = true;
+				}
+			}
+
+			ifArg("hide-modules", function(bool) {
+				if (bool) {
+					outputOptions.modules = false;
+					outputOptions.chunkModules = false;
+				}
+			});
+
+			ifArg("info-verbosity", function(value) {
+				outputOptions.infoVerbosity = value;
+			});
+
+			ifArg("build-delimiter", function(value) {
+				outputOptions.buildDelimiter = value;
+			});
+
+			const webpack = require("webpack");
+
+			let lastHash = null;
+			let compiler;
+			try {
+				compiler = webpack(options);
+			} catch (err) {
+				if (err.name === "WebpackOptionsValidationError") {
+					if (argv.color) console.error(`\u001b[1m\u001b[31m${err.message}\u001b[39m\u001b[22m`);
+					else console.error(err.message);
+					// eslint-disable-next-line no-process-exit
+					process.exit(1);
+				}
+
+				throw err;
+			}
+
+			if (argv.progress) {
+				const ProgressPlugin = require("webpack").ProgressPlugin;
+				new ProgressPlugin({
+					profile: argv.profile
+				}).apply(compiler);
+			}
+			if (outputOptions.infoVerbosity === "verbose") {
+				if (argv.w) {
+					compiler.hooks.watchRun.tap("WebpackInfo", compilation => {
+						const compilationName = compilation.name ? compilation.name : "";
+						console.error("\nCompilation " + compilationName + " starting…\n");
+					});
+				} else {
+					compiler.hooks.beforeRun.tap("WebpackInfo", compilation => {
+						const compilationName = compilation.name ? compilation.name : "";
+						console.error("\nCompilation " + compilationName + " starting…\n");
+					});
+				}
+				compiler.hooks.done.tap("WebpackInfo", compilation => {
+					const compilationName = compilation.name ? compilation.name : "";
+					console.error("\nCompilation " + compilationName + " finished\n");
+				});
+			}
+
+			function compilerCallback(err, stats) {
+				if (!options.watch || err) {
+					// Do not keep cache anymore
+					compiler.purgeInputFileSystem();
+				}
+				if (err) {
+					lastHash = null;
+					console.error(err.stack || err);
+					if (err.details) console.error(err.details);
+					process.exitCode = 1;
+					return;
+				}
+				if (outputOptions.json) {
+					stdout.write(JSON.stringify(stats.toJson(outputOptions), null, 2) + "\n");
+				} else if (stats.hash !== lastHash) {
+					lastHash = stats.hash;
+					if (stats.compilation && stats.compilation.errors.length !== 0) {
+						const errors = stats.compilation.errors;
+						if (errors[0].name === "EntryModuleNotFoundError") {
+							console.error("\n\u001b[1m\u001b[31mInsufficient number of arguments or no entry found.");
+							console.error(
+								"\u001b[1m\u001b[31mAlternatively, run 'webpack(-cli) --help' for usage info.\u001b[39m\u001b[22m\n"
+							);
+						}
+					}
+					const statsString = stats.toString(outputOptions);
+					const delimiter = outputOptions.buildDelimiter ? `${outputOptions.buildDelimiter}\n` : "";
+					if (statsString) stdout.write(`${statsString}\n${delimiter}`);
+				}
+				if (!options.watch && stats.hasErrors()) {
+					process.exitCode = 2;
+				}
+			}
+			if (firstOptions.watch || options.watch) {
+				const watchOptions =
+					firstOptions.watchOptions || options.watchOptions || firstOptions.watch || options.watch || {};
+				if (watchOptions.stdin) {
+					process.stdin.on("end", function(_) {
+						process.exit(); // eslint-disable-line
+					});
+					process.stdin.resume();
+				}
+				compiler.watch(watchOptions, compilerCallback);
+				if (outputOptions.infoVerbosity !== "none") console.error("\nwebpack is watching the files…\n");
+			} else {
+				compiler.run((err, stats) => {
+					if (compiler.close) {
+						compiler.close(err2 => {
+							compilerCallback(err || err2, stats);
+						});
+					} else {
+						compilerCallback(err, stats);
+					}
+				});
+			}
+		}
+		processOptions(options);
+	});
+})();
+```
+
+**NON_COMPILATION_ARGS**:
+
+```js
+/**
+ * init 创建一份webpack配置文件
+ * migrate 进行webpack版本迁移
+ * add 往webpack配置文件中增加属性
+ * remove 往webpack配置文件中删除属性
+ * serve 运行webpack-server
+ * generate-loader 生成webpack loader代码
+ * generate-plugin 生成webpack plugin代码
+ * info 返回与本地环境相关的一些信息
+*/
+const NON_COMPILATION_ARGS = ["init", "migrate", "add", "remove", "serve", "generate-loader", "generate-plugin", "info"];
+
+const CONFIG_GROUP = "Config options:";
+const BASIC_GROUP = "Basic options:";
+const MODULE_GROUP = "Module options:";
+const OUTPUT_GROUP = "Output options:";
+const ADVANCED_GROUP = "Advanced options:";
+const RESOLVE_GROUP = "Resolving options:";
+const OPTIMIZE_GROUP = "Optimizing options:";
+const DISPLAY_GROUP = "Stats options:";
+const GROUPS = {
+	CONFIG_GROUP,
+	BASIC_GROUP,
+	MODULE_GROUP,
+	OUTPUT_GROUP,
+	ADVANCED_GROUP,
+	RESOLVE_GROUP,
+	OPTIMIZE_GROUP,
+	DISPLAY_GROUP
+};
+
+const WEBPACK_OPTIONS_FLAG = "WEBPACK_OPTIONS";
+
+module.exports = {
+	NON_COMPILATION_ARGS,
+	GROUPS,
+	WEBPACK_OPTIONS_FLAG
+};
+```
+**prompt-command.js**
+
+```js
+// based on https://github.com/webpack/webpack/blob/master/bin/webpack.js
+
+/**
+ * @param {string} command process to run
+ * @param {string[]} args commandline arguments
+ * @returns {Promise<void>} promise
+ */
+const runCommand = (command, args) => {
+	const cp = require("child_process");
+	return new Promise((resolve, reject) => {
+		const executedCommand = cp.spawn(command, args, {
+			stdio: "inherit",
+			shell: true
+		});
+
+		executedCommand.on("error", error => {
+			reject(error);
+		});
+
+		executedCommand.on("exit", code => {
+			if (code === 0) {
+				resolve();
+			} else {
+				reject();
+			}
+		});
+	});
+};
+
+const npmGlobalRoot = () => {
+	const cp = require("child_process");
+	return new Promise((resolve, reject) => {
+		const command = cp.spawn("npm", ["root", "-g"]);
+		command.on("error", error => reject(error));
+		command.stdout.on("data", data => resolve(data.toString()));
+		command.stderr.on("data", data => reject(data));
+	});
+};
+
+const runWhenInstalled = (packages, pathForCmd, ...args) => {
+	const currentPackage = require(pathForCmd);
+	const func = currentPackage.default;
+	if (typeof func !== "function") {
+		throw new Error(`@webpack-cli/${packages} failed to export a default function`);
+	}
+	return func(...args);
+};
+
+module.exports = function promptForInstallation(packages, ...args) {
+	const nameOfPackage = "@webpack-cli/" + packages;
+	let packageIsInstalled = false;
+	let pathForCmd;
+	try {
+		const path = require("path");
+		const fs = require("fs");
+		pathForCmd = path.resolve(process.cwd(), "node_modules", "@webpack-cli", packages);
+		if (!fs.existsSync(pathForCmd)) {
+			const globalModules = require("global-modules");
+			pathForCmd = globalModules + "/@webpack-cli/" + packages;
+			require.resolve(pathForCmd);
+		} else {
+			require.resolve(pathForCmd);
+		}
+		packageIsInstalled = true;
+	} catch (err) {
+		packageIsInstalled = false;
+	}
+	if (!packageIsInstalled) {
+		const path = require("path");
+		const fs = require("fs");
+		const readLine = require("readline");
+		const isYarn = fs.existsSync(path.resolve(process.cwd(), "yarn.lock"));
+
+		const packageManager = isYarn ? "yarn" : "npm";
+		const options = ["install", "-D", nameOfPackage];
+
+		if (isYarn) {
+			options[0] = "add";
+		}
+
+		if (packages === "init") {
+			if (isYarn) {
+				options.splice(1, 1); // remove '-D'
+				options.splice(0, 0, "global");
+			} else {
+				options[1] = "-g";
+			}
+		}
+
+		const commandToBeRun = `${packageManager} ${options.join(" ")}`;
+
+		const question = `Would you like to install ${packages}? (That will run ${commandToBeRun}) (yes/NO) : `;
+
+		console.error(`The command moved into a separate package: ${nameOfPackage}`);
+		const questionInterface = readLine.createInterface({
+			input: process.stdin,
+			output: process.stdout
+		});
+		questionInterface.question(question, answer => {
+			questionInterface.close();
+			switch (answer.toLowerCase()) {
+				case "y":
+				case "yes":
+				case "1": {
+					runCommand(packageManager, options)
+						.then(_ => {
+							if (packages === "init") {
+								npmGlobalRoot()
+									.then(root => {
+										const pathtoInit = path.resolve(root.trim(), "@webpack-cli", "init");
+										return pathtoInit;
+									})
+									.then(pathForInit => {
+										return require(pathForInit).default(...args);
+									})
+									.catch(error => {
+										console.error(error);
+										process.exitCode = 1;
+									});
+								return;
+							}
+
+							pathForCmd = path.resolve(process.cwd(), "node_modules", "@webpack-cli", packages);
+							return runWhenInstalled(packages, pathForCmd, ...args);
+						})
+						.catch(error => {
+							console.error(error);
+							process.exitCode = 1;
+						});
+					break;
+				}
+				default: {
+					console.error(`${nameOfPackage} needs to be installed in order to run the command.`);
+					process.exitCode = 1;
+					break;
+				}
+			}
+		});
+	} else {
+		return runWhenInstalled(packages, pathForCmd, ...args);
+	}
+};
+```
+
+### 2.命令行工具 yargs 介绍
+
+> 提供命令和分组参数,动态生成help帮助信息
+
+![help帮助信息](https://img-blog.csdnimg.cn/20200814163033594.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70#pic_center)
+
+
+**config-yargs**:
+
+```js
+const optionsSchema = require("../config/optionsSchema.json");
+
+const { GROUPS } = require("../utils/constants");
+
+const {
+	CONFIG_GROUP,
+	BASIC_GROUP,
+	MODULE_GROUP,
+	OUTPUT_GROUP,
+	ADVANCED_GROUP,
+	RESOLVE_GROUP,
+	OPTIMIZE_GROUP,
+	DISPLAY_GROUP
+} = GROUPS;
+
+const nestedProperties = ["anyOf", "oneOf", "allOf"];
+
+const resolveSchema = schema => {
+	let current = schema;
+	if (schema && typeof schema === "object" && "$ref" in schema) {
+		const path = schema.$ref.split("/");
+		for (const element of path) {
+			if (element === "#") {
+				current = optionsSchema;
+			} else {
+				current = current[element];
+			}
+		}
+	}
+	return current;
+};
+
+const findPropertyInSchema = (schema, property, subProperty) => {
+	if (!schema) return null;
+	if (subProperty) {
+		if (schema[property] && typeof schema[property] === "object" && subProperty in schema[property]) {
+			return resolveSchema(schema[property][subProperty]);
+		}
+	} else {
+		if (property in schema) return resolveSchema(schema[property]);
+	}
+	for (const name of nestedProperties) {
+		if (schema[name]) {
+			for (const item of schema[name]) {
+				const resolvedItem = resolveSchema(item);
+				const result = findPropertyInSchema(resolvedItem, property, subProperty);
+				if (result) return result;
+			}
+		}
+	}
+	return undefined;
+};
+
+const getSchemaInfo = (path, property, subProperty) => {
+	const pathSegments = path.split(".");
+	let current = optionsSchema;
+	for (const segment of pathSegments) {
+		if (segment === "*") {
+			current = findPropertyInSchema(current, "additionalProperties") || findPropertyInSchema(current, "items");
+		} else {
+			current = findPropertyInSchema(current, "properties", segment);
+		}
+		if (!current) return undefined;
+	}
+	return findPropertyInSchema(current, property, subProperty);
+};
+
+module.exports = function(yargs) {
+	yargs
+		.help("help")
+		.alias("help", "h")
+		.version()
+		.alias("version", "v")
+		.options({
+			config: {
+				type: "string",
+				describe: "Path to the config file",
+				group: CONFIG_GROUP,
+				defaultDescription: "webpack.config.js or webpackfile.js",
+				requiresArg: true
+			},
+			"config-register": {
+				type: "array",
+				alias: "r",
+				describe: "Preload one or more modules before loading the webpack configuration",
+				group: CONFIG_GROUP,
+				defaultDescription: "module id or path",
+				requiresArg: true
+			},
+			"config-name": {
+				type: "string",
+				describe: "Name of the config to use",
+				group: CONFIG_GROUP,
+				requiresArg: true
+			},
+			env: {
+				describe: "Environment passed to the config, when it is a function",
+				group: CONFIG_GROUP
+			},
+			mode: {
+				type: getSchemaInfo("mode", "type"),
+				choices: getSchemaInfo("mode", "enum"),
+				describe: getSchemaInfo("mode", "description"),
+				group: CONFIG_GROUP,
+				requiresArg: true
+			},
+			context: {
+				type: getSchemaInfo("context", "type"),
+				describe: getSchemaInfo("context", "description"),
+				group: BASIC_GROUP,
+				defaultDescription: "The current directory",
+				requiresArg: true
+			},
+			entry: {
+				type: "string",
+				describe: getSchemaInfo("entry", "description"),
+				group: BASIC_GROUP,
+				requiresArg: true
+			},
+			"no-cache": {
+				type: "boolean",
+				describe: "Disables cached builds",
+				group: BASIC_GROUP
+			},
+			"module-bind": {
+				type: "string",
+				describe: "Bind an extension to a loader",
+				group: MODULE_GROUP,
+				requiresArg: true
+			},
+			"module-bind-post": {
+				type: "string",
+				describe: "Bind an extension to a post loader",
+				group: MODULE_GROUP,
+				requiresArg: true
+			},
+			"module-bind-pre": {
+				type: "string",
+				describe: "Bind an extension to a pre loader",
+				group: MODULE_GROUP,
+				requiresArg: true
+			},
+			output: {
+				alias: "o",
+				describe: "The output path and file for compilation assets",
+				group: OUTPUT_GROUP,
+				requiresArg: true
+			},
+			"output-path": {
+				type: "string",
+				describe: getSchemaInfo("output.path", "description"),
+				group: OUTPUT_GROUP,
+				defaultDescription: "The current directory",
+				requiresArg: true
+			},
+			"output-filename": {
+				type: "string",
+				describe: getSchemaInfo("output.filename", "description"),
+				group: OUTPUT_GROUP,
+				defaultDescription: "[name].js",
+				requiresArg: true
+			},
+			"output-chunk-filename": {
+				type: "string",
+				describe: getSchemaInfo("output.chunkFilename", "description"),
+				group: OUTPUT_GROUP,
+				defaultDescription: "filename with [id] instead of [name] or [id] prefixed",
+				requiresArg: true
+			},
+			"output-source-map-filename": {
+				type: "string",
+				describe: getSchemaInfo("output.sourceMapFilename", "description"),
+				group: OUTPUT_GROUP,
+				requiresArg: true
+			},
+			"output-public-path": {
+				type: "string",
+				describe: getSchemaInfo("output.publicPath", "description"),
+				group: OUTPUT_GROUP,
+				requiresArg: true
+			},
+			"output-jsonp-function": {
+				type: "string",
+				describe: getSchemaInfo("output.jsonpFunction", "description"),
+				group: OUTPUT_GROUP,
+				requiresArg: true
+			},
+			"output-pathinfo": {
+				type: "boolean",
+				describe: getSchemaInfo("output.pathinfo", "description"),
+				group: OUTPUT_GROUP
+			},
+			"output-library": {
+				type: "array",
+				describe: "Expose the exports of the entry point as library",
+				group: OUTPUT_GROUP,
+				requiresArg: true
+			},
+			"output-library-target": {
+				type: "string",
+				describe: getSchemaInfo("output.libraryTarget", "description"),
+				choices: getSchemaInfo("output.libraryTarget", "enum"),
+				group: OUTPUT_GROUP,
+				requiresArg: true
+			},
+			"records-input-path": {
+				type: "string",
+				describe: getSchemaInfo("recordsInputPath", "description"),
+				group: ADVANCED_GROUP,
+				requiresArg: true
+			},
+			"records-output-path": {
+				type: "string",
+				describe: getSchemaInfo("recordsOutputPath", "description"),
+				group: ADVANCED_GROUP,
+				requiresArg: true
+			},
+			"records-path": {
+				type: "string",
+				describe: getSchemaInfo("recordsPath", "description"),
+				group: ADVANCED_GROUP,
+				requiresArg: true
+			},
+			define: {
+				type: "string",
+				describe: "Define any free var in the bundle",
+				group: ADVANCED_GROUP,
+				requiresArg: true
+			},
+			target: {
+				type: "string",
+				describe: getSchemaInfo("target", "description"),
+				group: ADVANCED_GROUP,
+				requiresArg: true
+			},
+			cache: {
+				type: "boolean",
+				describe: getSchemaInfo("cache", "description"),
+				default: null,
+				group: ADVANCED_GROUP,
+				defaultDescription: "It's enabled by default when watching"
+			},
+			watch: {
+				type: "boolean",
+				alias: "w",
+				describe: getSchemaInfo("watch", "description"),
+				group: BASIC_GROUP
+			},
+			"watch-stdin": {
+				type: "boolean",
+				alias: "stdin",
+				describe: getSchemaInfo("watchOptions.stdin", "description"),
+				group: ADVANCED_GROUP
+			},
+			"watch-aggregate-timeout": {
+				describe: getSchemaInfo("watchOptions.aggregateTimeout", "description"),
+				type: getSchemaInfo("watchOptions.aggregateTimeout", "type"),
+				group: ADVANCED_GROUP,
+				requiresArg: true
+			},
+			"watch-poll": {
+				type: "string",
+				describe: getSchemaInfo("watchOptions.poll", "description"),
+				group: ADVANCED_GROUP
+			},
+			hot: {
+				type: "boolean",
+				describe: "Enables Hot Module Replacement",
+				group: ADVANCED_GROUP
+			},
+			debug: {
+				type: "boolean",
+				describe: "Switch loaders to debug mode",
+				group: BASIC_GROUP
+			},
+			devtool: {
+				type: "string",
+				describe: getSchemaInfo("devtool", "description"),
+				group: BASIC_GROUP,
+				requiresArg: true
+			},
+			"resolve-alias": {
+				type: "string",
+				describe: getSchemaInfo("resolve.alias", "description"),
+				group: RESOLVE_GROUP,
+				requiresArg: true
+			},
+			"resolve-extensions": {
+				type: "array",
+				describe: getSchemaInfo("resolve.alias", "description"),
+				group: RESOLVE_GROUP,
+				requiresArg: true
+			},
+			"resolve-loader-alias": {
+				type: "string",
+				describe: "Setup a loader alias for resolving",
+				group: RESOLVE_GROUP,
+				requiresArg: true
+			},
+			"optimize-max-chunks": {
+				describe: "Try to keep the chunk count below a limit",
+				group: OPTIMIZE_GROUP,
+				requiresArg: true
+			},
+			"optimize-min-chunk-size": {
+				describe: getSchemaInfo("optimization.splitChunks.minSize", "description"),
+				group: OPTIMIZE_GROUP,
+				requiresArg: true
+			},
+			"optimize-minimize": {
+				type: "boolean",
+				describe: getSchemaInfo("optimization.minimize", "description"),
+				group: OPTIMIZE_GROUP
+			},
+			prefetch: {
+				type: "string",
+				describe: "Prefetch this request (Example: --prefetch ./file.js)",
+				group: ADVANCED_GROUP,
+				requiresArg: true
+			},
+			provide: {
+				type: "string",
+				describe: "Provide these modules as free vars in all modules (Example: --provide jQuery=jquery)",
+				group: ADVANCED_GROUP,
+				requiresArg: true
+			},
+			"labeled-modules": {
+				type: "boolean",
+				describe: "Enables labeled modules",
+				group: ADVANCED_GROUP
+			},
+			plugin: {
+				type: "string",
+				describe: "Load this plugin",
+				group: ADVANCED_GROUP,
+				requiresArg: true
+			},
+			bail: {
+				type: getSchemaInfo("bail", "type"),
+				describe: getSchemaInfo("bail", "description"),
+				group: ADVANCED_GROUP,
+				default: null
+			},
+			profile: {
+				type: "boolean",
+				describe: getSchemaInfo("profile", "description"),
+				group: ADVANCED_GROUP,
+				default: null
+			},
+			d: {
+				type: "boolean",
+				describe: "shortcut for --debug --devtool eval-cheap-module-source-map --output-pathinfo",
+				group: BASIC_GROUP
+			},
+			p: {
+				type: "boolean",
+				// eslint-disable-next-line quotes
+				describe: 'shortcut for --optimize-minimize --define process.env.NODE_ENV="production"',
+				group: BASIC_GROUP
+			},
+			silent: {
+				type: "boolean",
+				describe: "Prevent output from being displayed in stdout"
+			},
+			json: {
+				type: "boolean",
+				alias: "j",
+				describe: "Prints the result as JSON."
+			},
+			progress: {
+				type: "boolean",
+				describe: "Print compilation progress in percentage",
+				group: BASIC_GROUP
+			},
+			color: {
+				type: "boolean",
+				alias: "colors",
+				default: function supportsColor() {
+					return require("supports-color").stdout;
+				},
+				group: DISPLAY_GROUP,
+				describe: "Force colors on the console"
+			},
+			"no-color": {
+				type: "boolean",
+				alias: "no-colors",
+				group: DISPLAY_GROUP,
+				describe: "Force no colors on the console"
+			},
+			"sort-modules-by": {
+				type: "string",
+				group: DISPLAY_GROUP,
+				describe: "Sorts the modules list by property in module"
+			},
+			"sort-chunks-by": {
+				type: "string",
+				group: DISPLAY_GROUP,
+				describe: "Sorts the chunks list by property in chunk"
+			},
+			"sort-assets-by": {
+				type: "string",
+				group: DISPLAY_GROUP,
+				describe: "Sorts the assets list by property in asset"
+			},
+			"hide-modules": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Hides info about modules"
+			},
+			"display-exclude": {
+				type: "string",
+				group: DISPLAY_GROUP,
+				describe: "Exclude modules in the output"
+			},
+			"display-modules": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Display even excluded modules in the output"
+			},
+			"display-max-modules": {
+				type: "number",
+				group: DISPLAY_GROUP,
+				describe: "Sets the maximum number of visible modules in output"
+			},
+			"display-chunks": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Display chunks in the output"
+			},
+			"display-entrypoints": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Display entry points in the output"
+			},
+			"display-origins": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Display origins of chunks in the output"
+			},
+			"display-cached": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Display also cached modules in the output"
+			},
+			"display-cached-assets": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Display also cached assets in the output"
+			},
+			"display-reasons": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Display reasons about module inclusion in the output"
+			},
+			"display-depth": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Display distance from entry point for each module"
+			},
+			"display-used-exports": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Display information about used exports in modules (Tree Shaking)"
+			},
+			"display-provided-exports": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Display information about exports provided from modules"
+			},
+			"display-optimization-bailout": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Display information about why optimization bailed out for modules"
+			},
+			"display-error-details": {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Display details about errors"
+			},
+			display: {
+				type: "string",
+				choices: ["", "verbose", "detailed", "normal", "minimal", "errors-only", "none"],
+				group: DISPLAY_GROUP,
+				describe: "Select display preset"
+			},
+			verbose: {
+				type: "boolean",
+				group: DISPLAY_GROUP,
+				describe: "Show more details"
+			},
+			"info-verbosity": {
+				type: "string",
+				default: "info",
+				choices: ["none", "info", "verbose"],
+				group: DISPLAY_GROUP,
+				describe: "Controls the output of lifecycle messaging e.g. Started watching files..."
+			},
+			"build-delimiter": {
+				type: "string",
+				group: DISPLAY_GROUP,
+				describe: "Display custom text after build output"
+			}
+		});
+};
+```
+
+### 3.webpack-cli 使用 args 分析
+
+> 参数分组(config/config-args.js)将命令划分为了9类：
+
+- `Config options`: 配置相关参数(文件名称、运行参数等)
+- `Basic options`: 基础参数(entry设置、debug模式设置、watch监听设置、devtool设置)
+- `Module options`: 模块参数,给loader设置扩展
+- `Output options`: 输出参数(输出路径、输出文件名称)
+- `Advanced options`: 高级用法(记录设置、缓存设置、监听频率、bail等)
+- `Resolving options`: 解析参数(alias 和 解析的文件后缀设置)
+- `Optimizing options`: 优化参数
+- `Stats options`: 统计参数
+- `options`: 通用参数(帮助命令、版本信息等)
+
+:::tip
+**webpack-cli 执行的结果**
+
+webpack-cli配置文件和命令行参数进行转换最终胜出配置选项参数 options
+
+最终会根据配置参数实例化 webpack 对象,然后执行构建流程
+:::
+
+## Tapable插件架构与Hooks设计
+
+- 2020.08.16
+
+### webpack的本质是什么?
+
+> 可以理解为webpack是一种基于事件流的编程范例,一系列的插件运行。
+
+其中核心对象Complier继承Tapable,Complation也是继承Tapable。
+
+### Tapable是什么?
+
+> `Tapable`是一个类似于`Node.js`的`EventEmitter插件库`,主要是控制钩子函数的发布与订阅,控制着`webpack`的插件系统。
+
+Tapable库暴露了很多的Hook(钩子)类,为插件的挂载提供了钩子
+
+```js
+const {
+	Tapable, 
+	SyncHook, // 同步钩子
+	SyncBailHook, // 同步熔断钩子 
+	SyncWaterfallHook, // 同步流水钩子
+	SyncLoopHook, // 同步循环钩子
+	AsyncParallelHook, // 异步并发钩子
+	AsyncParallelBailHook, // 异步并发熔断钩子
+	AsyncSeriesHook, // 异步串行钩子
+	AsyncSeriesBailHook, // 异步串行熔断钩子
+	AsyncSeriesWaterfallHook, // 异步串行流水钩子
+} = require("tapable");
+```
+
+hooks类型:
+
+| type  | function
+| :--- | :----
+| `Hook` | 所有钩子的后缀
+| `Waterfall` | 同步方法,但是他会传值给下一个函数
+| `Bail` | 熔断,当函数有任何返回值,则在当前执行函数停止
+| `Loop` | 监听函数返回true表示循环,返回undefined表示结束循环
+| `Sync` | 同步方法
+| `AsyncSeries` | 异步串行钩子
+| `AsyncParallel` | 异步并行执行钩子
+
+### Tapable的使用————new Hook(新建钩子)
+
+> Tapable暴露出来的都是类方法,我们需要new 一个类方法获得我们需要的钩子。class接收数组参数options,非必传。类方法会根据传参,接收同样数量的参数。
+
+```js
+const hook1 = new SyncHook([arg1, arg2, arg3]);
+```
+
+### Tapable的使用————钩子的绑定与执行
+
+> Tapable提供了同步和异步的绑定钩子的方法,并且他们都有绑定事件和执行事件对应的方法。
+
+| Async*  | Sync*
+| :--- | :----
+| 绑定: tapAsync、tapPromise、tap | 绑定: tap
+| 执行: callAsync、promise | 执行: call
+
+### Tapable的使用————hook基本用法示例
+
+```js
+const hook1 = new SyncHook(['arg1', 'arg2', 'arg3']);
+
+// 绑定事件到webpack事件流
+hook1.tap('hook1', (arg1, arg2, arg3) => console.log(arg1, arg2, arg3))
+
+// 执行绑定的事件
+hook1.call(1,2,3)
+```
+
+### Tapable的使用————实际例子演示
+
+定义一个Car方法,在内部hook上新建钩子。分别是同步钩子 `accelerate`、`brake`(accelerate接收一个参数)和异步钩子`calculateRoutes`。
+
+使用钩子对应的绑定和执行方法。
+
+`calculateRoutes`使用`tapPromise`可以返回一个`promise对象`。
+
+```js
+// Car.js
+const {
+	SyncHook,
+	AsyncSeriesHook
+} = require('tapable');
+
+class Car {
+	constructor(){
+		this.hooks = {
+			accelerate: new SyncHook(['newspeed']),
+			brake: new SyncHook(),
+			calculateRoutes: new AsyncSeriesHook(['source', 'trget', 'routesList'])
+		}
+	}
+}
+
+const myCar = new Car();
+
+// 绑定同步钩子
+myCar.hooks.brake.tap('WarningLampPlugin', () => console.log('WarningLampPlugin'));
+
+// 绑定同步钩子 并传参
+myCar.hooks.accelerate.tap('LoggerPlugin', newSpeed => console.log(`Accelerating to ${newSpeed}`));
+
+// 
+myCar.hooks.calculateRoutes.tapPromise('calculateRoutes tapPromise', (source, trget, routesList, callback)=>{
+	console.log('source', source);
+	return new Promise((resolve, rej)=>{
+		setTimeout(()=>{
+			console.log(`tapPromise to ${source} ${trget} ${routesList}`);
+			resolve();
+		}, 1000)
+	})
+})
+
+myCar.hooks.brake.call();
+myCar.hooks.accelerate.call(10);
+
+console.time('cost');
+
+// 执行异步钩子
+myCar.hooks.calculateRoutes.promise('Async', 'hook', 'demo').then(()=>{
+	console.timeEmd('cost');
+}, err=>{
+	console.error(err);
+	console.timeEmd('cost');
+})
+```
+
+## Tapable是如何和webpack关联起来的
+
+- 2020.08.17
+
+```js
+// webpack.js
+/**
+ * @param {WebpackOptions} options options object
+ * @param {function(Error=, Stats=): void=} callback callback
+ * @returns {Compiler | MultiCompiler} the compiler object
+ */
+const webpack = (options, callback) => {
+	const webpackOptionsValidationErrors = validateSchema(
+		webpackOptionsSchema,
+		options
+	);
+	if (webpackOptionsValidationErrors.length) {
+		throw new WebpackOptionsValidationError(webpackOptionsValidationErrors);
+	}
+	let compiler;
+	if (Array.isArray(options)) {
+		compiler = new MultiCompiler(
+			Array.from(options).map(options => webpack(options))
+		);
+	} else if (typeof options === "object") {
+		options = new WebpackOptionsDefaulter().process(options);
+
+		compiler = new Compiler(options.context);
+		compiler.options = options;
+		new NodeEnvironmentPlugin({
+			infrastructureLogging: options.infrastructureLogging
+		}).apply(compiler);
+		// 这里对应的就是webpack.config.js中对应的plugins数组执行
+		if (options.plugins && Array.isArray(options.plugins)) {
+			for (const plugin of options.plugins) {
+				if (typeof plugin === "function") {
+					plugin.call(compiler, compiler);
+				} else {
+					plugin.apply(compiler);
+				}
+			}
+		}
+		compiler.hooks.environment.call();
+		compiler.hooks.afterEnvironment.call();
+		compiler.options = new WebpackOptionsApply().process(options, compiler);
+	} else {
+		throw new Error("Invalid argument: options");
+	}
+	if (callback) {
+		if (typeof callback !== "function") {
+			throw new Error("Invalid argument: callback");
+		}
+		if (
+			options.watch === true ||
+			(Array.isArray(options) && options.some(o => o.watch))
+		) {
+			const watchOptions = Array.isArray(options)
+				? options.map(o => o.watchOptions || {})
+				: options.watchOptions || {};
+			return compiler.watch(watchOptions, callback);
+		}
+		compiler.run(callback);
+	}
+	return compiler;
+};
+```
+
+### 模拟一个自定义的complier
+
+```js
+class Complier {
+	constructor(){
+		this.hooks = {
+			accelerate: new SyncHook(['newspeed']),
+			brake: new SyncHook(),
+			calculateRoutes: new AsyncSeriesHook(['source', 'trget', 'routesList'])
+		}
+	}
+
+	run(){
+		this.accelerate(10);
+		this.break;
+		this.calculateRoutes('Async', 'Hook', 'Demo');
+	}
+
+	accelerate(speed){
+		this.hooks.accelerate.call(speed);
+	}
+
+	break(){
+		this.hooks.brake.call();
+	}
+
+	calculateRoutes(){
+		this.hooks.calculateRoutes.promise(..arguments).then(()=>{
+
+		}, err=>{
+			console.error(err);
+		})
+	}
+}
+
+module.exports = Complier;
+```
+
+### 根据Complier编写一个简易的自定义插件
+
+> 通过上面的分析我们知道自定义插件需要接收一个complier对象参数,内部需要有一个apply方法。
+
+```js
+const complier = require('./complier');
+
+class MyFirstPlugin = {
+	constructor(){
+
+	}
+
+	apply(complier){
+		complier.hooks.break.tap("WarningLampPlugin",()=> console.log('WarningLampPlugin'));
+		complier.hooks.accelerate.tap("LoggerPlugin", (newSpeed)=>{
+			console.log(`Accelerate to ${newSpeed}`);
+		})
+		complier.hooks.calculateRoutes.tapPromise("calculateRoutes tapAsync",(source, target, routesList)=>{
+			return new Promise((resolve, reject)=>{
+				setTimeout(()=>{
+					console.log(`tapPromise to ${source} ${target} ${routesList}`);
+					resolve();
+				},1000)
+			});
+		})
+	}
+}
+```
+
+### 模拟插件的执行
+
+```js
+const myPlugin = new MyFirstPlugin();
+
+const options = {
+	plugins:[myPlugin]
+}
+
+const complier = new Complier();
+
+for (const plugin of options.plugins){
+	if (typeof plugin === 'function'){
+		plugin.call(compiler, compiler);
+	}
+	else {
+		plugin.apply(compiler);
+	}
+}
+
+complier.run();
+```
+
+## webpack流程细剖————准备篇
+
+- 2020.08.17
+
+![流程分析](https://img-blog.csdnimg.cn/20200817204240119.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70#pic_center)
+
+## 模块构建和chunk生成阶段
+
+- 2020.08.17

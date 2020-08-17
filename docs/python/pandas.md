@@ -7,11 +7,18 @@
 3. Pandas提供大量能使我们快速便捷地处理数据的函数和方法。
 4. Pandas是字典形式，基于NumPy创建，让NumPy为中心的应用变得更加简单。
 
+通常的引用形式是以下约定俗成的方式:
 
-# 数据结构
-Pandas有两个主要数据结构`Series（一维`）和`DataFrame（二维）`
+```py
+import pandas as pd
+```
 
-- Series
+## 数据结构
+Pandas有三个主要数据结构`Series（一维`）和`DataFrame（二维）`以及`Panel(三维或可变维数据)`
+
+- ### Series
+
+> `series`本质上是一个含有索引的一维数组,看起来其包含一个左侧可以自动生成(也可以手动指定)的`index`和右侧的`value`值。分别使用`s.index`和`s.values`进行查看。`index`返回一个`index对象`,而`values`返回一个`array`。
 
 ```py
 import numpy as np
