@@ -3865,3 +3865,361 @@ complier.run();
 ## 模块构建和chunk生成阶段
 
 - 2020.08.17
+
+### ModuleFactory
+
+- NormalModuleFactory
+
+> 指那些通过普通的`module.exports`导出的模块。
+
+- ContextModuleFactory
+
+> 路径模块之类的。
+
+### Module的类型
+
+- `NormalModule` 普通模块
+
+Build通过:
+
+1. 使用 `loader-runner` 运行loaders
+
+2. 通过 `Parser` 解析(内部是 acron)
+
+3. `ParserPlugins` 添加依赖
+
+- `ContextModule` 路径模块 
+
+> './src/a'
+
+- `ExternalModule` 外部模块 
+
+> module.exports = Jquery
+
+- `DelegatedModule`
+
+> manifest
+
+- `MultiModule`
+
+> entry: ['a', 'b']
+
+### chunk生成算法
+
+1. `webpack`先将`entry`中对应的`module`都生成一个新的`chunk`
+2. 遍历`module`的依赖列表，将依赖的`module`也加入到`chunk`中
+3. 如果一个依赖`module`是动态引入的模块，那么就会根据这个`module`创建一个新的`chunk`，继续遍历依赖
+4. 重复上面的过程，知道得到所有的`chunks`
+
+## webpack流程篇————文件生成
+
+- 2020.08.18
+
+:::tip
+这里有一个点,文件生成的`Hash值`是在`seal阶段`生成的。
+
+调用的是`Complation.js`中的`this.createHash`方法。
+:::
+
+## 实战篇————动手编写一个简易的webpack
+
+- 2020.08.18
+
+**知识点回顾:**
+
+1. `webpack`打包出来的是一个`IIFE(匿名闭包)`。
+2. `modules` 是一个数组,每一项是一个模块初始化函数。
+3. `__webpack__require` 用来加载模块,返回`module.exports`。
+4. `通过WEBPACK_REQUIRE_METHOD(0)` 来启动程序。
+
+**功能需求:**
+
+1. 可以将ES6预发转化成ES5的语法。
+	- 通过`babylon`生成AST树
+	- 通过`babel-core`将AST重新生成源码
+
+2. 可以分析模块之间的依赖关系
+	- 通过`babel-traverse` 的`ImportDeclaration` 方法获取依赖属性
+
+3. 生成的JS文件可以在浏览器中运行。
+
+**完整示例**
+
+[完整代码参见](https://github.com/xjl271314/simple-webpack)
+
+## Loader的链式调用和执行顺序
+
+- 2020.08.19
+
+> loader只是一个导出为函数的Javascript函数,我们知道定义的loader是从右往左依次执行的。
+
+```js
+module.exports = function(source){
+	return source;
+}
+```
+
+loader是串行执行的, loader的执行顺序为: `postcss-loader` -> `scss-loader` -> `css-loader` -> `style-loader`
+
+```js
+
+module.exports = {
+	...,
+	module:{
+		rule: [
+			test: /\.scss$/,
+			use: ['style-loader', 'css-loader', 'scss-loader','postcss-loader']
+		]
+	}
+}
+```
+
+loader的实现方式和我们之前接触的compose函数的思想是一致的。
+
+### compose函数
+
+> compose函数接收一个参数返回一个组合后的复合函数,下一个函数会以上个函数的返回值作为参数
+
+```js
+function compose(){
+	var args = [...arguments];
+	return function(initArg){
+		var result = initArg;
+		for(var i = args.length -1; i >=0; i--){
+			result = args[i](result);
+		}
+		return result;
+	}
+}
+// 调用ReduceRight()
+function compose1(){
+	var args = [].slice.call(arguments);
+	return function(initArg){
+		return args.reduceRight(function(init, current){
+			return current(init);
+		},initArg)
+	}
+}
+```
+**使用webpack-cli创建loader**
+
+```js
+webpack-cli-loader
+```
+
+## 使用loader-runner高效进行loader的调式
+
+- 2020.08.20
+
+> `loader-runner`允许你在不安装`webpack`的情况下运行`loaders`
+
+**作用:**
+
+1. 作为webpack的依赖,webpack中使用它执行loader
+2. 进行loader的开发和测试。
+
+```js
+import { runLoaders } from "loader-runner";
+
+runLoaders({
+	resource: "/abs/path/to/file.txt?query",
+	// String: Absolute path to the resource (optionally including query string)
+
+	loaders: ["/abs/path/to/loader.js?query"],
+	// String[]: Absolute paths to the loaders (optionally including query string)
+	// {loader, options}[]: Absolute paths to the loaders with options object
+
+	context: { minimize: true },
+	// Additional loader context which is used as base context
+
+	readResource: fs.readFile.bind(fs)
+	// A function to read the resource
+	// Must have signature function(path, function(err, buffer))
+
+}, function(err, result) {
+	// err: Error?
+
+	// result.result: Buffer | String
+	// The result
+
+	// result.resourceBuffer: Buffer
+	// The raw resource as Buffer (useful for SourceMaps)
+
+	// result.cacheable: Bool
+	// Is the result cacheable or do it require reexecution?
+
+	// result.fileDependencies: String[]
+	// An array of paths (files) on which the result depends on
+
+	// result.contextDependencies: String[]
+	// An array of paths (directories) on which the result depends on
+})
+```
+
+### 开发一个raw-loader
+
+```js
+// raw-loader \u2028: 行分隔符 \u2029: 段落分隔符
+module.exports = function(source){
+	const json = JSON.stringify(source).replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
+
+	return `export default ${json}`;
+}
+
+// run-loader.js
+const fs = require('fs');
+const path = require('path');
+const { runLoaders } = require('loader-runner');
+
+runLoaders(
+	{
+		resource: './demo.txt',
+		loaders: [path.resolve(__dirname, './loaders/raw-loader')],
+		readResource: fs.readFile.bind(fs)
+	},
+	(err, result)=> err ? console.error(err) : console.log(result)
+);
+
+// 运行
+node run-loader.js
+
+// 结果
+{
+	result: ['export defualt footbar'],
+	resourceBuffer: <Buffer 66 6f 6f 62 61 72>,
+	cacheable: true,
+	fileDependencies: ['./src/demo.txt'],
+	contextDependencies: []
+}
+```
+
+## 更复杂的loader开发场景
+
+> 实际的loader开发过程中往往涉及到很多,比如loader的参数获取、loader内部的异常处理
+
+### 通过loader-utils的 getOptions方法获取参数
+
+```js
+const loaderUtils = require('loader-utils');
+
+module.exports = function(source) {
+	const { name } = loaderUtils.getOptions(this);
+}
+```
+
+### loader内部的异常处理
+
+> loader内直接通过`throw`抛出,通过`this.callback`传递错误。
+
+```js
+this.callback(
+	err: Error | null,
+	content: string | Buffer,
+	sourceMap?: sourceMap,
+	meta?: any
+);
+```
+
+### loader的异步处理
+
+> 通过 `this.async`来返回一个异步函数(第一个参数是`Error`,第二个参数是`处理的结果`)
+
+```js
+module.exports = function(input){
+	const callback = this.async();
+
+	// No callback -> return synchronous results
+	// if callback ....
+
+	callback(null,  input + input)
+};
+```
+
+### 在 loader中使用缓存
+
+> webpack中默认是开启loader缓存的(可以使用`this.cacheable`关掉缓存)。
+
+缓存的条件:
+
+`loader`的结果在相同的输入下有明确的输出,有依赖的`loader`无法使用缓存。
+
+### 在loader中如何进行文件输出
+
+> loader中通过 `this.emitFile` 进行文件写入
+
+```js
+const loaderUtils = require('loader-utils');
+
+module.exports = function(source) {
+	const url = loaderUtils.interpolateName(this, "[name].[ext]", {
+        source,
+	});
+	
+	this.emitFile(path.join(__dirname, url), source);
+
+	const path = `__webpack_public_path__+${JSON.stringify(url)}`;
+
+	return `export default ${path}`;
+}
+```
+
+## 开发一个自动合成雪碧图的loader
+
+- 2020.08.20
+
+**准备知识：如何将两张图片合成一张图片?**
+
+> 使用 spritesmith(https://www.npmjs.com/package/spritesmith)
+
+```js
+const Spritesmith = require('spritesmith ');
+const path = require('path');
+const fs = require('fs');
+
+module.exports = {
+	const callback = this.async();
+
+	const imgs = source.match(/url\((\s*)\?__sprite/g);
+	const matchedImgs = [];
+
+	for(let i = 0; i< imgs.length; i++){
+		const img = imgs[i].match(/url\((\s*)\?__sprite/)[1];
+
+		matchedImgs.push(path.join(__dirname, img))
+	}
+
+	Spritesmith.run({
+		src: matchedImgs,
+	},	(err, result)=>{
+			fs.writeFileSync(path.join(process.ced(), 'dist/sprite.jpg'), result.image);
+			source = source.replace(/url\((\s*)\?__sprite/g), (match)=>{
+				return `url("dist/sprite.jpg")`;
+			})
+
+			fs.writeFileSync(path.join(process.ced(), 'dist/index.css'), source);
+			callback(null, source);
+		}
+	});
+}
+```
+
+## 插件基本结构介绍
+
+- 2020.08.20
+
+> 用于处理除了loader以外的功能,没有像loader一样的独立运行环境,只能在webpack中运行。
+
+```js
+class MyPlugin {	// 插件的名称
+	apply(compiler){	// 必须的apply方法
+		compiler.hooks.done.tap('My Plugin',(stats)=>{	// 触发的hooks
+			// do something ...
+		})
+	}
+}
+
+module.exports = MyPlugin;
+
+// 插件的使用
+plugins: [new MyPlugin()]
+```
