@@ -4,7 +4,216 @@
 
 - 2020.05.29
 
-> `Babel`是一个 `JavaScript` 编译器。我们能够在项目中使用新颖的 `Javascript` 特性,它能够帮助我们自动转化成浏览器可以识别的代码。`babel`的核心概念就是利用一系列的`plugin`来管理编译案列，通过不同的`plugin`帮助我们编译不同特性的代码。
+> `Babel`是一个 `JavaScript` 编译器。我们能够在项目中使用新颖的 `Javascript` 特性,它能够帮助我们自动转化成浏览器可以识别的代码。简单地说就是`Babel` 能够转译 `ECMAScript 2015+` 的代码，使它在旧的浏览器或者环境中也能够运行。`Babel`的核心概念就是利用一系列的`plugin`来管理编译案列，通过不同的`plugin`帮助我们编译不同特性的代码。
+
+## babelrc配置文件详解
+
+- 2020.08.21
+
+> babel7.x之后提供了多种并行配置文件格式，可以一起使用，也可以独立使用。
+
+- `.babelrc.json`
+- `babel.config.json`
+- `package.json`
+- `JavaScript configuration files`
+
+### 1. `.babelrc.json`
+
+> 常用的配置方式之一,位置处于与`package.json`同级的根目录
+
+```json
+{
+  "presets": [...],
+  "plugins": [...]
+}
+```
+
+### 2. `package.json`
+
+> 我们也可以在package.json中书写相关的配置
+
+```json
+{
+  "name": "my-package",
+  "version": "1.0.0",
+  "babel": {
+    "presets": [ ... ],
+    "plugins": [ ... ],
+  }
+}
+```
+
+### 3. `babel.config.json`
+
+> `babel.config.json` 和 `.babelrc.json` 是同样的效果
+
+### 4. `babel.config.js`
+
+> 推荐使用js导出
+
+```js
+module.exports = function (api) {
+  api.cache(true);
+
+  const presets = [ ... ];
+  const plugins = [ ... ];
+
+  return {
+    presets,
+    plugins
+  };
+}
+```
+
+### presets 和 plugins
+
+> `presets`：是某一类 `plugin` 的集合，包含了某一类插件的所有功能。`plugin` ： 将某一种需要转化的代码，转为浏览器可以执行代码。
+
+**编译的执行顺序：**
+
+1. 执行 plugins 中所有的插件
+
+2. plugins 的插件，按照顺序依赖编译
+
+3. 所有 plugins 的插件执行完成，在执行 presets 预设。
+
+4. presets 预设，按照倒序的顺序执行。(从最后一个执行)
+
+5. 完成编译。
+
+### options配置
+
+> 官方推荐使用`babel-preset-env`来替代一些插件包的安装（`es2015-arrow-functions`，`es2015-block-scoped-functions`等等）
+
+```js
+{
+    "targets": {
+        "chrome": 52,
+        "browsers": ["last 2 versions", "safari 7"],
+        "node":"6.10"
+    }
+    "modules": false
+}
+```
+
+- `targets`可以制定兼容浏览器版本，如果设置了`browsers`，那么就会覆盖`targets`原本对浏览器的限制配置。
+
+- `targets.node`正对node版本进行编译。
+
+- `modules`通常都会设置为false，因为默认都是支持CommonJS规范，同时还有其他配置参数："amd" | "umd" | "systemjs" | "commonjs"
+
+## transform-runtime
+
+> 为了解决这种全局对象或者全局对象方法编译不足的情况，才出现了`transform-runtime`这个插件，但是它只会对`es6`的语法进行转换，而不会对新api进行转换。如果需要转换新api，也可以通过使用`babel-polyfill`来规避兼容性问题。
+
+**对`Object.assign`进行编译，配置与未配置经过`webpack`编译后的代码片段如下：**
+
+```js
+// 未设置代码片段：
+__webpack_require__("ez/6");
+var aaa = 1;
+
+function fna() {
+  var dd = 33333;
+  var cc = Object.assign({ key: 2 });
+  var xx = String.prototype.repeat.call('b', 3);
+  if ("foobar".String.prototype.includes("foo")) {
+    var vv = 1;
+  }
+
+  return dd;
+}
+
+// 设置代码片段：
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_babel_runtime_core_js_object_assign___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_babel_runtime_core_js_object_assign__);
+
+__webpack_require__("ez/6");
+var aaa = 1;
+
+function fna() {
+  var dd = 33333;
+  var cc = __WEBPACK_IMPORTED_MODULE_1_babel_runtime_core_js_object_assign___default()({ key: 2 });
+  var xx = String.prototype.repeat.call('b', 3);
+  if ("foobar".String.prototype.includes("foo")) {
+    var vv = 1;
+  }
+
+  return dd;
+}
+```
+
+**对`class`定义类会进行编译，配置与未配置经过`webpack`编译后的代码片段如下：**
+
+```js
+// 未设置代码片段：
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Canvas = function Canvas(height, width) {
+  _classCallCheck(this, Canvas);
+
+  this.height = height;
+  this.width = width;
+};
+
+var Canvas2 = function Canvas2(height, width) {
+  _classCallCheck(this, Canvas2);
+
+  this.height = height;
+  this.width = width;
+};
+
+// 设置代码片段：
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck__);
+
+var Canvas = function Canvas(height, width) {
+  __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default()(this, Canvas);
+
+  this.height = height;
+  this.width = width;
+};
+
+var Canvas2 = function Canvas2(height, width) {
+  __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_classCallCheck___default()(this, Canvas2);
+
+  this.height = height;
+  this.width = width;
+};
+```
+
+:::tip
+虽然使用`transform-runtime`后文件大小会有所增大，但是解决一些兼容性的问题。
+
+同时，从以上给出的测试代码例子来看，使用`transform-runtime`后，可以减少内部全局函数的定义，从结构上看尊崇了webpack的模块化思想，所以还是建议使用该插件。
+:::
+
+## syntax-dynamic-import
+
+> 这个插件主要解决动态引入模块的问题
+
+```js
+function nDate() {
+  import('moment').then(function(moment) {
+    console.log(moment.default().format());
+  }).catch(function(err) {
+    console.log('Failed to load moment', err);
+  });
+}
+
+nDate();
+```
+
+> 如果.babelrc配置项中使用了"stage-2"，也可以不实用该插件，同样支持动态模块引入。
+
+不然就会报以下错误：
+
+- Module build failed: SyntaxError: 'import' and 'export' may only appear at the top level, or (import 和 export只能在最外层，也就是不能用在函数或者块中)
+
+- Module build failed: SyntaxError: Unexpected token, expected {
+
+## @babel/plugin-proposal-class-properties
+
+> 用于解析类的属性
+
 
 ## @babel/preset-env
 
