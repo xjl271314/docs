@@ -102,6 +102,7 @@ module.exports = {
           "/css/base",
           "/css/img",
           "/css/fix",
+          "/css/animate",
           "/css/display",
           "/css/interview"
         ]
@@ -224,6 +225,7 @@ module.exports = {
         title: "Mysql",
         collapsable: true,
         children:[
+          '/mysql/faq',
           '/mysql/base',
           '/mysql/select',
           '/mysql/insert'

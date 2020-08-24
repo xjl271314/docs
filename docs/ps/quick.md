@@ -123,3 +123,4 @@
 
 - Mac: `Commond + Del`
 - Windows: `Ctrl + delete`
+
