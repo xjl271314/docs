@@ -258,6 +258,7 @@ module.exports = {
           '/python/utils',
           '/python/pandas',
           '/python/numpy',
+          '/python/django',
           {
             title:'文件处理相关',
             children:[

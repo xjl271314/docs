@@ -1,8 +1,8 @@
 # ps(cc2017版)常用快捷键指南
 
-- 2020.08.06
+## 工具箱快捷止指南
 
-## 工具箱
+- 2020.08.06
 
 ### 移动工具
 
@@ -123,4 +123,98 @@
 
 - Mac: `Commond + Del`
 - Windows: `Ctrl + delete`
+
+## 文件操作快捷指南
+
+- 2020.08.24
+
+### 新建一个文件
+
+- Mac: `Commond + N`
+- Windows: `Ctrl + N`
+
+### 打开已有的图像
+
+- Mac: `Commond + O`
+- Windows: `Ctrl + O`
+
+### 关闭当前图像
+
+- Mac: `Commond + W`
+- Windows: `Ctrl + W`
+
+### 关闭当前打开的所有图像
+
+- Mac: `Commond + Alt + W`
+- Windows: `Ctrl + Alt + W`
+
+### 保存当前文件的修改
+
+- Mac: `Commond + S`
+- Windows: `Ctrl + S`
+
+### 保存当前文件的副本
+
+- Mac: `Commond + Alt + S`
+- Windows: `Ctrl + Alt + S`
+
+### 文件打印设置
+
+- Mac: `Commond + P`
+- Windows: `Ctrl + P`
+
+### 首选项设置
+
+- Mac: `Commond + K`
+- Windows: `Ctrl + K`
+
+## 编辑菜单快捷操作指南
+
+- 2020.08.24
+
+### 还原/重做前一步操作
+
+- Mac: `Commond + Z`
+- Windows: `Ctrl + Z`
+
+### 还原两步以上的操作
+
+- Mac: `Commond + Alt + Z`
+- Windows: `Ctrl + Alt + Z`
+
+### 重做两步以上的操作
+
+- Mac: `Commond + Shift + Z`
+- Windows: `Ctrl + Shift + Z`
+
+### 渐隐历史记录画笔
+
+- Mac: `Commond + Shift + F`
+- Windows: `Ctrl + Shift + F`
+
+### 拷贝所选图像或者路径
+
+- Mac: `Commond + C`
+- Windows: `Ctrl + C`
+
+### 剪切所选图像或者路径
+
+- Mac: `Commond + X`
+- Windows: `Ctrl + X`
+
+### 合并拷贝
+
+- Mac: `Commond + Shift + C`
+- Windows: `Ctrl + Shift + C`
+
+### 开启自由变换
+
+- Mac: `Commond + T`
+- Windows: `Ctrl + T`
+
+### 取消自由变换(在开启自由变化的基础上)
+
+- Mac: `Esc`
+- Windows: `Esc`
+
 
