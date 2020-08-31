@@ -222,4 +222,240 @@ class Relationship(models.Model):
 | `unique` | 如果设置为`True`,则会在数据表中保持该字段的唯一性,数据库会添加唯一的索引。如果保存一个该值重复出现的模型,系统将会抛出异常。在设置了`unique` 为`True`的时候就无须再次设置 `db_index` 参数。
 | `verbose_name` | 为字段提供一个可读性良好的字段名称,比如在`Django Admin`操作界面上显示更易懂的文字。
 
+## 数据库查询接口简介
 
+- 2020.08.27
+
+> django给我们提供了一个shell脚本,无需界面即可操作数据的增加、删除、修改等功能。
+
+### 创建对象
+
+> 在django中,为了将数据与数据库中的数据对应起来,使用模型类来表示数据表,用这个模型类的实例来代表数据表中的一条数据。所以在创建一个数据表的记录的时候,只需要创建一个该数据模型的实例并调用其save方法即可。
+
+:::tip
+只有当save方法被执行时才会执行真正的数据库INSERT操作。
+:::
+
+```py
+book = Book(name='深入理解计算机系统', author='xjl271314', price='99.00', publish_date='2020-08-27', category='计算机与互联网')
+
+book.save()
+```
+
+### 修改对象
+
+> 如果要修改一个已经存在的对象,只需要修改对应的属性之后再次调用save方法即可。
+
+```py
+book.price = 111.2
+
+book.save()
+```
+
+:::tip
+在django中除了对单个对象的修改之外,还支持对批量对象进行修改,这时只需要调用QuerySet对象的update方法即可。
+:::
+
+```py
+Book.objects.filter(category='计算机与互联网').update(category='计算机')
+```
+
+### 查找对象
+
+> Django在查找方面也提供了非常丰富的接口。我们需要通过模型类上的Manager来构建QuerySet从数据库中取回所需的对象。QuerySet对象代表着数据库中的一些记录的集合,接受任意多个筛选条件,最后根据查询参数生成一个SQL的SELECT语句并执行。
+
+:::tip
+Django会把查询结果以`QuerySet对象`的形式返回。每个模型类都有一个叫做`objects`的默认`Manager`, `Model.objects`是`models.Manager`的实例,这个实例的大部分方法都是返回一个`QuerySet对象`。也可以根据需要自定义`Manager类`。
+:::
+
+- **如果希望取回一个模型下的所有对象,就可以通过`Manager`的`all`方法取回。**
+
+```py
+book_set = Book.objects.all()
+```
+
+- **如果希望按照一定的筛选条件筛选出想要的部分记录,可以调用filter方法或者exclude方法。**
+
+    - `filter`方法会返回一个新的`QuerySet对象`,即符合给定的查询条件;
+
+    - 而`exclude`方法则相反m返回一个新的QuerySet对象时排除了指定的查询条件后的记录。
+
+:::tip
+在django中QuerySet返回的仍然是一个QuerySet对象,所以可以链式调用。
+:::
+
+```py
+bppk_set = Book.objects.filter(category='计算机与互联网').filter(publish_date__year = 2020)
+```
+
+:::tip
+在这样的使用情况下,得到的总是一个QuerySet对象。如果想要获得单个元素可以调用get方法。
+:::
+
+```py
+book = Book.objects.get(pk = 1)
+```
+
+:::warning
+需要注意的是,如果使用get方法取回元素时满足的条件不是唯一的话或者不存在,均会抛出异常。
+:::
+
+:::tip
+我们可以在查询的时候对 `QuerySet` 进行数组切片来返回我们需要的数量。这样的语法在数据库中对应为 `LIMIT` 和 `OFFSET` 限定词。另外,查询时不支持负数索引。
+:::
+
+```py
+book_set = Book.objects.filter(publish_date__year = 2020)[:10]
+```
+
+在传递参数查询的时候,有两种可选的方式。
+
+- 一种是使用"字段名=值"的方式,
+- 另一种是"字段名_——查询方式=值"。比如上面的查询方式就是使用了后者。
+
+可选的查询方式还有很多,比如`exact`为精确匹配,`iexact`为无视字母大小写的精确匹配;`contains`为包含;还有`startswith`、`endwith`等。
+
+### 删除对象
+
+> `Django`同样提供了方便简洁的删除接口。可以直接对模型类的实例调用它的`delete`方法来执行删除操作,也可以对一个`QuerySet`调用`delete`方法来进行批量的删除操作。
+
+```py
+book = Book.objects.get(pk=1)
+
+book.delete()
+
+Book.objects.filter(publish_date__year=2020).delete()
+```
+
+## Django中页面的实现
+
+- 2020.08.28
+
+> 在`django`中实现页面有两个部分需要完成,首先是一个模板文件,也就是一个`html`文件,他是整个页面的结构;另一个是`views.py`文件,在其中完成对应的视图处理函数。
+
+### 如何处理静态文件
+
+> 和其他框架一样,Django框架在实际生成环境中试不处理静态文件这部分的。一般而言静态文件都是交由HTTP服务器类似Apache或者Nginx,这样可以更高效和灵活。开发环境中,django给我们提供了一个精简的开发测试用的HTTP服务器。
+
+在django中使用静态文件,只需要简单的几个步骤。
+
+1. 首先在需要使用静态文件的模板页面首行插入 `{% load static %}`语句,告诉django的模板引擎,需要在这个文件中载入静态文件。
+
+2. 在需要使用静态文件的地方使用 static 标签加上文件对应应用的静态目录的相对路径地址即可。
+
+```py
+{% load static %}
+...
+
+```
+
+:::warning
+
+在django 2.x版本中此处为 `{% load staticfiles %}`
+
+:::
+
+
+## Django通用视图简介
+
+- 2020.08.30
+
+### TemplateView简介
+
+> `TemplateView`是一个最为基本的通用视图,它的作用是渲染指定的模板。
+
+在使用`TemplateView`的时候,通过继承`TemplateView`类并把它的 `template_name`属性指定为模板名称即可。
+
+:::tip
+如果需要在模板渲染时传入额外的参数,可以通过重写 `get_context_data` 方法来实现。
+:::
+
+```py
+class HomepageView(TemplateView):
+
+template_name = 'website/index.html'
+
+def get_context_data(self, **kwargs):
+    context = super().get_context_data(**kwargs)
+    context['username'] = 'admin'
+    return context
+```
+
+
+### RedirectView简介
+
+> 跳转视图的作用是跳转到指定的 URL 对应的网页,可以通过几种不同的方式提供想要跳转网页对应的URL。
+
+1. 重新设置RedirectView的URL属性,以字符串的形式提供一个URL,Django将会自动跳转到这个URL对应的网页。
+
+2. 重新设置path_name属性,提供一个在URL设置中的URL名称,Django框架会找到这个名称对应的URL地址并跳转到对应的网页。
+
+:::tip
+如果上面两种方式都不能满足应用的需求,那么可以采用重写 `get_redirect_url`方法的方式,通过这个方法返回一个URL字符串。
+
+在跳转之前我们也可以先实现自己所需要的逻辑,然后执行跳转。
+:::
+
+```py
+class LogoutView(RedirectView):
+    pattern_name = 'homepage'
+
+    def get_redirect_url(self, *args, **kwargs):
+        logout(self.request)
+        return super(LogoutView, self).get_redirect_url(*args, **kwargs)
+```
+
+### DetailView简介
+
+> `DetailView`多用于展示某一个数据对象的详细信息的页面。通常情况下,通过在URL中提供一个 `pk` 或者 `slug` 参数,`Django`就会根据所提供的这个参数来找到指定模型的对象,并渲染出指定模板的页面。
+
+通过重新设置model属性来指定需要获取的Model类,默认对象名称为`object`,也可以通过重写设置 `context_object_name` 属性来更改这个名字。
+
+当然,也可以通过直接重写 `get_object` 方法来实现更加复杂的逻辑m或者在取回对象的同时完成一些附加逻辑。
+
+```py
+class BookDetailView(FrontMixin, DetailView):
+    model = Blog
+    context_object_name = 'article'
+    template_name = 'article/article_detail.html'
+
+    def get_object(self, queryset = None):
+        obj = super(BookDetailView, self).get_object()
+        obj.show_times += 1
+        obj.save()
+        return obj
+```
+
+### ListView简介
+
+> `ListView`主要用于展示对象的列表,可以通过重写设置其model字段来指定想要展示的类型,可以在模板用 `object_list` 来调用对象的列表。默认情况下,获取的是该模型的全部元素,即调用了 `all` 接口。
+
+`ListView`可以使用Django内置的分页组件,只需要重写设置 `paginate_by` 字段,指定分页的大小即可。
+
+当然如果想对列表进行一些筛选或者自定义查询的规则,也是非常容易的,只需要重写 `get_queryset`方法即可。该方法返回一个QuerySet对象。
+
+如果需要向页面中添加其他元素,和 `TemplateView` 类似,只需要重写 `get_context_data`方法,在其中加入所需要的额外信息即可。
+
+### FromView简介 
+
+> `FromView`主要用于表单的处理,通过Get方式访问该视图时会返回表单。通过POST方式提交表单后,如果出现错误,会返回相应的错误信息,如果没有错误信息则会跳转至新的URL对应的网页。
+
+使用`FromView`除了像以往一样通过重新设置 `template_name` 来指明模板之外的,还必须通过重新设置 `from_class` 字段来指定需要处理的表单对象,并且通过重设 `success_url` 来指定表单处理成功会的跳转路径。
+
+### CreateView简介
+
+> `CreateView`是较为常用的通用视图,可以将创建对象这样简单重复的程序逻辑全部交由这个通用视图来处理。我们需要做的仅仅是重新设置 `model` 字段来指明所需要创建对象的模型,并且通过重设 `fields` 字段来指明表单中会提交的字段名称,剩下的交给 Django处理。
+
+### UpdateView简介
+
+> `UpdateView` 和 `CreateView`基本上是一致的,区别在于前者是对一个已经存在的对象进行显示和修改。
+
+在使用方法上,`UpdateView` 和 `CreateView`一样,需要传入一个具体的pk或者slug找到需要修改的对象。同时与 `CreateView`类似,需要通过重写设置 `fields` 字段来指定所要更新的字段名称。如果修改成功,会跳转到重设 `success_url`字段指定的网页。
+
+### DeleteView简介
+
+> `DeleteView`用于删除一个对象和展示确认页面的视图。
+
+- 当以GET方式访问时会展示确认页面,这个页面应该包含一个含有像同一个URL提交POST请求的表单。
+
+- 通过POST访问这个URL时,会删除指定的对象。
