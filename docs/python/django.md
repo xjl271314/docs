@@ -459,3 +459,226 @@ class BookDetailView(FrontMixin, DetailView):
 - 当以GET方式访问时会展示确认页面,这个页面应该包含一个含有像同一个URL提交POST请求的表单。
 
 - 通过POST访问这个URL时,会删除指定的对象。
+
+## Django编写RESTFUL API(教程)
+
+- 2020.09.07
+
+> 本章节旨在通过示例指导如何从0开始开发一套django的后端API服务(不涉及使用相应的template模板进行搭建视图),完成前后端的解耦。
+
+### 准备工作
+
+在我们开始之前,先做一些准备工作,熟悉的小伙伴可以跳过。
+
+1. 安装Django
+2. 新建Django项目
+3. 对一个简单的HttpRequest做出响应
+4. 解析带参数的URL
+5. 处理HTTP请求的body
+
+#### 1.安装django
+
+```py
+pip3 install Django
+
+# 如果需要指定版本可以跟上对应版本号
+pip3 install Django==3.1
+```
+
+#### 2. 新建Django项目
+
+```py
+django-admin startproject restful_api
+```
+
+在这里我们新建了一个名为 `restful_api` 的项目,目录结构如下:
+
+- `restful_api` 项目文件夹
+    - `manage.py` 用来运行Django项目的一些功能
+    - `restful_api` 
+        - `__init__.py`: 一个空文件，告诉 `Python` 这个目录应该被认为是一个 `Python` 包。一般，你不需要去修改它。
+        - `asgi.py`: 与ASGI兼容的Web服务器为您的项目提供服务的入口点。有关更多详细信息，请参见如何使用ASGI进行部署。
+        - `settings.py`: 配置文件。
+        - `urls.py`: 路由文件。
+        - `wsgi.py`: 作为项目的运行在 WSGI 兼容的 Web 服务器的入口。
+
+### 运行项目
+
+执行以下命令,打开 localhost:8888 就会看到django为我们生产的默认的启动页。
+```py
+cd 主项目
+python manage.py runserver 8888
+```
+
+![默认项目](https://img-blog.csdnimg.cn/2020090811294538.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70#pic_center)
+
+### 3. 对一个简单的HttpRequest做出响应
+
+> Django中的 `views.py` 存放着对应的视图解析函数(类)等, `urls.py` 存放对应的url与解析的映射。
+
+1. 在 `views.py` 中新增一个方法
+
+```py
+from django.http import JsonResponse
+
+def test_function(request):
+    return JsonResponse({
+        code: 0,
+        msg: 'success',
+        data: "Hello World"
+    })
+```
+
+2. 在 `urls.py` 中新增一个映射
+
+```py
+# task_platform/urls.py
+from django.contrib import admin
+from django.urls import path
+from restful_api import views # added
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('test/', views.test_function), # added
+]
+```
+
+这样我们访问 `localhost:8888/test` 就会输出对应的结果了。
+
+```json
+{"code": 0, "msg": "success", "data": "Hello World"}
+```
+
+### 4. 解析带参数的URL
+
+如何解析url上携带的参数 类似 `http://localhost:8888/test?user=Lucy&gender=femail`?
+
+```py
+# 修改后的方法
+from django.http import JsonResponse
+
+def test_function(request):
+    user = request.GET['user']
+    gender = ('先生','女士')[request.GET['gender'] == 'femail']
+    return JsonResponse({
+        'code': 0,
+        'msg': 'success',
+        'data': "欢迎回家 {0} {1}".format(user, gender)
+    })
+```
+
+### 5. 解析HTTP请求的body
+
+在 `views.py` 中新增一个`post`方法。
+
+```py
+from django.views.decorators.csrf import csrf_exempt
+
+# 用于不进行验证csrf cookie 否则会报错
+@csrf_exempt
+def test_post_function(request):
+    user = request.POST['user']
+    gender = ('先生','女士')[request.POST['gender'] == 'femail']
+    print("欢迎回家 {0}~{1}".format(user, gender))
+    return JsonResponse({
+        'code': 0,
+        'msg': 'success',
+        'data': "欢迎回家~{0} {1}".format(user, gender)
+    })
+```
+
+使用 `postman` 进行请求模拟。
+
+![postman](https://img-blog.csdnimg.cn/20200909200244660.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70#pic_center)
+
+### 最简单的请求例子
+
+```py
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+def test_add_api(request):
+    '''
+        实现两数的和
+    '''
+    received_data = json.loads(request.body.decode('utf-8'))
+    var1 = received_data['var1']
+    var2 = received_data['var2']
+
+    sum = var1 + var2
+
+    return JsonResponse({
+        'code': 0,
+        'msg': 'success',
+        'data': sum
+    })
+```
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200909201544643.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70#pic_center)
+
+## Django中mysql数据库的配置
+
+在`django`中默认的数据库是`sqlite3`,配置在`settings.py`中。
+
+```py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+```
+
+如果需要修改为`mysql`,需要安装对应的数据库包`pymysql`,并在项目的`__init__.py`中引入,将其设置为默认数据库。
+
+
+```py
+# setteings.py
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': '数据库名称',
+        'HOST':'localhost',
+        'PORT':3306,
+        'USER':'用户名',
+        'PASSWORD':'密码'
+    }
+}
+
+# __init__.py
+import pymysql
+
+# 这里如果遇到报错 可以采用使用指定版本的mysql进行解决。
+pymysql.version_info = (1, 4, 13, "final", 0)
+pymysql.install_as_MySQLdb()
+
+```
+
+
+
+## Django部署相关知识
+
+- 2020.09.07
+
+本文主要讲解在`Linux`下使用`Nginx` 和 `uWSGI`来部署 `Django` 项目。
+
+整个的部署链路是 `Nginx ————> uWSGI ————> Python Web 应用`,通常还会用到 `supervisor` 工具。
+
+### uWSGI
+
+> uWSGI是一款软件,即部署服务的工具。
+
+### WSGI
+
+> WSGI(Web server Gateway interface)是一个规范,它规定了Python Web应用和Python Web服务之间的通信方式。
+
+### uwsgi
+
+> uwsgi协议是uWSGI独有的协议,具有简洁高效的特点。有关uwsgi协议的细节,可以参考 [uWSGI的文档](https://uwsgi-docs.readthedocs.io/en/latest/Protocol.html)
+
+### Nginx
+
+> Nginx是一个Web服务器,是一个常用的反向代理工具,通常用它来部署静态文件。uWSGI通过WSGI规范和Python Web服务进行通信,然后通过自带的uwsgi协议和Nginx进行通信,最终 Nginx 通过HTTP协议将服务对外公示。
+
+Nginx中有一个 `ngx_http_uwsgi_module` 模块,当一个访问到达 Nginx时, Nginx会把请求(HTTP协议)转化为 uwsgi协议。
+

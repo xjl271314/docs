@@ -4191,12 +4191,12 @@ module.exports = {
 	Spritesmith.run({
 		src: matchedImgs,
 	},	(err, result)=>{
-			fs.writeFileSync(path.join(process.ced(), 'dist/sprite.jpg'), result.image);
+			fs.writeFileSync(path.join(process.cwd(), 'dist/sprite.jpg'), result.image);
 			source = source.replace(/url\((\s*)\?__sprite/g), (match)=>{
 				return `url("dist/sprite.jpg")`;
 			})
 
-			fs.writeFileSync(path.join(process.ced(), 'dist/index.css'), source);
+			fs.writeFileSync(path.join(process.cwd(), 'dist/index.css'), source);
 			callback(null, source);
 		}
 	});
@@ -4222,4 +4222,119 @@ module.exports = MyPlugin;
 
 // 插件的使用
 plugins: [new MyPlugin()]
+```
+
+## 动手实现一个 loader 之简易的jsx-px2rem
+
+- 2020.09.08
+
+> 此loader用于将jsx中的style中的px转换为rem。
+
+**`jsx-px2rem-loader.js`**:
+
+```js
+import regRules from './reg';
+import _ from 'lodash';    // lodash是一个js工具库，特别方便建议各位去了解一下
+ 
+module.exports = function(source) {
+  // webpack中默认是开启loader缓存的(可以使用this.cacheable关掉缓存)。
+  if (this.cacheable) {
+    this.cacheable();
+  }
+  let backUp = source;
+ 
+  // style={{marginRight: '1px'}} => style={{marginRight: '0.01rem'}}
+  if (regRules.pxReg.test(backUp)) {
+    backUp = backUp.replace(regRules.pxReg, px => {
+      let val = px.replace(regRules.numReg, num => {
+        return num / 100;
+      });
+      val = val.replace(/px$/, 'rem');
+      return val;
+    });
+  }
+ 
+ 
+  // marginRight: 1 => marginRight: '0.01rem'
+  _.each(regRules.styleReg, (reg, styleName) => {
+    if (reg.test(backUp)) {
+      backUp = backUp.replace(reg, val => {
+        return val.replace(regRules.numReg, num => {
+          return `"${num / 100}rem"`;
+        });
+      });
+    }
+  });
+ 
+ 
+  // img标签 width: 1 => style={{width: '0.01rem'}}
+  _.each(regRules.imgReg, (reg, styleName) => {
+    if (reg.test(backUp)) {
+      backUp = backUp.replace(reg, val => {
+        let style = '';
+        val.replace(regRules.numReg, num => {
+          style = `${num / 100}rem`;
+        });
+        return `style={{${styleName}:"${style}"}}`;
+      });
+    }
+  });
+  
+  return backUp;
+}
+```
+
+**`reg.js`**:
+
+```js
+// 匹配jsx中的px 如 1px
+const pxReg = /\b(\d+(\.\d+)?)px\b/g;    
+ 
+// 匹配jsx中 缩写形式的style 如：marginRight: 1
+const styleReg = {    
+  marginTop: /\bmarginTop(?:\s+):(?:\s+)?(\d+)/g,
+  marginRight: /\bmarginRight(?:\s+)?:(?:\s+)?(\d+)/g,
+  marginBottom: /\bmarginBottom(?:\s+)?:(?:\s+)?(\d+)/g,
+  marginLeft: /\bmarginLeft(?:\s+)?:(?:\s+)?(\d+)/g,
+  fontSize: /\bfontSize(?:\s+)?:(?:\s+)?(\d+)/g,
+  paddingTop: /\bpaddingTop(?:\s+)?:(?:\s+)?(\d+)/g,
+  paddingRight: /\bpaddingRight(?:\s+)?:(?:\s+)?(\d+)/g,
+  paddingBottom: /\bpaddingBottom(?:\s+)?:(?:\s+)?(\d+)/g,
+  paddingLeft: /\bpaddingLeft(?:\s+)?:(?:\s+)?(\d+)/g,
+}
+ 
+// 匹配img 中的行内样式 width: '20'
+const imgReg = {    
+  height: /\bheight(?:\s+)?=(?:\s+)?(\'||\")?(\d+)?=(\'||\")?/g,
+  width: /\bwidth(?:\s+)?=(?:\s+)?(\'||\")?(\d+)?=(\'||\")?/g,
+}
+ 
+// 匹配数字
+const numReg = /(\d+)/g;
+ 
+export default {
+  pxReg,
+  styleReg,
+  imgReg,
+  numReg,
+}
+```
+
+**`config.js`**:
+
+```js
+import path from 'path'
+ 
+...
+ 
+chainWebpack(config){
+    config.module
+      .rule('jsx-px2rem-loader')
+      .test(/\.js$/)
+      .exclude
+      .add([path.resolve('../src/pages/.umi'), path.resolve('node_modules')])
+      .end()
+      .use('../loader/jsx-px2rem-loader')
+      .loader(path.join(__dirname, '../loader/jsx-px2rem-loader'));
+}
 ```
