@@ -143,7 +143,14 @@ module.exports = {
         ]
       },
       '/safe/',
-      '/git/',
+      {
+        title: "git",
+        collapsable: true,
+        children: [
+          "/git/base",
+          "/git/standant",
+        ]
+      },
       {
         title: "nginx",
         collapsable: true,
@@ -203,7 +210,8 @@ module.exports = {
           "/react/optimization",
           "/react/webpack",
           "/react/recompose",
-          "/react/problems"
+          "/react/problems",
+          "/react/upgrade",
         ]
       },
       {
@@ -290,7 +298,8 @@ module.exports = {
           "/open/module",
           "/open/rtv",
           "/open/highList",
-          "/open/system"
+          "/open/system",
+          "/open/pageVisualization"
         ]
       },
       {
@@ -318,7 +327,8 @@ module.exports = {
         title: "LeetCode",
         collapsable: true,
         children: [
-          "/leetcode/algorithm",
+          "/leetcode/sameTree",
+          "/leetcode/sumOfTwoNum",
         ]
       },
       {
@@ -326,6 +336,13 @@ module.exports = {
         collapsable: true,
         children: [
           "/tool/charles",
+        ]
+      },
+      {
+        title: "插件推荐",
+        collapsable: true,
+        children: [
+          "/extend/number",
         ]
       },
     ],

@@ -143,3 +143,39 @@ document.addEventListener("WeixinJSBridgeReady", function() {
 
 3. 微信固定入口在没有使用`jsbridge`，而是通过点击来播放的点击事件，只能是`click`事件，不能是`touchstart`事件。
 
+
+## video在手机百度上遇到的的播放问题
+
+
+在微信环境及其他X5内核的浏览器内,设置视频行内播放,全屏播放等都可以通过以下方式进行配置,但是这个配置在百度小程序和手机百度app上被流氓失效了。
+
+```html
+<video 
+  controls
+  width="100%"
+  preload="auto"
+  x5-video-player-type="h5"
+  webkit-playsinline="true"
+  playsinline="true"
+  x5-playsinline="true">
+  <source src="www.otherserver.mp4" type="video/mp4">
+</video>
+```
+
+在手机百度app里面，会存在视频层级最高，遮挡导航栏的情况。`x5-video-player-type="h5"`这个属性解决不了。如何页面上底部存在着一些类似tab的导航栏或者是底部按钮的话,就会被遮挡住。
+
+### 安卓
+
+安卓手机百度中，视频只要播放，会被手百接管，此时层级最高。如果视频上面还有层级，比如弹出层，千万不要自动播放视频。
+
+万幸的是安卓手百，`video`能操作位置，所以给出了一种处理思路，特定的时候可以调整位置，或者隐藏，假装不遮挡。比如当点击导航栏图标，导航跳出来的时候，视频跟着下移，这样视频就不会遮住导航栏
+
+### ios
+
+ios手百，video只要一播放，视频就被被手百接管，此时无论对视频进行移动，隐藏，删除都无效。
+无意间发现，貌似是`<source src="www.otherserver.mp4" type="video/mp4">`以及`video.js`引起的需要将跨域域名改成不跨域的，然后不要用`video.js`，改用原生写。
+
+```html
+// 去掉video.js
+<source src="./1.mp4" type="video/mp4">
+```

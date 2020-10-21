@@ -1,8 +1,8 @@
-# git相关知识
+# git常用基础操作
 
-### 新建代码库
+## 新建代码库
 
-```python
+```sh
 # 在当前目录新建一个Git代码库
 $ git init
 
@@ -14,25 +14,29 @@ $ git clone [url]
 
 ```
 
-### 配置
+## gitconfig配置
 
 `Git`的设置文件为`.gitconfig`，它可以在用户主目录下（全局配置），也可以在项目目录下（项目配置）。
 
-```python
+```sh
 # 显示当前的Git配置
 $ git config --list
 
 # 编辑Git配置文件
 $ git config -e [--global]
 
-# 设置提交代码时的用户信息
-$ git config [--global] user.name "[name]"
-$ git config [--global] user.email "[email address]"
+# 设置当前仓库下提交代码时的用户信息
+$ git config --local user.name "[name]"
+$ git config --local user.email "[email address]"
+
+# 设置全局仓库下提交代码时的用户信息
+$ git config --global user.name "[name]"
+$ git config --global user.email "[email address]"
 ```
 
-### 增加/删除文件
+## 增加/删除文件
 
-```python
+```sh
 # 添加指定文件到暂存区
 $ git add [file1] [file2] ...
 
@@ -56,9 +60,9 @@ $ git rm --cached [file]
 $ git mv [file-original] [file-renamed]
 ```
 
-### 代码提交
+## 代码提交
 
-```python
+```sh
 # 提交暂存区到仓库区
 $ git commit -m [message]
 
@@ -78,12 +82,13 @@ $ git commit --amend -m [message]
 # 重做上一次commit，并包括指定文件的新变化
 $ git commit --amend [file1] [file2] ...
 
-# 快速合并commit
+# 快速将多个commit合并成一个
 $ git reset --soft commitHash; git add .; git commit -m '提交信息'; git push -f
 ```
 
-### 分支管理
-```python 
+## 分支管理
+
+```sh 
 # 列出所有本地分支
 $ git branch
 
@@ -130,9 +135,8 @@ $ git branch -dr [remote/branch]
 # 本地存在一个分支，名称叫：develop_chen，但远程没有怎么办？
 $ git push origin develop_chen
 
-这样就在远程建立一个和本地一样的分支 
-
-$ git branch --set-upstream-to=origin/develop  develop  本地分支和远程分支简历跟踪关系
+# 这样就在远程建立一个和本地一样的分支,本地分支和远程分支简历跟踪关系
+$ git branch --set-upstream-to=origin/develop  develop  
 
 # 获取指定分支/commit上的文件内容
 $ git checkout commitHash/branchName -- dir/path/or/file/path
@@ -141,9 +145,9 @@ $ git checkout commitHash/branchName -- dir/path/or/file/path
 $ git merge develop --strategy-option theirs/ours
 ```
 
-### 标签相关
+## 标签相关
 
-```python
+```sh
 # 列出所有tag
 $ git tag
 
@@ -172,9 +176,9 @@ $ git push [remote] --tags
 $ git checkout -b [branch] [tag]
 ```
 
-### 查看信息
+## 查看信息
 
-```python
+```sh
 # 显示有变更的文件
 $ git status
 
@@ -243,10 +247,12 @@ $ git reflog --all --date=iso
 $ git rebase [branch]
 ```
 
-### 远程同步
+## 远程同步
 
-```python
-$ git remote update  --更新远程仓储
+```sh
+# 更新远程仓储
+$ git remote update
+
 # 下载远程仓库的所有变动
 $ git fetch [remote]
 
@@ -272,9 +278,9 @@ $ git push [remote] --force
 $ git push [remote] --all
 ```
 
-### 撤销
+## 撤销
 
-```python
+```sh
 # 恢复暂存区的指定文件到工作区
 $ git checkout [file]
 
@@ -308,9 +314,9 @@ $ git stash
 $ git stash pop
 ```
 
-### 合并两个分支：Merge
+## 合并两个分支：Merge
 
-```python
+```sh
 # 将开发分支代码合入到master中
 
 git checkout dev           #切换到dev开发分支
@@ -358,28 +364,3 @@ git pull origin dev
 
 9. 同步到远程 git 仓库 `git push -f`
 ```
-
-### 代码规范部分参照
-
-- 2020.07.27
-
-#### 提交格式要求
-
-```xml
-<type>(<scope>):<subject>
-<BLANK LINE>
-<body>
-<BLANK LINE>
-<footer>
-```
-
-- type 代表某次提交的类型,比如说是修复一个bug还是增加一个新的feature。所有类型如下:
-    - `feat`: 新增feature。
-    - `fix`: 修复bug。
-    - `docs`: 仅仅修改了文档,比如README,CHANGELOG,CONTRIBUTE等等。
-    - `style`: 仅仅修改了空格、格式缩进等。
-    - `refactor`: 代码重构,没有新增功能或者修复bug。
-    - `perf`: 优化相关,比如提升性能、体验等。
-    - `test`: 测试用例,包括单元测试、集成测试等。
-    - `chore`: 更改构建流程,或者增加依赖库、工具等。
-    - `revert`: 回滚到上一个版本。
