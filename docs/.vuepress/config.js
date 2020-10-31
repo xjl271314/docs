@@ -329,6 +329,14 @@ module.exports = {
         children: [
           "/leetcode/sameTree",
           "/leetcode/sumOfTwoNum",
+          "/leetcode/addOfTwoNum",
+        ]
+      },
+      {
+        title: "微信开发相关",
+        collapsable: true,
+        children: [
+          "/wechat/h5share",
         ]
       },
       {

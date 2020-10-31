@@ -1,7 +1,7 @@
 # 数字相关插件
 
 
-## 数字滚轴效果 [odometer](https://gitlab.weipaitang.com/f2e/webApp/merge_requests/6850/diffs)
+## 数字滚轴效果 [odometer](https://github.hubspot.com/odometer/)
 
 - 2020.10.21
 
