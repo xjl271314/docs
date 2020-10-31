@@ -17,7 +17,7 @@ npm run docs:build
 
 ## 直接访问
 
-https://xjl271314.github.io/my-blogs
+https://xjl271314.github.io/docs/
 
 
 
