@@ -13,7 +13,7 @@
 npm i odometer
 ```
 
-<odometer-demo1 />
+<!-- <odometer-demo1 /> -->
 
 ```vue
 <template>
