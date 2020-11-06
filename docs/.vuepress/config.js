@@ -82,7 +82,8 @@ module.exports = {
           "/javascript/macro",
           "/javascript/ajax",
           "/javascript/throtte",
-          "/javascript/eventsEmitter"
+          "/javascript/eventsEmitter",
+          "/javascript/target",
         ]
       },
       {
@@ -337,6 +338,8 @@ module.exports = {
         collapsable: true,
         children: [
           "/wechat/h5share",
+          "/wechat/miniprogramComponent",
+          "/wechat/miniprogram",
         ]
       },
       {

@@ -4,7 +4,7 @@
 
 
 ## 克隆
-git clone https://github.com/xjl271314/my-blogs.git
+git clone https://github.com/xjl271314/docs.git
 
 ## 安装
 npm install  或者  yarn install

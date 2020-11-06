@@ -1,4 +1,4 @@
-# 面向对象编程 
+# 面向对象编程(oop重点)
 
 面向对象编程(`Object Orient Programming`)简称`OOP`，是一种编程技术。
 
@@ -38,11 +38,14 @@ var person = {
 3. `Writable`：表示能否修改属性的值。直接在对象上定义的属性，它们的这个特性默认值为 `true`。
 4. `Value`:包含这个属性的数据值。读取属性值的时候，从这个位置读；写入属性值的时候，把新值保存在这个位置。这个特性的默认值为 `undefined`。
 
-要修改属性默认的特性，必须使用`ECMAScript5` 的`Object.defineProperty()`方法。
+:::warning
+**要修改属性默认的特性，必须使用`ECMAScript5` 的`Object.defineProperty()`方法。**
+:::
 
 这个方法接收三个参数：`属性所在的对象`、`属性的名字`和`一个描述符对象`。
 
 其中，描述符对象的属性必须是：`configurable`、`enumerable`、`writable` 和 `value`。设置其中的一或多个值，可以修改对应的特性值。
+
 
 ```js
 var person = {}; 
