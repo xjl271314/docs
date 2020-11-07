@@ -64,7 +64,6 @@ module.exports = {
           "/javascript/not",
           "/javascript/for-in",
           "/javascript/with",
-          "/javascript/arguments",
           "/javascript/env",
           "/javascript/rubbish",
           "/javascript/regexp",
