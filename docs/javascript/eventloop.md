@@ -1,13 +1,29 @@
 # 事件循环(Event Loop)
 
-我们都知道`javascript`是一门单线程语言,那么为什么需要是单线程的呢？
+- 2020.11.07
 
-:::tip
+## javascript发展历史
+
+在我们理解事件循环机制之前先来了解下`Javascript`语言的发展史。
+
+首先我们需要知道,一个`Javascript`引擎会常驻于内存中,他等待这我们(宿主)把`Javascript`代码或者函数传递给他执行。
+
+在早期的`Javascript`语言版本中,本事并没有异步执行代码的能力,这也叫意味着只能等待宿主环境吧代码传递给引擎,然后引擎直接把代码顺次执行,这个任务也就是宿主发起的任务。
+
+从ES5开始,`Javascript`引入了 `Promise`, 这样，不需要浏览器的安排, `Javascript`本身也可以发起任务了。
+
+**至此,这里就诞生了两个概念, `宏观任务`与 `微观任务`。**
+
+- `宏观任务`: 指代那些有宿主环境发起的任务。
+
+- `微观任务`: 指代由`Javascript`引擎本身发起的任务。
+
+## 为什么需要是单线程？
 
 单线程与之用途有关，单线程能够保证一致性，如果有两个线程，一个线程点击了一个元素，另一个删除了一个元素，浏览器以哪一个为准？
 
-单线程指的是单个脚本只能在一个线程上运行，而不是 JavaScript 引擎只有一个线程。
-
+:::tip
+单线程指的是单个脚本只能在一个线程上运行，而不是 `JavaScript` 引擎只有一个线程。
 :::
 
 我们先看一张经典的图
@@ -76,14 +92,66 @@ console.log('script end');
  * 7. promise2     // 执行promise中的then 优先级大于setTimeout
  * 8. setTimeout   // 执行setTimeout函数
  * /
-
 ```
 
-**引申**
+### 引申：如果我写了一个`setTimeout(()=>console.log(1111), 500);`这段代码会在500毫秒后执行吗?
 
-Q: 如果我写了一个`setTimeout(()=>console.log(1111), 500);`这段代码会在500毫秒后执行吗?
+不一定会执行，这段代码只是告诉浏览器我往异步任务队列塞了一个延迟500毫秒后执行的任务，如果当前异步任务队列是空闲的，在得到执行权后会延时500毫秒执行。否则的话必须等到获得执行权。
 
-A: 不一定会执行，这段代码只是告诉浏览器我往异步任务队列塞了一个延迟500毫秒后执行的任务，如果当前异步任务队列是空闲的，在得到执行权后会延时500毫秒执行。否则的话必须等到获得执行权。
+
+### 引申: 如何根据此特性实现一个红绿灯,把一个圆形的div按照绿色3s,黄色1s,红色2s循环改变背景色?
+
+- 2020.11.07
+
+<demos-trafficLight />
+
+```html
+<div ref="light" class="traffic-light" :class="[className]" />
+```
+
+#### 方法1: 思路最简单,使用`setTimeout`来显示递归显示。
+
+```js
+let that = this;
+      
+const fn = function (){
+    that.className= "green";
+    setTimeout(()=>{
+        that.className= "yellow";
+        setTimeout(()=>{
+            that.className= "red";
+            setTimeout(()=>{
+                fn();
+            },2000)
+        },1000)
+    }, 3000)
+}
+
+fn();
+```
+
+#### 方法2： `setTimeout` 与 `Promise`结合,本质上没什么区别
+
+```js
+const fn = function () {
+    that.className = "green";
+    setTimeout(() => {
+        return new Promise((res, rej) => {
+            that.className = "yellow";
+            res(
+                setTimeout(() => {
+                    return new Promise((res, rej) => {
+                        that.className = "red";
+                        setTimeout(() => {
+                            res(fn());
+                        }, 2000);
+                    });
+                }, 1000)
+            );
+        });
+    }, 3000);
+};
+```
 
 
 

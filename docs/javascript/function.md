@@ -100,22 +100,59 @@ alert(callSum(10,10));   // 20
 
 ## 函数表达式
 
+```js
+// 函数声明
+function hello(type){
+    return 'hello world';
+}
+
+// 函数表达式
+hello(); // VM1155:1 Uncaught ReferenceError: Cannot access 'hello' before initialization
+
+const hello = function(){
+    return 'hello world';
+}
+```
+
 :::tip
-函数声明与函数表达式的区别：
+**函数声明与函数表达式的区别：**
 
 函数声明存在变量提升，可以先使用再声明。函数表达式必须先定义再使用。
 :::
 
 ## 闭包
 
-> **闭包是指有权访问另一个函数作用域中的变量的函数。**
+> **闭包是指一个绑定了执行环境的函数。**
 
 创建闭包的常见方式，就是在一个函数内部创建另一个函数。
 
+## 执行上下文
+
+`javascript`标准把一段代码(包括函数),执行所需的所有信息定义为`执行上下文`,并且为函数规定了用来保存定义时上下文的私有属性[Environment]。
+
+**以下是在ES2018中的定义:**
+
+- `lexical environment:` 词法环境,当前变量或者 this 值时使用。
+
+- `variable environment:` 变量环境,当声明变量时使用。
+
+- `code environment state:` 用于恢复代码执行位置。
+
+- `Function:` 执行的任务是函数时使用,表示正在执行的函数。
+
+- `ScriptOrModule:` 执行的任务是脚本或者模块时使用,表示正在被执行的代码。
+
+- `Realm:` 使用的基础库和内置对象实例。
+
+- `Generator:` 仅生成器上下文有这个属性,表示当前生成器。
+
+当一个函数执行时,会创建一条新的执行环境,记录的外层词法(`outer lexical environment`)会被设置成函数的[Environment]。
+
+上述的这个动作就是`切换上下文`。
+
 ## 关于this对象
 
-在闭包中使用`this`对象也可能会导致一些问题。我们知道，`this`对象是在运行时基于函数的执
-行环境绑定的：在全局函数中，`this`等于`window`，而当函数被作为某个对象的方法调用时，`this`等于那个对象。
+在闭包中使用`this`对象也可能会导致一些问题。我们知道,`this`对象是在运行时基于函数的执行环境绑定的：在全局函数中，`this`等于`window`，而当函数被作为某个对象的方法调用时，`this`等于那个对象。
 
 <font color="#f44">不过，匿名函数的执行环境具有全局性，因此其 this 对象通常指向 window。</font>
 
@@ -130,7 +167,7 @@ var object = {
             return this.name; 
         }; 
     } 
-}; 
+};
 alert(object.getNameFunc()()); //"The Window"（在非严格模式下）
 ```
 
@@ -206,6 +243,39 @@ function outputNumbers(count){
     alert(i); // 导致一个错误！
 }
 ```
+
+### 引申: 为什么有的地方会出现以下这种在函数前面加上`;`的代码?
+
+在此之前先看下面这段代码:
+
+```js
+(function(){
+    console.log(1111);
+}());
+
+(function(){
+    console.log(2222);
+})();
+```
+
+如果上一行代码不写分号的话,括号就会被解释为上一行代码最末的函数调用,产生完全不符合预期,并且难以调式的行为,加号等运算符也有类似的问题。所以一些推荐不加分号的代码风格规范,会要求在括号前面加上分号。
+
+```js
+;(function(){
+    console.log(1111);
+}())
+```
+
+因此也就产生了上述的这种代码风格,当然一种更加推荐的做法是使用`void`关键字。
+
+```js
+void function(){
+    console.log(1111);
+}();
+```
+
+这样既能有效的避免了语法的问题,同时,语义上`void运算符`表示忽略后面表达式的值,变成了`undefined`,我们确认也不关心`IIFE`的返回值,所以语义也更为合理。
+
 
 ## 私有变量
 
