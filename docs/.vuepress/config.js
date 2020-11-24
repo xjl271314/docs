@@ -63,6 +63,7 @@ module.exports = {
           "/javascript/array",
           "/javascript/not",
           "/javascript/for-in",
+          "/javascript/try-catch",
           "/javascript/with",
           "/javascript/env",
           "/javascript/rubbish",
@@ -100,6 +101,7 @@ module.exports = {
         collapsable: true,
         children: [
           "/css/base",
+          "/css/higher",
           "/css/img",
           "/css/fix",
           "/css/animate",
@@ -299,7 +301,8 @@ module.exports = {
           "/open/rtv",
           "/open/highList",
           "/open/system",
-          "/open/pageVisualization"
+          "/open/pageVisualization",
+          "/open/semicolon",
         ]
       },
       {

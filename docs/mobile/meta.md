@@ -115,3 +115,28 @@
 ```html
 <meta name="format-detection" content="telephone=no,email=no" />
 ```
+
+**删除苹果默认的工具栏和菜单栏**
+
+```html
+<meta name="apple-mobile-web-app-capable" content="yes">
+```
+
+**设置苹果工具栏颜色**
+
+```html
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+```
+
+
+**默认使用最新浏览器,改变360兼容模式下以何种版本的IE去渲染页面**
+
+```html
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+```
+
+**不被网页(加速)转码**
+
+```html
+<meta http-equiv="Cache-Control" content="no-siteapp">
+```

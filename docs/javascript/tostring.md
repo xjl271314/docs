@@ -51,3 +51,21 @@ alert(String(value4)); // "undefined"
 
 然而,现在字符集国际标准,字符是以`Unicode`的方式表示的,每一个`Unicode`的码表示一个字符,理论上`Unicode`的范围是无限的。
 
+
+### 试题: 12.toString()输出结果是什么?为什么?
+
+```js
+// Uncaught SyntaxError: Invalid or unexpected token
+12.toString();
+
+// 12
+12 .toString();
+
+// 12
+12..toString();
+
+// Uncaught SyntaxError: Invalid or unexpected token
+12...toString();
+```
+
+`12.` 会被当作省略了小数点后面部分的数字，而单独看成一个整体,所以我们要想让`点`单独成为一个 `token`，就要加入空格。
