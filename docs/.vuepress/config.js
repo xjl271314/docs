@@ -122,6 +122,14 @@ module.exports = {
       },
       '/http/',
       {
+        title: "浏览器相关知识",
+        collapsable: true,
+        children: [
+          "/browser/extension",
+          "/browser/knowledge"
+        ]
+      },
+      {
         title: "PS相关知识",
         collapsable: true,
         children:[
@@ -310,13 +318,6 @@ module.exports = {
         collapsable: true,
         children: [
           "/im/tcent",
-        ]
-      },
-      {
-        title: "浏览器插件扩展",
-        collapsable: true,
-        children: [
-          "/extensions/chrome"
         ]
       },
       {

@@ -22,6 +22,13 @@
 
 `HTML`版本有很多种，这个声明告诉浏览器采用HTML5标准网页声明来解析`html`文件。
 
+### DTD 语法（文档类型定义）
+
+DTD 的全称是 `Document Type Defination`，也就是文档类型定义。SGML 用 DTD 来定义每一种文档类型，HTML 属于 SGML，在 HTML5 出现之前，HTML 都是使用符合 SGML 规定的 DTD。
+
+
+
+
 ## 严格模式和混杂模式
 
 - `严格模式`下排版和js运作模式是以该浏览器支持的最高标准运行。
@@ -297,6 +304,14 @@ function loadStyleString(css){
 
 - `matchesSelector()方法`:接收一个参数，即`CSS`选择符，如果调用元素与该选择符匹配，返回` true`；否则，返回 `false`。
 
+:::tip
+我们需要注意，`getElementById`、`getElementsByName`、`getElementsByTagName`、`getElementsByClassName`，这几个 API 的性能高于 `querySelector`。
+
+而 `getElementsByName`、`getElementsByTagName`、`getElementsByClassName` 获取的集合并非数组，而是一个能够动态更新的集合。
+
+浏览器内部是有高速的索引机制，来动态更新这样的集合的。但是,尽管 `querySelector` 系列的 API 非常强大，我们还是应该尽量使用 `getElement` 系列的 API。
+:::
+
 ## HTML5扩充
 
 ### 与类相关的扩充
@@ -533,6 +548,113 @@ el.getBoundingClientRect();
 - `事件捕获`:事件捕获的思想是不太具体的节点应该更早接收到事件，而最具体的节点应该最后接收到事件。**事件捕获的用意在于在事件到达预定目标之前捕获它**。
 
 ![事件捕获](https://img-blog.csdnimg.cn/20200118145806967.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+### 捕获与冒泡
+
+我们都知道捕获过程是从外向内，冒泡过程是从内向外,那么为什么需要事件捕获和冒泡呢?
+
+这里引用一个故事:
+
+我们现代的 UI 系统，都源自 WIMP 系统。`WIMP` 即 `Window Icon Menu Pointer` 四个要素，它最初由施乐公司研发，后来被微软和苹果两家公司应用在了自己的操作系统上。
+
+WIMP 是由 Alan Kay 主导设计的，这位巨匠，同时也是面向对象之父和 Smalltalk 语言之父。
+
+乔布斯曾经受邀参观施乐，他见到当时的 WIMP 界面，认为非常惊艳，不久后就领导苹果研究了新一代麦金塔系统。
+
+后来，在某次当面对话中，乔布斯指责比尔盖茨抄袭了 WIMP 的设计，盖茨淡定地回答：“史蒂夫，我觉得应该用另一种方式看待这个问题。这就像我们有个叫施乐的有钱邻居，当我闯进去想偷走电视时，却发现你已经这么干了。”
+
+但是不论如何，苹果和微软的数十代操作系统，极大地发展了这个体系，才有了我们今天的 UI 界面。
+
+回归到之前的问题上:
+
+实际上点击事件来自触摸屏或者鼠标，鼠标点击并没有位置信息，但是一般操作系统会根据位移的累积计算出来，跟触摸屏一样，提供一个坐标给浏览器。
+
+:::tip
+
+那么，把这个坐标转换为具体的元素上事件的过程，就是捕获过程了。而冒泡过程，则是符合人类理解逻辑的：当你按电视机开关时，你也按到了电视机。
+
+
+所以我们可以认为，捕获是计算机处理事件的逻辑，而冒泡是人类处理事件的逻辑。
+:::
+
+我们来看个例子：
+
+```html
+<body>
+  <input id="i"/>
+</body>
+```
+
+```js
+document.body.addEventListener("mousedown", () => {
+  console.log("key1")
+}, true)
+
+document.getElementById("i").addEventListener("mousedown", () => {
+  console.log("key2")
+}, true)
+
+document.body.addEventListener("mousedown", () => {
+  console.log("key11")
+}, false)
+
+document.getElementById("i").addEventListener("mousedown", () => {
+  console.log("key22")
+}, false)
+
+// key1 key2 key22 key11
+```
+
+在一个事件发生时，捕获过程跟冒泡过程总是先后发生，跟你是否监听毫无关联。
+
+:::tip
+在我们实际监听事件时，我建议这样使用冒泡和捕获机制：默认使用`冒泡模式`，当开发组件时，遇到需要父元素控制子元素的行为，可以使用`捕获机制`。
+:::
+
+理解了冒泡和捕获的过程，我们再看监听事件的 API，就非常容易理解了。
+
+addEventListener 有三个参数：
+
+- 事件名称；
+- 事件处理函数；
+- 捕获还是冒泡。
+
+事件处理函数不一定是函数，也可以是个 JavaScript 具有 handleEvent 方法的对象，看下例子：
+
+```js
+var o = {
+  handleEvent: event => console.log(event)
+}
+document.body.addEventListener("keydown", o, false);
+```
+
+第三个参数不一定是 bool 值，也可以是个对象，它提供了更多选项。
+
+- once：只执行一次。
+- passive：承诺此事件监听不会调用 preventDefault，这有助于性能。
+- useCapture：是否捕获（否则冒泡）。
+
+实际使用，在现代浏览器中，还可以不传第三个参数，我建议默认不传第三个参数，因为我认为冒泡是符合正常的人类心智模型的，大部分业务开发者不需要关心捕获过程。除非你是组件或者库的使用者，那就总是需要关心冒泡和捕获了。
+
+
+### 自定义事件
+
+除了来自输入设备的事件，还可以自定义事件，实际上事件也是一种非常好的代码架构，但是 DOM API 中的事件并不能用于普通对象，所以很遗憾，我们只能在 DOM 元素上使用自定义事件。
+
+自定义事件的代码示例如下（来自 MDN）：
+
+```js
+var evt = new Event("look", {"bubbles":true, "cancelable":false});
+document.dispatchEvent(evt);
+```
+
+这里使用 Event 构造器来创造了一个新的事件，然后调用 dispatchEvent 来在特定元素上触发。
+
+我们可以给这个 Event 添加自定义属性、方法。
+
+:::warning
+注意，这里旧的自定义事件方法（使用 `document.createEvent` 和 `initEvent`）已经被废弃。
+:::
 
 ### DOM事件流
 
@@ -872,3 +994,50 @@ iOS 2.0 中的 `Safari` 还引入了一组手势事件。当两个手指触摸�
 2. 建立在事件冒泡机制之上的`事件委托`技术，可以有效地减少事件处理程序的数量。
 3. 建议在浏览器卸载页面之前移除页面中的所有事件处理程序。
 :::
+
+## CSSOM
+
+我们通常创建样式表也都是使用 HTML 标签来做到的，我们用 style 标签和 link 标签创建样式表，例如：
+
+```html
+<style title="Hello">
+	a {
+	color:red;
+	}
+</style>
+<link rel="stylesheet" title="x" href="data:text/css,p%7Bcolor:blue%7D">
+```
+
+我们创建好样式表后，还有可能要对它进行一些操作。如果我们以 DOM 的角度去理解的话，这些标签在 DOM 中是一个节点，它们有节点的内容、属性，这两个标签中，CSS 代码有的在属性、有的在子节点。这两个标签也遵循 DOM 节点的操作规则，所以可以使用 DOM API 去访问。
+
+但是，这样做的后果是我们需要去写很多分支逻辑，并且，要想解析 CSS 代码结构也不是一件简单的事情，所以，这种情况下，我们直接使用 CSSOM API 去操作它们生成的样式表，这是一个更好的选择。
+
+我们首先了解一下 CSSOM API 的基本用法，一般来说，我们需要先获取文档中所有的样式表：
+
+```js
+document.styleSheets
+```
+
+document 的 styleSheets 属性表示文档中的所有样式表，这是一个只读的列表，我们可以用方括号运算符下标访问样式表，也可以使用 item 方法来访问，它有 length 属性表示文档中的样式表数量。
+
+样式表只能使用 style 标签或者 link 标签创建,我们虽然无法用 CSSOM API 来创建样式表，但是我们可以修改样式表中的内容。
+
+```js
+document.styleSheets[0].insertRule("p { color:pink; }", 0)
+document.styleSheets[0].removeRule(0)
+```
+
+更进一步，我们可以获取样式表中特定的规则（Rule），并且对它进行一定的操作，具体来说，就是使用它的 cssRules 属性来实现：
+
+```js
+document.styleSheets[0].cssRules
+```
+
+此外，CSSOM 还提供了一个非常重要的方法，来获取一个元素最终经过 CSS 计算得到的属性：
+
+```js
+window.getComputedStyle(elt, pseudoElt);
+```
+
+其中第一个参数就是我们要获取属性的元素，第二个参数是可选的，用于选择伪元素。
+
