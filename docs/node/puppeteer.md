@@ -2,7 +2,15 @@
 
 - 2020.06.28
 
-> `Puppeteer`是一个`Node.js库`,用于操控浏览器的爬虫神器，支持调用Chrome的API来操纵Web，相比较`Selenium`或是`PhantomJs`,它最大的特点就是它的操作Dom可以完全在内存中进行模拟既在V8引擎中处理而不打开浏览器[github地址](https://github.com/puppeteer/puppeteer)。
+> `Puppeteer`是一个`Node.js库`,用于操控浏览器的爬虫神器，支持调用Chrome的API来操纵Web，相比较`Selenium`或是`PhantomJs`,它最大的特点就是它的操作Dom可以完全在内存中进行模拟既在V8引擎中处理而不打开浏览器。
+
+## 文档地址
+
+[文档地址](https://zhaoqize.github.io/puppeteer-api-zh_CN/)
+
+## github地址
+
+[github地址](https://github.com/puppeteer/puppeteer)。
 
 ## 使用场景
 

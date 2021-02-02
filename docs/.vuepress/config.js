@@ -40,7 +40,7 @@ module.exports = {
     ],
     themeConfig: {
         nav: [
-            { text: 'css tricks', link: '' },
+            { text: 'css tricks', link: 'https://xjl271314.github.io/css_tips' },
             { text: 'js tricks', link: 'https://xjl271314.github.io/js_tips' },
         ],
         sidebar: [

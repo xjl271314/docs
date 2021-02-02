@@ -1670,3 +1670,609 @@ WebRTC 中媒体协商完成之后，就会对 Candidate pair 进行连通性检
 
 **无法P2P就需要用TURN服务器转发数据了**。
 
+##  如何通过Node.js实现一套最简单的信令系统？
+
+WebRTC 1.0 规范对 WebRTC 要实现的功能、API 等相关信息做了大量的约束，比如规范中定义了如何采集音视频数据、如何录制以及如何传输等。甚至更细的，还定义了都有哪些 API，以及这些 API 的作用是什么。但这些约束只针对于客户端，并没有对服务端做任何限制。
+
+那 WebRTC 规范中为什么不对服务器也做约束呢？其实，这样做有以下三点好处。
+
+- **第一点，可以集中精力将 WebRTC 库做好**。WebRTC 的愿景是使浏览器能够方便地处理音视频相关的应用，规范中不限制服务端的事儿，可以使它更聚焦。
+
+- **第二点，让用户更好地对接业务**。信令服务器一般都与公司的业务有着密切的关系，每家公司的业务都各有特色，让它们按照自已的业务去实现信令服务器会更符合它们的要求。
+
+- **第三点，能得到更多公司的支持**。WebRTC 扩展了浏览器的基础设施及能力，而不涉及到具体的业务或产品，这样会更容易得到像苹果、微软这种大公司的支持，否则这些大公司之间就会产生抗衡。
+
+当然，这样做也带来了一些坏处，最明显的一个就是增加了学习 WebRTC 的成本，因为我们在学习 WebRTC 的时候，必须自己去实现信令服务器，否则就没办法让 WebRTC 运转起来，这确实增加了不少学习成本。
+
+### 在 WebRTC 处理过程中的位置
+
+![信令服务器](https://img-blog.csdnimg.cn/20210128112649641.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+### WebRTC 信令服务器的作用
+
+它的功能是蛮简单的，就是进行信令的交换，但作用却十分关键。在通信双方彼此连接、传输媒体数据之前，它们要通过信令服务器交换一些信息，如媒体协商。
+
+举个例子，假设 A 与 B 要进行音视频通信，那么 A 要知道 B 已经上线了，同样，B 也要知道 A 在等着与它通信呢。**也就是说，只有双方都知道彼此存在，才能由一方向另一方发起音视频通信请求，并最终实现音视频通话**。
+
+具体下来至少要实现下面两个功能：
+
+1. 房间管理。即每个用户都要加入到一个具体的房间里，比如两个用户 A 与 B 要进行通话，那么它们必须加入到同一个房间里。
+
+2. 信令的交换。即在同一个房间里的用户之间可以相互发送信令。
+
+### 信令服务器的实现
+
+了解了 WebRTC 信令服务器的作用，并且还知道了信令服务器要实现的功能，接下来我们就操练起来，看看如何实现信令服务器吧！我将从下面 5 个方面来逐步讲解如何实现一个信令服务器。
+
+#### 1. 为什么选择 Node.js？
+
+要实现信令服务器，我们可以使用 C/C++、Java 等语言一行一行从头开始编写代码，也可以以现有的、成熟的服务器为基础，做二次开发。具体使用哪种方式来实现，关键看服务器要实现什么功能，以及使用什么传输协议等信息来决策。
+
+以上述的信令服务器为例，因它只需要传输几个简单的信令，而这些信令既可以使用 TCP、 HTTP/HTTPS 传输，也可以用 WebSocket/WSS 协议传输，所以根据它使用的传输协议，可以很容易地想到，通过 Web 服务器（如 Nginx、Node.js）来构建我们的信令服务器是最理想、最省时的、且是最优的方案。
+
+我们可以根据自己的喜好选择不同的 Web 服务器（如 Apache、Nginx 或 Node.js）来实现，而今天我们选择的是 Node.js，所以接下来我们将要讲解的是如何使用 Node.js 来搭建信令服务器。
+
+#### Node.js 的基本工作原理
+
+![Node.js 的基本工作原理](https://img-blog.csdnimg.cn/20210128114833496.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+Node.js 的工作原理如上图所示，其核心是 V8 引擎。通过该引擎，可以让 JavaScript 调用 C/C++ 方法或对象。反过来讲，通过它也可以让 C/C++ 访问 JavaScript 方法和变量。
+
+Node.js 首先将 JavaScript 写好的应用程序交给 V8 引擎进行解析，V8 理解应用程序的语义后，再调用 Node.js 底层的 C/C++ API 将服务启动起来。
+
+**所以 Node.js 的强大就在于 JavaScript 与 C/C++ 可以相互调用，从而达到使其能力可以无限扩展的效果**。
+
+我们以 Node.js 开发一个 HTTP 服务为例，Node.js 打开侦听的服务端口后，底层会调用 libuv 处理该端口的所有 HTTP 请求。其网络事件处理的过程就如下图所示：
+
+![网络事件处理的过程](https://img-blog.csdnimg.cn/20210128115151838.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+当有网络请求过来时，首先会被插入到一个事件处理队列中。libuv 会监控该事件队列，当发现有事件时，先对请求做判断，如果是简单的请求，就直接返回响应了；如果是复杂请求，则从线程池中取一个线程进行异步处理。
+
+线程处理完后，有两种可能：一种是已经处理完成，则向用户发送响应；另一种情况是还需要进一步处理，则再生成一个事件插入到事件队列中等待处理。事件处理就这样循环往复下去，永不停歇。
+
+#### Socket.io 的使用
+
+除了 Node.js 外，我们最终还要借助 Socket.io 来实现 WebRTC 信令服务器。Socket.io 特别适合用来开发 WebRTC 的信令服务器，通过它来构建信令服务器大大简化了信令服务器的实现复杂度，这主要是因为它内置了房间的概念。
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20210128115817757.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+Socket.io 分为服务端和客户端两部分。服务端由 Node.js 加载后侦听某个服务端口，客户端要想与服务端相连，首先要加载 Socket.io 的客户端库，然后调用 io.connect();即可与服务端连接上。
+
+:::tip
+Socket.io 有很多种发送消息的方式，其中最常见的有下面几种:
+
+1. 给本次连接发消息
+
+```
+socket.emit()
+```
+
+2. 给某个房间内所有人发消息
+
+```
+io.in(room).emit()
+```
+
+3. 除本连接外，给某个房间内所有人发消息
+
+```
+socket.to(room).emit()
+```
+
+4. 除本连接外，给所有人发消息
+
+```
+socket.broadcast.emit()
+```
+
+其中 S 表示服务器，C 表示客户端，它们是发送消息与接收消息的比对。
+
+1. 发送 command 命令
+
+```
+S: socket.emit('cmd’);
+C: socket.on('cmd',function(){...});
+```
+
+2. 发送了一个 command 命令，带 data 数据
+
+```
+S: socket.emit('action', data);
+C: socket.on('action',function(data){...});
+```
+
+3. 发送了 command 命令，还有两个数据
+
+```
+S: socket.emit(action,arg1,arg2);
+C: socket.on('action',function(arg1,arg2){...});
+```
+:::
+
+#### 实现信令服务器
+
+这里简单介绍前后端的示例代码：
+
+- 客户端
+
+```js
+var isInitiator;
+
+room = prompt('Enter room name:'); //弹出一个输入窗口
+
+const socket = io.connect(); //与服务端建立socket连接
+
+if (room !== '') { //如果房间不空，则发送 "create or join" 消息
+  console.log('Joining room ' + room);
+  socket.emit('create or join', room);
+}
+
+socket.on('full', (room) => { //如果从服务端收到 "full" 消息
+  console.log('Room ' + room + ' is full');
+});
+
+socket.on('empty', (room) => { //如果从服务端收到 "empty" 消息
+  isInitiator = true;
+  console.log('Room ' + room + ' is empty');
+});
+
+socket.on('join', (room) => { //如果从服务端收到 “join" 消息
+  console.log('Making request to join room ' + room);
+  console.log('You are the initiator!');
+});
+
+socket.on('log', (array) => {
+  console.log.apply(console, array);
+});
+```
+
+- 服务端
+
+```js
+const static = require('node-static');
+const http = require('http');
+const file = new(static.Server)();
+const app = http.createServer(function (req, res) {
+  file.serve(req, res);
+}).listen(2013);
+
+const io = require('socket.io').listen(app); //侦听 2013
+
+io.sockets.on('connection', (socket) => {
+
+  // convenience function to log server messages to the client
+  function log(){ 
+    const array = ['>>> Message from server: ']; 
+    for (var i = 0; i < arguments.length; i++) {
+      array.push(arguments[i]);
+    } 
+      socket.emit('log', array);
+  }
+
+  socket.on('message', (message) => { //收到message时，进行广播
+    log('Got message:', message);
+    // for a real app, would be room only (not broadcast)
+    socket.broadcast.emit('message', message); //在真实的应用中，应该只在房间内广播
+  });
+
+  socket.on('create or join', (room) => { //收到 “create or join” 消息
+
+  var clientsInRoom = io.sockets.adapter.rooms[room];
+    var numClients = clientsInRoom ? Object.keys(clientsInRoom.sockets).length : 0; //房间里的人数
+
+    log('Room ' + room + ' has ' + numClients + ' client(s)');
+    log('Request to create or join room ' + room);
+
+    if (numClients === 0){ //如果房间里没人
+      socket.join(room);
+      socket.emit('created', room); //发送 "created" 消息
+    } else if (numClients === 1) { //如果房间里有一个人
+    io.sockets.in(room).emit('join', room);
+      socket.join(room);
+      socket.emit('joined', room); //发送 “joined”消息
+    } else { // max two clients
+      socket.emit('full', room); //发送 "full" 消息
+    }
+    socket.emit('emit(): client ' + socket.id +
+      ' joined room ' + room);
+    socket.broadcast.emit('broadcast(): client ' + socket.id +
+      ' joined room ' + room);
+  });
+});
+```
+
+## RTCPeerConnection：音视频实时通讯的核心
+
+RTCPeerConnection 类是在浏览器下使用 WebRTC 实现 1 对 1 实时互动音视频系统最核心的类。
+
+:::tip
+SDP 是掌握 WebRTC 运行机制的钥匙，而 RTCPeerConnection 是使用 WebRTC 的钥匙
+:::
+
+### 传输要做哪些事儿?
+
+假如我们要实现一套 1 对 1 的通话系统，首先会想到在每一端创建一个 socket，然后通过该 socket 与对端相连。
+
+当 socket 连接成功之后，我们就可以通过 socket 向对端发送数据或者接收对端的数据了。
+
+实际上，**RTCPeerConnection 类的工作原理与 socket 基本是一样的**，不过它的功能更强大，实现也更为复杂。因为它有很多细节需要处理。
+
+- 端与端之间要建立连接，但它们是如何知道彼此的外网地址呢？
+
+- 如果两台主机都是在 NAT 之后，它们又是如何穿越 NAT 进行连接的呢？
+
+- 如果 NAT 穿越不成功，又该如何保证双方之间的连通性呢？
+
+- 好不容易双方连通了，如果突然丢包了，该怎么办？
+
+- 如果传输过程中，传输的数据量过大，超过了网络带宽能够承受的负载，又该如何保障音视频的服务质量呢？
+
+- 传输的音视频要时刻保持同步，这又该如何做到呢？
+
+- 数据在传输之前要进行音视频编码，而在接收之后又要做音视频解码，但 WebRTC 支持那么多编解码器，如 H264､ H265､ VP8､ VP9 等，它是如何选择的呢？
+
+### 什么是 RTCPeerConnection？
+
+了解了传输都要做哪些事之后，我们再理解什么是 RTCPeerConnection 就比较容易了。RTCPeerConnection 就与普通的 socket 一样，在通话的每一端都至少有一个 RTCPeerConnection 对象。在 WebRTC 中它负责与各端建立连接，接收、发送音视频数据，并保障音视频的服务质量。
+
+在操作时，我们完全可以把它当作一个 socket 来用，而且还是一个具有超强能力的“SOCKET”。至于它是如何保障端与端之间的连通性，如何保证音视频的服务质量，又如何确定使用的是哪个编解码器等问题，使用时可以不必关心，因为所有的这些问题都已经在 RTCPeerConnection 对象的底层实现好了。
+
+因此当有人问我们什么是 RTCPeerConnection时，我们可以简要的回答。**它就是一个功能超强的 socket！**。
+
+### RTCPeerConnection 如何工作
+
+假设 A 与 B 进行通信，那么对于每个端都要创建一个 RTCPeerConnection 对象，这样双方才可以通信。
+
+在 WebRTC 端与端之间建立连接，包括三个任务：
+
+1. 为连接的每个端创建一个 RTCPeerConnection 对象，并且给 RTCPeerConnection 对象添加一个本地流，该流是从 getUserMedia() 获取的；
+
+2. 获取本地媒体描述信息，即 SDP 信息，并与对端进行交换；
+
+3. 获得网络信息，即 Candidate（IP 地址和端口），并与远端进行交换。
+
+:::danger
+ iOS端只能用 safari，其它的浏览器都不能用 webrtc，之所以这样是因为苹果不允许其它浏览器访问底层 API，只能通过 webview实现浏览器。因此你会发现在iOS上只有 safari才能访问之前讲解的那些API.
+:::
+
+## 在WebRTC中如何控制传输速率呢？
+
+通过 RTCPeerConnection 进行传输速率的控制实际上还是蛮简单的一件事儿，但是对掌握知识来说，我们不但要学习如何控制传输速率，同时还应该清楚为什么要对传输速率进行控制。
+
+**之所以要进行传输速率的控制，是因为它会对音视频服务质量产生比较大的影响**。
+
+### 音视频服务质量
+
+虽然通过 RTCPeerConnection 在端与端之间建立连接后，音视频数据可以互通了，但你还应对传输速率有所控制。之所以要对传输速率进行控制，主要是为了提高音视频服务质量。
+
+举个简单的例子，假设我们的带宽是 1Mbps，当我们与朋友进行音视频通话，使用的视频分辨率为 720P，帧率是 15 帧 / 秒，通话的质量将会是怎么样的?
+
+咱们来简单计算一下，根据经验值，帧率为 15 帧 / 秒、分辨率为 720P 的视频，每秒钟大约要产生 1.2～1.5Mbps 的流量。然而我们的带宽只有1Mbps,超出带宽的数据会被直接丢弃掉，从而造成大量视频帧无法解码，所以最终效果一定会很差。
+
+**因此，假如我们不对传输的帧率进行限制，那么最终的效果就会比较差**。
+
+除了传输速率，以下这些因素也会对音视频质量产生影响:
+
+- **网络质量**，包括物理链路的质量、带宽的大小、传输速率的控制等；
+
+- **数据**，包括音视频压缩码率、分辨率大小、帧率等。
+
+以上这些因素都会对音视频的服务质量产生影响,在真实的场景中，我们该怎么去区分它们呢?或者说怎么判断服务质量是不是由于传输速率问题引起的呢？
+
+这里主要涉及到以下知识点:
+
+#### 1. 物理链路质量
+
+物理链路质量包括三个方面，即丢包、延迟和抖动。下面我们来看看它们是怎样影响服务质量的吧！
+
+- **丢包**。这个比较好理解，如果物理链路不好，经常出现丢包，这样就会造成接收端无法组包、解码，从而对音视频服务质量产生影响。
+
+- **延迟**。指通信双方在传输数据时，数据在物理链路上花费的时间比较长。对于实时通信来说，200ms 以内的延迟是最好的，这样通话双方的感觉就像是在面对面谈话；如果延迟是在 500 ms 以内，通话双方的体验也还不错，有点像打电话的感觉；如果延迟达到 800ms，还能接受，但有明显的迟滞现像；但如果延迟超过 1 秒，那就不是实时通话了！
+
+- **抖动**。指的是数据一会儿快、一会儿慢，很不稳定。如果不加处理的话，你看到的视频效果就是一会儿快播了、一会儿又慢动作，给人一种眩晕的感觉，时间长了会非常难受。不过对于 WebRTC 来讲，它通过内部的 JitterBuffer（可以简单地理解为一块缓冲区）就能很好地解决该问题。
+
+#### 2. 带宽大小
+
+带宽大小指的是每秒钟可以传输多少数据。比如 1M 带宽，它表达的是每秒钟可以传输 1M 个 bit 位，换算成字节就是 1Mbps/8 = 128KBps，也就是说 1M 带宽实际每秒钟只能传输 128K 个 Byte。
+
+当带宽固定的情况下，如何才能让数据传输得更快呢？
+
+**答案是充分利用带宽**。它实际的含义是把带宽尽量占满，但千万别超出带宽的限制。
+
+以 1M 带宽为例，如果每秒都传输 1M 的数据，这样传输数据的速度才是最快，多了、少了都不行。
+
+#### 3. 传输速率
+
+在实时通信中，与传输速率相关的有两个码率：`音视频压缩码率`和`传输控制码率`。
+
+**音视频压缩码率**指的是单位时间内音视频被压缩后的数据大小，或者简单地理解为压缩后每秒的采样率。它与视频的清晰度是成反比的，也就是**压缩码率越高，清晰度越低**。
+
+:::tip
+所谓的有损压缩就是数据被压缩后，就无法再还原回原来的样子；而与有损压缩对应的是无损压缩，它是指数据解压后还能还原回来。
+
+像我们日常中用到的 Zip、RAR、GZ 等这些压缩文件都是无损压缩。
+
+对于有损压缩，你设备的压缩码率越高，它的损失也就越大，解码后的视频与原视频的差别就越大。
+:::
+
+**传输码率**指对网络传输速度的控制。
+
+举个例子，假设我们发送的每个网络包都是 1500 字节，如果每秒钟发 100 个包，它的传输码率是多少呢？
+
+即 100*1.5K = 150K 字节，再换算成带宽的话就是 150KB * 8 = 1.2M。但如果带宽是 1M，那每秒钟发 100 个包肯定是多了，这个时候就要控制发包的速度，把它控制在 1M 以内，并尽量地接近 1M，这样数据传输的速度才是最快的。
+
+#### 4. 分辨率与帧率
+
+我们知道，视频的分辨率越高，视频就越清晰，但同时它的数据量也就越大。
+
+我们来简单计算一下，对于 1 帧未压缩过的视频帧，如果它的分辨率是 1280 * 720，存储成 RGB 格式，则这一帧的数据为 1280 * 720 * 3 * 8（3 表示 R、G、B 三种颜色，8 表示将 Byte 换算成 bit），约等于 22Mb；而存成 YUV420P 格式则约等于 11Mb，即 1280 * 720 * 1.5 * 8。
+
+按照上面的公式计算，如果我们把视频的分辨率降到 640 * 360，则这一帧的数据就降到了原来的 1/4，这个效果还是非常明显的。所以，如果想降低码率，最直接的办法就是降分辨率。
+
+当然，对帧率的控制也一样可以起到一定的效果。比如原来采集的视频是 30 帧 / 秒，还以分辨率是 1280 * 720 为例，之前 1 帧的数据是 22M，那 30 帧就是 22 * 30=660Mb。但如果改为 15 帧 / 秒，则数据就变成了 330Mb，直接减少了一半。
+
+:::tip
+实际上，通过减少帧率来控制码率的效果可能并不明显。因为在传输数据之前是要将原始音视频数据进行压缩的，在同一个 GOP（Group Of Picture）中，除了 I/IDR 帧外，B 帧和 P 帧的数据量是非常小的。
+:::
+
+### 传输速率的控制
+
+通过上面的介绍，我们知道可以通过以下两种方式来控制传输速率。
+
+1. 第一种是通过压缩码率这种“曲线救国”的方式进行控制；
+
+2. 第二种则是更直接的方式，通过控制传输速度来控制速率。
+
+第二种方式虽说很直接，但是也存在一些弊端。假设你有 10M 的数据要发送，而传输的速度却被限制为 5kbps，那它就只能一点一点地传。
+
+:::warning
+需要注意的是，由于 WebRTC 是实时传输，当它发现音视频数据的延迟太大，且数据又不能及时发出去时，它会采用主动丢数据的方法，以达到实时传输的要求。
+
+**所以在 WebRTC 中速率的控制是使用压缩码率的方法来控制的，而不是直接通过传输包的多少来控制的**。
+:::
+
+```js
+....
+var vsender = null; //定义 video sender 变量
+var senders = pc.getSenders(); //从RTCPeerConnection中获得所有的sender
+
+//遍历每个sender
+senders.forEach( sender => {
+  if(sender && sender.track.kind === 'video'){ //找到视频的 sender
+      vsender = sender; 
+  }
+});
+
+var parameters = vsender.getParameters(); //取出视频 sender 的参数
+if(!parameters.encodings){ //判断参数里是否有encoding域
+    return;
+}
+
+//通过 在encoding中的 maxBitrate 可以限掉传输码率
+parameters.encodings[0].maxBitrate = bw * 1000;
+
+//将调整好的码率重新设置回sender中去，这样设置的码率就起效果了。
+vsender.setParameters(parameters) 
+       .then(()=>{
+          console.log('Successed to set parameters!');
+       }).catch(err => {
+          console.error(err);
+       })
+
+...
+```
+
+## 如何打开/关闭音视频？
+
+在实时互动直播系统中，打开 / 关闭音视频流是很常见的需求。作为一个直播用户，你至少会有下面几种需求:
+
+- **将远端的声音静音**。比如来了一个电话，此时，应该先将直播中远端的声音关掉，等接完电话再将远端的声音打开，否则电话的声音与直播远端的声音会同时播放出来。
+
+- **将自己的声音静音**。比如老板要找你谈话，这时你应该将直播中自己的声音静音，否则你与老板的一些私密谈话会被远端听到。比如被老板骂了，要是被远端听到可就尴尬了。
+
+- **关闭远端的视频**。这个与远端声音静音差不多，只不过将声音改为视频了。比如当机子性能比较差的时候，为了节省资源，你可能会选择将远端的视频关闭掉。不过这种情况不是很多。
+
+- **关闭自己的视频**。当你不想让对方看到自己的视频时，就可以选择关闭自己的视频。比如今天你的状态特别不好，你又特别在乎你的形象，此时你就可以选择关闭自己的视频。
+
+针对实现上述所需的功能，我们来看看思路:
+
+### 1. 将远端的声音静音
+
+要实现这个功能，你可以通过在**播放端控制**和**发送端控制**两种方式实现。
+
+- 在播放端有两种方法，一种是**不让播放器播出来**，另一种是**不给播放器喂数据，将收到的音频流直接丢弃**。在播放端控制的优点是实现简单；缺点是虽然音频没有被使用，但它仍然占用网络带宽，造成带宽的浪费。
+
+- 在发送端控制也可以细分成两种方法实现，即**停止音频的采集**和**停止音频的发送**。对于 1 对 1 实时直播系统来说，这两种方法的效果是一样的。但对于多对多来说，它们的效果就大相径庭了。因为停止采集音频后，所有接收该音频的用户都不能收到音频了，这显然与需求不符；而停止向某个用户发送音频流，则符合用户的需求。
+
+### 2. 将自己的声音静音
+
+无论是 1 对 1 实时互动，还是多人实时互动，它的含义都是一样的，就是所有人都不能听到“我”的声音。因此，你只需**停止对本端音频数据的采集**就可以达到这个效果。
+
+### 3. 关闭远端的视频
+
+这与将“远端的声音静音”是类似的，要实现这个功能也是分为从播放端控制和从发送端控制两种方式。
+
+不过它与“将远端的声音静音”也是有区别的，那就是：
+
+- 从播放端控制**只能使用不给播放器喂数据这一种方法**，因为播放器不支持关闭视频播放的功能；
+
+- 从发送端控制是**通过停止向某个用户发送视频数据**这一种方法来实现的。而另一个停止采集则不建议使用，因为这样一来，其他端就都看不到你的视频了。
+
+### 4. 关闭自己的视频
+
+其逻辑与“将自己的声音静音”相似。但我们不应该关闭视频的采集，而应该通过**关闭所有视频流的发送**来实现该需求。之所以要这样，是因为视频还有本地预览，只要视频设备可用，本地预览就应该一直存在。所以，“关闭自己的视频”与“将自己的声音静音”的实现是不一样的。
+
+
+**代码实现部分**:
+
+1. 将远端的声音静音
+
+```html
+<HTML>
+...
+<video id=remote autoplay muted playsinline/>
+...
+</HTML>
+...
+```
+我们仅需要给video设置静音属性即可，需要开启的时候再开启。
+
+```js
+const remotevideo = document.querySelector('video#remote');
+remotevideo.muted = false;
+...
+```
+
+2. 播放端控制：丢掉音频流
+
+当然在播放端还有另外一种办法实现远端的静音，即在收到远端的音视频流后，将远端的 AudioTrack 不添加到要展示的 MediaStream 中，也就是让媒体流中不包含音频流，这样也可以起到静音远端的作用。具体代码如下:
+
+```js
+...
+var remoteVideo = document.querySelector('video#remote');
+...
+{
+    //创建与远端连接的对象
+    pc = new RTCPeerConnection(pcConfig);
+    ...
+    //当有远端流过来时，触发该事件
+    pc.ontrack = getRemoteStream;
+    ...
+}
+...
+
+function getRemoteStream(e){
+    //得到远端的音视频流
+  remoteStream = e.streams[0];
+    //找到所有的音频流
+    remoteStream.getAudioTracks().forEach((track)=>{
+      if (track.kind === 'audio') { //判断 track 是类型
+        //从媒体流中移除音频流    
+        remoteStream.removeTrack(track);
+      }
+    }); 
+    //显示视频 
+  remoteVideo.srcObject = e.streams[0];
+}
+...
+```
+
+3. 发送端控制：不采集音频
+
+```js
+
+...
+
+//获取本地音视频流
+function gotStream(stream) {
+    localStream = stream;
+    localVideo.srcObject = stream;
+}
+
+//获得采集音视频数据时限制条件
+function getUserMediaConstraints() {
+  
+  var constraints =  { 
+    "audio": false,
+    "video": {
+        "width": {
+            "min": "640",
+            "max": "1280"
+        },
+        "height": {
+            "min": "360",
+            "max": "720"
+        }
+    }
+  };
+  
+  return constraints;
+}
+
+...
+//采集音视频数据
+function captureMedia() {
+    ...
+    if (localStream) {
+      localStream.getTracks().forEach(track => track.stop());
+    }
+      ...
+      //采集音视频数据的 API
+    navigator.mediaDevices.getUserMedia(getUserMediaConstraints())
+      .then(gotStream)
+      .catch(e => {
+       ...
+      });
+}
+...
+```
+
+上面的代码非常简单，captureMedia 函数用于采集音视频数据，在它里面实际是调用的浏览器 API getUserMedia 进行具体操作的。由于这里强调的是不采集音频数据，所以你可以看到在 getUserMediaConstraints 函数中，将音频关掉了，所以最后获取到的流中只有视频数据。
+
+4. 发送端控制：关闭通道
+
+通过远端关闭通道的方式也可以达到静音的效果。与方法 3 不采集音频类似，本地想让远端静音时，向信令服务器发送一条静音指令，信令服务器进行转发，远端收到指令后执行下面的代码：
+
+```js
+  ...
+  var localStream = null;
+  
+  //创建peerconnection对象
+  var pc = new RTCPeerConnection(server);
+  ...
+  
+  //获得流
+  function gotStream(stream){
+    localStream = stream;
+  }
+  ...
+  
+  //peerconnection 与 track 进行绑定 
+  function bindTrack() {
+    //add all track into peer connection
+    localStream.getTracks().forEach((track)=>{
+      if(track.kink !== 'audio') {
+        pc.addTrack(track, localStream);
+      }
+    });
+  }
+  
+  ...
+```
+
+## WebRTC中的数据统计
+
+当我们实现视频通话后，还有一个非常重要的工作需要做，那就是实现数据监控。
+
+在 WebRTC 中可以监控很多方面的数据，比如收了多少包、发了多少包、丢了多少包，以及每路流的流量是多少，这几个是我们平常最关心的。除此之外，WebRTC 还能监控目前收到几路流、发送了几路流、视频的宽 / 高、帧率等这些信息。
+
+有了这些信息，我们就可以评估出目前用户使用的音视频产品的服务质量是好还是坏了。当发现用户的音视频服务质量比较差时，尤其是网络带宽不足时，可以通过降低视频分辨率、减少视频帧率、关闭视频等策略来调整你的网络状况。
+
+:::tip
+实际上，要查看 WebRTC 的统计数据，我们不需要另外再开发一行代码，只要在 Chrome 浏览器下输入“chrome://webrtc-internals”这个 URL 就可以看到所有的统计信息了。
+
+但它有一个前提条件，就是必须有页面创建了 RTCPeerConnection 对象之后，才可以通过这个 URL 地址查看相关内容。
+
+因为在 Chrome 内部会记录每个存活的 RTCPeerConnection 对象，通过上面的访问地址，就可以从 Chrome 中取出其中的具体内容。
+:::
+
+## 此处内容待迁移
+
+下面我们看一下，现代计算机图形处理的基本原理，如下图所示：
+
+![现代计算机图形处理的基本原理](https://img-blog.csdnimg.cn/20210128172648217.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+图中 Graphic Memory、GPU、Video Controller 都是现代显卡的关键组成部分，具体处理过程大致可描述为如下。
+
+- 应用程序处理的图形数据都是保存在 System Memory 中的，也就是我们经常所说的主内存中。需要硬件处理的时候，先将 System Memory 中的图形数据拷贝到 Graphic Memory 中。
+
+- 然后，通过 CPU 指令通知 GPU 去处理图形数据。
+
+- GPU 收到指令后，从 Graphic Memory 读取图形数据，然后进行坐标变换、着色等一系列复杂的运算后形成像素图，也就是 Video Frame，会存储在缓冲区中。
+
+- 视频控制器从 Video Frame 缓冲区中获取 Video Frame，并最终显示在显示器上。
+
+## 使用WebRTC进行文本聊天
+
+WebRTC 中的数据通道（RTCDataChannel）是专门用来传输除了音视频数据之外的任何数据，它的应用非常广泛，如实时文字聊天、文件传输、远程桌面、游戏控制、P2P 加速等。
+
