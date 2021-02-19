@@ -149,7 +149,7 @@ width: 200px;
 |  `static` | 默认值。没有定位，元素出现在正常的流中（忽略top,bottom,left,right,z-index声明）。
 | `inherit` | 规定从父元素继承position属性的值。
 
-## ::before 和:after 中双冒号和单冒号
+## `::before` 和 `::after` 中双冒号和单冒号
 
 - 2020.05.20
 
@@ -193,4 +193,180 @@ cursor
 ### 元素可见性
 visibility
 
-还有一些不常用的；speak，page，设置嵌套引用的引号类型quotes等属性
+还有一些不常用的；speak，page，设置嵌套引用的引号类型quotes等属性。
+
+
+## 字母x与CSS的基线
+
+- 2021.02.08
+
+在各种内联相关的盒模型中,凡是涉及到垂直方向的排版或者是对齐方式的,都离不开最基本的基线(baseline)。
+
+例如:
+- `line-height`: 行高的定义就是两基线之间的间距(指的是最小间距)。
+
+- `vertical-align`: 的默认值就是基线,其他中线、顶线一类的定义也离不开基线。
+
+:::tip
+
+而基线的定义就是来源于字母x(这里指的是小写字母x)。
+
+**字母x的下边缘就是我们的基线**。
+
+:::
+
+![基线的定义](https://img-blog.csdnimg.cn/20210209111234962.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+
+在了解了基线的定义之后我们再来看看`vertical-align`的实现与基线的关系。
+
+## 字母x 与 CSS中的x-height
+
+CSS中还有个`x-height`的概念,通俗的讲就是**小写字母x的高度**,官方的描述就是基线和等分线(`mean line`也称作中线, middle之间的距离)。
+
+![x-height定义](https://img-blog.csdnimg.cn/20210209112525555.png)
+
+**字段解释如下:**
+
+| 属性 | 描述 
+| :---------------- | :---
+| `ascender height` | 上行线高度
+| `cap height`      | 大写字母高度
+| `median`          | 中线
+| `baseline`        | 字母x的底部
+| `descender height`| 下行线高度
+
+:::tip
+`vertical-align`的 middle属性指的是**基线往上1/2 x-height高度**,可以近似的理解为字母x交叉点那个位置。
+
+因此, `vertical-align: middle;`并不是绝对的垂直居中对齐,我们平常看到的居中只是一个近似值。
+
+在不同的字体情况下,在行内盒子中的位置是不一样的,比如"微软雅黑"的字体就是一个字符下沉比较明显的字体,所有字符的位置都比其他字体要偏下一点。也就是说"微软雅黑"的字体字母x的交叉点是在容器中分线的下面一点。
+
+
+所以对于内联元素的垂直居中应该是对文字,而非局外部的块级容器所言。
+:::
+
+## 字母x与CSS中的ex
+
+ex是相对于小写字母x的尺寸，`1ex`就是一个x的高度。价值在于实现————不受字体和字号影响的内联元素的垂直居中对齐效果。
+
+假如有如下这么一个场景,图标的高度就是一个ex,同时背景图片居中,图标和文字就天然垂直居中,而且完全不受字体和字号的影响。因为ex就是一个相对于字体和字号的单位。
+
+<demos-ex />
+
+```html
+<div class="box">
+    显示全部内容
+    <div class="arrow-down" />
+</div>
+```
+
+```scss
+.box {
+  padding: 10px;
+  background: skyblue;
+  color: #fff;
+  font-size: 24px;
+}
+
+.arrow-down {
+  display: inline-block;
+  width: 24px;
+  height: 1ex; // 关键代码 不会随着字号的改变改变效果
+  background: url("../images/arrow-down.png") no-repeat center / cover;
+}
+```
+
+## 内联元素line-height的本质
+
+:::tip
+结论先行,不定高度元素的高度是由`line-height`来决定的而不是由`font-size`来决定的。
+:::
+
+<demos-line-height />
+
+```html
+  <div class="box">
+    <div class="box1">我的line-height为0,font-size为18px;</div>
+    <div class="box2">我的line-height为18px,font-size为0;</div>
+  </div>
+```
+
+```css
+.box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  .box1 {
+    width: 300px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: 18px;
+    line-height: 0;
+    background: #eee;
+    border: 1px solid #ccc;
+  }
+
+  .box2 {
+    width: 300px;
+    font-size: 0;
+    line-height: 18px;
+    background: #eee;
+    border: 1px solid #ccc;
+  }
+}
+```
+
+:::tip
+
+在CSS中,"行距"分散在当前文字的上方和下方,也就是即使是第一行文字,其上方也是有"行距"的,只不过这个"行距"的高度仅仅是完整"行距"高度的一半,因此也被称作"半行距"。
+
+行距 = `line-height` - `font-szie(1em)`;
+
+半行间距 = (`font-size` * `line-height` - `font-size` ) / 2 ===> `0.25* font-size`。
+
+**如果标注的是文字上边距,则向下取值;如果是文字下边距,则向上取整**。
+:::
+
+:::warning
+对于块级元素, `line-height`对其本身是没有任何作用的,我们平时改变`line-height`，块级元素的高度跟着变化实际上是通过改变块级元素里面内联元素占据的高度实现的。
+:::
+
+## 内联元素的`line-height`近似垂直居中
+
+多行文本或者替换元素的垂直居中需要`line-height`和`vertical-align`属性一同辅助。
+
+<demos-line-height2 />
+
+```css
+.box{
+    width: 400px;
+    line-height: 80px;
+    background: #f0f3f9;
+}
+
+.content{
+    display: inline-block;
+    line-height: 20px;
+    margin: 0 20px;
+    vertical-align: middle;
+}
+```
+
+```html
+<div class="box">
+    <div class="content">基于行高实现的内联元素垂直居中,需要使用 vertical-align 辅助实现。</div>
+</div>
+```
+
+:::tip
+
+实现的原理大致如下:
+
+1. 多行文本使用一个标签包裹,然后设置`display`为`inline-block`。好处在于既能重置外部的 `line-height`为正常的大小，又能保持内联元素的特效，从而设置 `vertical-align` 属性，产生一个关键的"行框盒子"。每个行框盒子都会产生一个"幽灵空白节点,即一个宽度为0看不见的节点。
+
+2. 内联元素是默认是基线对齐的,所以我们通过对`.content`设置 `vertical-align` 属性来调整多行文本的垂直位置，从而实现近似的垂直居中。
+
+:::   
+

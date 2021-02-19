@@ -160,6 +160,7 @@ module.exports = {
                 children: [
                     "/git/base",
                     "/git/standant",
+                    "/git/list",
                 ]
             },
             {
