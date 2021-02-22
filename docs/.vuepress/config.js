@@ -150,7 +150,8 @@ module.exports = {
                     "/project/docker",
                     "/project/autoTryCatch",
                     "/project/gitlabCI",
-                    "/project/middleWare"
+                    "/project/middleWare",
+                    "/project/immer"
                 ]
             },
             '/safe/',
