@@ -120,6 +120,14 @@
 | git push remote 标签名 | 向远端提交指定标签
 | git push remote --tags | 向远端提交所有标签
 
+## git删除中间某个commit
+
+1. git log获取commit信息
+2. git rebase -i (commit-id) commit-id 为要删除的commit的下一个commitId
+3. 编辑文件，将要删除的commit之前的单词改为drop
+4. 先按esc键退出 然后输入:wq进行保存
+5. git push -f强推到远程
+6. 查看git log 检查是否有误
 
 
 

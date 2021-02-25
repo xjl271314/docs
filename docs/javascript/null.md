@@ -4,7 +4,7 @@
 
 > 我们首先要明白的是,`javascript`中变量只声明不赋值的话默认就是`undefined`。
 
-`Undefined类型`表示未定义,它的类型只有一个值,就是 `undefined`。
+`undefined`表示未定义,它的类型只有一个值,就是 `undefined`。
 
 `undefined`值是派生自`null`值的，因此`ECMA-262`规定对它们的相等性测试要返回`true`。
 

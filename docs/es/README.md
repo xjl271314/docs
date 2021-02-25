@@ -268,7 +268,7 @@ for (const element of array1){
 
 `Symbol`是ES6出现的一种基本数据类型,`symbol()`函数会返回`symbol`类型的值，该类型具有静态属性和静态方法。它的静态属性会暴露几个内建的成员对象；它的静态方法暴露全局的symbol注册，且类似于内建对象类。
 
-每个`Symbol()`返回的`symbol`值都是唯一的。
+每个`Symbol()`返回的`symbol`值都是唯一的。当参数为对象时，将调用对象的toString()方法。
 
 :::tip
 一个`symbol`值能作为对象属性的标识符；这是该数据类型仅有的目的。
@@ -279,12 +279,132 @@ const symbol1 = Symbol();
 const symbol2 = Symbol(42);
 const symbol3 = Symbol('foo')
 const symbol4 = Symbol('foo')
+const symbol5 = Symbol({ name: 'Lucy' }); // Symbol([object Object])
 
 console.log(typeof symbol1) // "symbol"
 console.log(symbol3.toString()) // "Symbol('foo')"
 console.log(symbol3 === sumbol4) // false
 
 ```
+
+**如果我们想创造两个相等的Symbol变量，可以使用`Symbol.for(key)`。**
+
+> `Symbol.for(key)`使用给定的key搜索现有的symbol，如果找到则返回该symbol。否则将使用给定的key在全局symbol注册表中创建一个新的symbol。
+
+```js
+const symbol1 = Symbol.for('foo');
+const symbol2 = Symbol.for('foo');
+
+console.log(symbol1 === symbol2);
+```
+
+:::warning
+这里需要注意一点,我们需要使用Symbol()函数创建symbol变量，并非使用构造函数，使用new操作符会直接报错。
+
+```js
+new Symbol(); // Uncaught TypeError: Symbol is not a constructor
+```
+
+当使用Symbol作为对象属性时，可以保证对象不会出现重名属性，调用`for...in`不能将其枚举出来，另外调用`Object.getOwnPropertyNames`、`Object.keys()`也不能获取Symbol属性。
+
+```js
+var obj = {
+  name:'Lucy',
+  [Symbol('name')]:'jack'
+}
+Object.getOwnPropertyNames(obj); // ["name"]
+Object.keys(obj); // ["name"]
+for (var i in obj) {
+   console.log(i); // name
+}
+Object.getOwnPropertySymbols(obj) // [Symbol(name)]
+```
+:::
+
+**Symbol的应用场景**:
+
+- 防止XSS:
+
+在`React`的`ReactElement`对象中，有一个`$$typeof`属性，它是一个Symbol类型的变量：
+
+```js
+const REACT_ELEMENT_TYPE =
+  (typeof Symbol === 'function' && Symbol.for && Symbol.for('react.element')) ||
+  0xeac7;
+```
+
+`ReactElement.isValidElement`函数用来判断一个React组件是否是有效的，下面是它的具体实现。
+
+```js
+ReactElement.isValidElement = function (object) {
+  return typeof object === 'object' && object !== null && object.$$typeof === REACT_ELEMENT_TYPE;
+};
+```
+
+**`React`渲染时会把没有`$$typeof`标识，以及规则校验不通过的组件过滤掉。**
+
+如果你的服务器有一个漏洞，允许用户存储任意JSON对象， 而客户端代码需要一个字符串，这可能会成为一个问题：
+
+```js
+// JSON
+let expectedTextButGotJSON = {
+  type: 'div',
+  props: {
+    dangerouslySetInnerHTML: {
+      __html: '/* put your exploit here */'
+    },
+  },
+};
+let message = { text: expectedTextButGotJSON };
+<p>
+  {message.text}
+</p>
+```
+
+而`JSON`中不能存储`Symbol`类型的变量，这就是`防止XSS`的一种手段。
+
+- 私有属性
+
+借助`Symbol`类型的不可枚举，我们可以在类中模拟私有属性，控制变量读写：
+
+```js
+const privateField = Symbol();
+class myClass {
+  constructor(){
+    this[privateField] = 'ConardLi';
+  }
+  getField(){
+    return this[privateField];
+  }
+  setField(val){
+    this[privateField] = val;
+  }
+}
+```
+
+- 防止属性污染
+
+在某些情况下，我们可能要为对象添加一个属性，此时就有可能造成属性覆盖，用Symbol作为对象属性可以保证永远不会出现同名属性。
+
+例如我们模拟实现一个call方法：
+
+```js
+Function.prototype.myCall = function (context) {
+    if (typeof this !== 'function') {
+        return undefined; // 用于防止 Function.prototype.myCall() 直接调用
+    }
+    context = context || window;
+    const fn = Symbol();
+    context[fn] = this;
+    const args = [...arguments].slice(1);
+    const result = context[fn](...args);
+    delete context[fn];
+    return result;
+}
+```
+
+**我们需要在某个对象上临时调用一个方法，又不能造成属性污染，Symbol是一个很好的选择。**
+
 
 **13. 迭代器与生成器**
 
