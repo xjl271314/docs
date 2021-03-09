@@ -73,3 +73,137 @@ var num4 = parseFloat("22.34.5"); //22.34
 var num5 = parseFloat("0908.5"); //908.5 
 var num6 = parseFloat("3.125e7"); //31250000 
 ```
+
+## + 运算符的转换规则
+
++操作符在js中比较特殊，执行+操作符时：
+
+1. 当一侧为`String`类型，被识别为`字符串拼接`，并会优先将另一侧转换为字符串类型。
+2. 当一侧为`Number`类型，另一侧为`原始类型`，则将原始类型转换为Number类型。
+3. 当一侧为`Number`类型，另一侧为`引用类型`，将引用类型和Number类型转换成字符串后拼接。
+
+```js
+123 + '123' // 123123   （规则1）
+123 + null  // 123    （规则2）
+123 + true // 124    （规则2）
+123 + {}  // 123[object Object]    （规则3）
+```
+
+## 数值比较运算
+
+### 1. NaN
+
+`NaN`和其他任何类型比较永远返回`false`(包括和他自己)。
+
+```js
+NaN == NaN // false
+```
+
+### 2. Boolean
+
+`Boolean`和其他任何类型比较，`Boolean`首先被转换为`Number`类型。
+
+```js
+true == 1  // true 
+true == '2'  // false
+true == ['1']  // true
+true == ['2']  // false
+```
+
+:::tip
+这也是为什么undefined、null和布尔值比较返回false的原因。
+
+false首先被转换成0。
+
+```js
+undefined == false // false
+null == false // false
+```
+
+:::
+
+### 3. String和Number
+
+`String`和 `Number`比较，先将`String`转换为`Number`类型。
+
+```js
+123 == '123' // true
+'' == 0 // true
+```
+
+### 4. null和undefined
+
+`null == undefined` 比较结果是true，除此之外，null、undefined和其他任何结果的比较值都为false。
+
+```js
+null == undefined // true
+null == '' // false
+null == 0 // false
+null == false // false
+undefined == '' // false
+undefined == 0 // false
+undefined == false // false
+```
+
+### 5. 原始类型和引用类型
+
+当原始类型和引用类型做比较时，对象类型会依照`ToPrimitive`规则转换为原始类型:
+
+```js
+'[object Object]' == {} // true
+'1,2,3' == [1, 2, 3] // true
+```
+
+:::tip
+这里有一个常见的面试题:
+
+```js
+[] == ![] // true
+```
+!的优先级高于==，![]首先会被转换为false，然后根据上面第三点，false转换成Number类型0，左侧[]转换为0，两侧比较相等。
+
+:::
+
+同理:
+
+```js
+[null] == false // true
+[undefined] == false // true
+```
+
+:::tip
+
+一道有意思的面试题：
+
+**如何让：a == 1 && a == 2 && a == 3?**
+
+```js
+// 解法1
+const a = {
+   value:[3,2,1],
+   valueOf: function () {return this.value.pop(); },
+} 
+// 解法2
+const a = {
+  i: 1,
+  toString: function () {
+    return a.i++;
+  }
+}
+// 解法3
+let val = 0;
+
+Object.defineProperty(window, 'a', {
+  get: function() {
+    return ++val;
+  }
+})
+```
+:::
+
+
+
+
+
+
+

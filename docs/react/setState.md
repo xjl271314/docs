@@ -1,6 +1,6 @@
 # setState
 
-当我们在组件中调用 `setState`时，你认为发生了什么？
+## 当我们在组件中调用 `setState`时，你认为发生了什么？
 
 ```js
 import React, { Component } from 'react';
@@ -172,6 +172,32 @@ try {
 
 这也意味着，`Hooks`本身并不依赖于`React`。如果将来有更多的库想要复用相同的原始`Hooks`，理论上，`dispatcher`程序可以移植到一个单独的包中，并且作为第一级`API`以一个不太恐怖的名字暴露出去。
 
+## 引申: componentDidMount调用setstate会发生什么?
+
+这里是官方文档的描述:
+
+> 在`componentDidMount()`中，你 可以立即调用`setState()`。它将会触发一次额外的渲染，但是它将在浏览器刷新屏幕之前发生。这保证了在此情况下即使`render()`将会调用两次，用户也不会看到中间状态。谨慎使用这一模式，因为它常导致性能问题。在大多数情况下，你可以 `在constructor(`)中使用`赋值初始状态`来代替。然而，有些情况下必须这样，比如像模态框和工具提示框。这时，你需要先测量这些DOM节点，才能渲染依赖尺寸或者位置的某些东西。
+
+我们不推荐直接在`componentDidMount`直接调用`setState`，由上面的分析：`componentDidMount`本身处于一次更新中，我们又调用了一次`setState`，就会在未来再进行一次`render`，造成不必要的性能浪费，大多数情况可以设置初始值来搞定。
+
+当然在`componentDidMount`我们可以调用`接口`，在接口的回调中去修改`state`，这是正确的做法。
+
+当`state`初始值依赖`dom属性`时，在`componentDidMount`中`setState`是无法避免的。
+
+## 引申：结合生命周期,哪些生命周期里面可以去setState?
+
+| 生命周期 |  是否可以`setState`   | 描述 |
+|:--------| :--------:|:-------------|
+| `constructor()` | ❌ | 构造函数中请使用 `this.state = {...}`进行初始化赋值。
+| `static getDerivedStateFromProps()` | ❌ | 静态方法没有`this`对象,此处需要按照语法返回新的`state对象`。
+| `render()` | ❌ | `render()`中禁止使用`this.setState`否则会引起循环,内存溢出。
+| `componentDidMount()` | ✅ | 此生命周期中不推荐直接调用`this.setState`这会造成重复`render`,但是当需要获取DOM信息后再去更改`state`的属性时又不得不放在这里执行。
+| `shouldComponentUpdate()` | ❌ | 此生命周期只做返回是否更新的判断。
+| `getSnapshotBeforeUpdate()` | ❌ | 此生命周期只在`componentDidUpdate()`前进行数据修改。
+| `componentDidUpdate()` | ✅ | 此生命周期中可以正常使用,但需要注意添加更新条件,不然会导致死循环。
+| `componentWillUnmount()` | ❌ | 此生命周期不应调用`setState()`，因为该组件将永远不会重新渲染，组件实例卸载后，将永远不会再挂载它。
+| `componentDidCatch()` | ✅ | 此生命周期可以在捕获到错误后进行`state`存储。
+| `static getDerivedStateFromError()` | ❌ | 此生命周期在收到错误后执行,也需要返回新的`state`对象。
 
 
 
