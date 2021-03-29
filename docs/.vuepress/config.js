@@ -196,7 +196,8 @@ module.exports = {
                     "/mobile/live",
                     "/mobile/h5live",
                     "/mobile/h5liveProblems",
-                    "/mobile/rtc"
+                    "/mobile/rtc",
+                    "/mobile/videojs"
                 ]
             },
             {
@@ -235,6 +236,7 @@ module.exports = {
                 collapsable: true,
                 children: [
                     "/vue/lifestyle",
+                    "/vue/scoped",
                 ]
             },
             {
@@ -351,6 +353,7 @@ module.exports = {
                     "/wechat/h5share",
                     "/wechat/miniprogramComponent",
                     "/wechat/miniprogram",
+                    "/wechat/plugin",
                 ]
             },
             {

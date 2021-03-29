@@ -2,6 +2,54 @@
 
 > `SyntheticEvent` 实例将被传递给你的事件处理函数，它是浏览器的原生事件的跨浏览器包装器。除兼容所有浏览器外，它还拥有和浏览器原生事件相同的接口，包括 `stopPropagation()` 和 `preventDefault()`。
 
+## 为什么要手动绑定this?
+
+在了解合成事件之前,我们都知道在React中如果不使用箭头函数,我们给每个事件都需要手动的绑定一个`this`。先来一个例子:
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+class TestPage extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this); //绑定this
+  }
+  
+  handleClick(){
+    console.log( this )
+  }
+
+  render() {
+    const { count } = this.state;
+    return (
+      <button onClick={ this.handleClick } >点我测试</button>
+    );
+  }
+}
+
+ReactDOM.render(
+  <TestPage/>,document.getElementById('root')
+);
+```
+
+上述代码编译后的结果大致是这样:
+
+```jsx
+render() {
+    return React.createElement(
+      'button',
+      { onClick: this.handleClick },
+      'Hello'
+    );
+}
+```
+
+:::warning
+在ES6 class 内定义方法时，如果不是`箭头函数`，方法是挂载在 `prototype` 原型对象上的。当我们没有去绑定this的时候,这时候的this默认指向的是`window`,因此访问的时候就是`undefined`了。
+:::
+
 ## 事件池
 
 `SyntheticEvent` 是合并而来。这意味着 `SyntheticEvent` 对象可能会被重用，而且在事件回调函数被调用后，所有的属性都会无效。出于性能考虑，你不能通过异步访问事件。
