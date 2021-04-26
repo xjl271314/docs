@@ -5,7 +5,7 @@
 
 ### 函数防抖（debounce）：
 
-> 在事件被触发n秒之后再执行回调，如果在这n秒内又被触发,则重新开始计时。
+> 给一个固定时间例如5s，如果触发动作后，并且在这个固定时间内不再触发，那么就执行相应的回调，否则会重新开始计时。
 
 ### 防抖应用场景
 
@@ -32,7 +32,7 @@ function debounce(func, delay){
         timer = setTimeout(()=>{
             func.apply(context, args)
         }, delay)
-    }
+    }     
 }
 
 ```

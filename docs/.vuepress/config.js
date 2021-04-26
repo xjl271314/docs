@@ -59,6 +59,7 @@ module.exports = {
                     "/javascript/null",
                     "/javascript/number",
                     "/javascript/typeChange",
+                    "/javascript/assignment",
                     "/javascript/tostring",
                     "/javascript/object",
                     "/javascript/array",
@@ -177,6 +178,7 @@ module.exports = {
                 title: "TypeScript",
                 collapsable: true,
                 children: [
+                    "/typescript/start",
                     "/typescript/base",
                     "/typescript/enum",
                     "/typescript/interface",

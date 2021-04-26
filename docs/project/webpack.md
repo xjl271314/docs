@@ -1412,6 +1412,12 @@ plugins: [
 
 > 清理构建目录
 
+```js
+plugins: [
+  new CleanWebpackPlugin();
+]
+```
+
 ## ExtractTextWebpackPlugin 
 
 > 将CSS从bundle中提取成一个独立的css文件

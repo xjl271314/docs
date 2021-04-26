@@ -190,3 +190,4 @@ let tuple: [number , string] = [1 , '2']
 tuple.push('3'); //正常push
 tuple[2]  //报错, 因为越界访问了
 ```
+
