@@ -1,7 +1,6 @@
-# H5直播方案分析讲解
+# H5 直播方案分析讲解
 
 - 2020.05.25
-
 
 ## 直播的流程
 
@@ -9,27 +8,27 @@
 
 ![直播流程](https://img-blog.csdnimg.cn/20200525115522476.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
 
-## 视频流协议HLS与RTMP
+## 视频流协议 HLS 与 RTMP
 
-目前 `WEB`项目 上主流的视频直播方案有 `HLS` 和 `RTMP`，`H5`上目前以 `HLS` 为主（`HLS`存在延迟性问题，也可以借助 `video.js` 采用`RTMP`），PC端则以 `RTMP` 为主实时性较好。
+目前 `WEB`项目 上主流的视频直播方案有 `HLS` 和 `RTMP`，`H5`上目前以 `HLS` 为主（`HLS`存在延迟性问题，也可以借助 `video.js` 采用`RTMP`），PC 端则以 `RTMP` 为主实时性较好。
 
-实际的直播和用户播放的直播会有10秒左右或者更高的延迟,如何降低这个延时提高体验的关键。
+实际的直播和用户播放的直播会有 10 秒左右或者更高的延迟,如何降低这个延时提高体验的关键。
 
 ### HTTP Live Streaming
 
 > `HLS(HTTP Live Streaming)`是一个基于 `HTTP` 的视频流协议，由 `Apple` 公司实现，`Mac OS` 上的 `QuickTime`、`Safari` 以及 `iOS` 上的 `Safari` 都能很好的支持 `HLS`，高版本 `Android` 也增加了对 `HLS` 的支持。一些常见的客户端如：`MPlayerX`、`VLC` 也都支持 `HLS` 协议。
 
 **提供 HLS 的服务器需要做两件事**：
- 
+
 1. `编码`: 以 `H.263` 格式对图像进行编码，以 `MP3` 或者 `HE-AAC` 对声音进行编码，最终打包到 `MPEG-2 TS（Transport Stream）`容器之中。
 
 2. `分割`: 把编码好的 `TS` 文件等长切分成后缀为 `ts` 的小文件，并生成一个 `.m3u8` 的纯文本索引文件。
 
-### m3u8文件
+### m3u8 文件
 
 浏览器使用的是 `m3u8` 文件。
 
-> `m3u8` 跟`音频列表格式 m3u` 很像，可以简单的认为 `m3u8` 就是包含多个 `ts` 文件的播放列表(采用utf-8编码)。
+> `m3u8` 跟`音频列表格式 m3u` 很像，可以简单的认为 `m3u8` 就是包含多个 `ts` 文件的播放列表(采用 utf-8 编码)。
 
 ### 播放流程
 
@@ -74,63 +73,71 @@ pili-live-rtmp.xxx.com_1708021247HmBHAG-1590389226932.ts
 
 - `videojs-contrib-hls(解码m3u8文件)`
 
-- `jwplayer([Flash和HTML5播放器]  网页媒体播放器)`
+- `jwplayer([Flash和HTML5播放器] 网页媒体播放器)`
 
 - `videojs(可能会出现 跨域 问题，需要服务端的配合，让视频允许跨域)`。
-:::
+  :::
 
 **`video.js`方案部分代码展示**
 
 ```html
 <!-- 引入的文件 -->
-<link href="https://unpkg.com/video.js/dist/video-js.css" rel="stylesheet">
+<link href="https://unpkg.com/video.js/dist/video-js.css" rel="stylesheet" />
 <script src="https://unpkg.com/video.js/dist/video.js"></script>
 <script src="https://unpkg.com/videojs-contrib-hls/dist/videojs-contrib-hls.js"></script>
 
 <!-- html部分 -->
-<video id="my_video_1" class="video-js vjs-default-skin" controls preload="auto" width="640" height="268" 
-  data-setup='{}'>
-    <source src="http://www.tony.com/hls/test.m3u8" type="application/x-mpegURL">
- </video>
+<video
+  id="my_video_1"
+  class="video-js vjs-default-skin"
+  controls
+  preload="auto"
+  width="640"
+  height="268"
+  data-setup="{}"
+>
+  <source
+    src="http://www.tony.com/hls/test.m3u8"
+    type="application/x-mpegURL"
+  />
+</video>
 ```
+
 ```js
-var player=videojs('#my_video_1');
+var player = videojs("#my_video_1");
 player.play();
 
-// 视频播放 
-var myPlayer = videojs('my_video_1<%=i%>',{
-    bigPlayButton : true,
-    textTrackDisplay : true,
+// 视频播放
+var myPlayer = videojs(
+  "my_video_1<%=i%>",
+  {
+    bigPlayButton: true,
+    textTrackDisplay: true,
     posterImage: true,
-    errorDisplay : true,
-    controlBar : true
-},function(){
+    errorDisplay: true,
+    controlBar: true,
+  },
+  function() {
     //ready 加载
-	var _that = this;
-    this.on('loadedmetadata',function(){
-    })
-    this.on('ended',function(){
-    })
-    this.on('firstplay',function(){
-    })
-    this.on('loadstart',function(){
-        //开始加载
-    })
-    this.on('loadeddata',function(){
-    })
-    this.on('seeking',function(){
-        //正在去拿视频流的路上
-    })
-    this.on('seeked',function(){
-        //已经拿到视频流,可以播放
-    })
-    this.on('waiting',function(){
-    })
-    this.on('pause',function(){
-    })
-    this.on('play',function(){
-    })
-});
+    var _that = this;
+    this.on("loadedmetadata", function() {});
+    this.on("ended", function() {});
+    this.on("firstplay", function() {});
+    this.on("loadstart", function() {
+      //开始加载
+    });
+    this.on("loadeddata", function() {});
+    this.on("seeking", function() {
+      //正在去拿视频流的路上
+    });
+    this.on("seeked", function() {
+      //已经拿到视频流,可以播放
+    });
+    this.on("waiting", function() {});
+    this.on("pause", function() {});
+    this.on("play", function() {});
+  }
+);
 myPlayer.play(); //视频播放
 ```
 
@@ -157,13 +164,12 @@ this.play();
 </script>
 ```
 
-## 视频流协议HLS与RTMP对比
+## 视频流协议 HLS 与 RTMP 对比
 
-| 方式 | 协议 | 原理 | 延时 | 优点 | 使用场景
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| `HLS` | 短链接HTTP | 集合一段时间数据生成ts切片文件更新`m3u8`文件 | 10s - 30s | 跨平台 | 移动端为主
-| `RTMP` | 长链接Tcp | 每个时刻的数据收到后立即发送 | 2s | 延时低、实时性好 | PC + 直播 + 实时性要求高 + 互动性强
-
+| 方式   | 协议        | 原理                                           | 延时      | 优点             | 使用场景                            |
+| :----- | :---------- | :--------------------------------------------- | :-------- | :--------------- | :---------------------------------- |
+| `HLS`  | 短链接 HTTP | 集合一段时间数据生成 ts 切片文件更新`m3u8`文件 | 10s - 30s | 跨平台           | 移动端为主                          |
+| `RTMP` | 长链接 Tcp  | 每个时刻的数据收到后立即发送                   | 2s        | 延时低、实时性好 | PC + 直播 + 实时性要求高 + 互动性强 |
 
 ## H5 录制视频
 
@@ -171,7 +177,7 @@ this.play();
 
 **使用 `webRTC` 录制视频基本流程是：**
 
-1. 调用`window.navigator.webkitGetUserMedia();`获取用户的PC摄像头视频数据。
+1. 调用`window.navigator.webkitGetUserMedia();`获取用户的 PC 摄像头视频数据。
 
 2. 将获取到视频流数据转换成`window.webkitRTCPeerConnection(一种视频流数据格式)`。
 
@@ -181,8 +187,7 @@ this.play();
 由于许多方法都要加上浏览器前缀，所以很多移动端的浏览器还不支持 `webRTC`，所以真正的视频录制还是要靠客户端`（iOS,Android）`来实现,效果会好一些。
 :::
 
-
-## iOS 采集（录制）音视频数据OS
+## iOS 采集（录制）音视频数据 OS
 
 **关于音视频采集录制，首先明确下面几个概念：**
 
@@ -202,7 +207,6 @@ this.play();
 
 4. 建立`RTMP`连接并上推到服务端。
 
-
 ![IOS采集流程](https://img-blog.csdnimg.cn/20200525161931467.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
 
 ## 直播间状态分析
@@ -219,24 +223,23 @@ this.play();
 - 回放
 - 预展中
 
-## H5直播开发注意事项
+## H5 直播开发注意事项
 
+- ### `Video`标签兼容问题
 
-1. `Video`标签兼容问题
-
-比如： 在微信和QQ的内置浏览器里，播放视频会自动全屏，`video标签`也是永远浮在页面最上层，你根本控制不了。 浮在最上层不只是`X5浏览器`，还有些手机只带的浏览器。 视频源出现问题的表现，播放按钮的问题，都有不同。 因此需要我们对video标签的属性就行兼容处理:
+比如： 在微信和 QQ 的内置浏览器里，播放视频会自动全屏，`video标签`也是永远浮在页面最上层，你根本控制不了。 浮在最上层不只是`X5浏览器`，还有些手机只带的浏览器。 视频源出现问题的表现，播放按钮的问题，都有不同。 因此需要我们对 video 标签的属性就行兼容处理:
 
 ```html
-<video 
-  id="video" 
-  style="object-fit:fill" 
+<video
+  id="video"
+  style="object-fit:fill"
   autoplay
-  webkit-playsinline 
-  playsinline 
+  webkit-playsinline
+  playsinline
   x5-video-player-type="h5"
   x5-video-player-fullscreen="true"
-  x5-video-orientation="portraint" 
-  src="video.mp4" 
+  x5-video-orientation="portraint"
+  src="video.mp4"
   poster="img.jpg"
 /></video>
 <!-- object-fit: fill   视频内容充满整个video容器
@@ -246,8 +249,8 @@ autoplay： 自动播放
     meta - 当页面加载后只载入元数据
     none - 当页面加载后不载入视频
 muted：当设置该属性后，音频输出为静音
-webkit-playsinline playsinline:   内联播放 解决在iOS Safari和一些安卓的一些浏览器下播放视频
-                                  的时候，不能在h5页面中播放视频，系统会自动接管视频的问题
+playsinline： iOS10 之后Safari中新增 用于解决早期视频层级最高问题 采用视频内联播放
+webkit-playsinline:   iOS10之前 解决在Safari和一些安卓的一些浏览器下播放视频的时候，不能在h5页面中播放视频，系统会自动接管视频的问题
 x5-video-player-type="h5-page" :  启用x5内核H5播放器 解决安卓同层级播放
 x5-video-player-fullscreen="true"  全屏设置。ture和false的设置会导致布局上的不一样
 x5-video-orientation="portraint" ：声明播放器支持的方向，可选值landscape 横屏,portraint竖屏。
@@ -255,14 +258,29 @@ x5-video-orientation="portraint" ：声明播放器支持的方向，可选值la
                                    但是这个属性需要x5-video-player-type开启H5模式 -->
 ```
 
-2. `Video`推流监听问题
+```js
+// 通过事件监听全屏情况
+document
+  .getElementById("video")
+  .addEventListener("x5videoexitfullscreen", function() {
+    alert("exit fullscreen");
+  });
 
-推流会有一些不可控的情况，主播关闭摄像头，推送断流等，客户端断网。 这个时候在H5端的表现就是卡住，一旦卡住之后，就算推流又重新开始了，video依然会卡在那里，不会有任何重新播放的样子。 如果推流重新开始，用户自己点击控制条的暂停，再点击播放，又可以正常播放了。 
+document
+  .getElementById("video")
+  .addEventListener("x5videoenterfullscreen", function() {
+    alert("enter fullscreen");
+  });
+```
 
-可我们不可能让用户一直点，因为你也不知道推流什么时候重新开始，或者什么时候不再是断网状态。 通过点击控制条的暂停，再点击播放便可以播放的规律，我们可以自己检查当前的状态，再用JS控制video暂停，再播放。
+- ### `Video`推流监听问题
+
+推流会有一些不可控的情况，主播关闭摄像头，推送断流等，客户端断网。 这个时候在 H5 端的表现就是卡住，一旦卡住之后，就算推流又重新开始了，video 依然会卡在那里，不会有任何重新播放的样子。 如果推流重新开始，用户自己点击控制条的暂停，再点击播放，又可以正常播放了。
+
+可我们不可能让用户一直点，因为你也不知道推流什么时候重新开始，或者什么时候不再是断网状态。 通过点击控制条的暂停，再点击播放便可以播放的规律，我们可以自己检查当前的状态，再用 JS 控制 video 暂停，再播放。
 
 ```js
-const video = document.getElementById('video');
+const video = document.getElementById("video");
 
 video.pause();
 video.play();
@@ -273,54 +291,72 @@ video.play();
 ```js
 var checkTime = null;
 var checkLastTime = null;
-var check = setInterval(function(){
-    if(checkTime != null){
-        if(video.paused){
-            //如果是暂停状态
-        }
-        if(checkTime == checkLastTime || (checkTime== 0 && checkLastTime==0)){
-            if(!video.paused){//如果是暂停状态，就忽略
-                Message.tip('主播暂时'); // 提示一下用户
-                video.pause();
-                video.src = video.src;// 重置src，否则ios不会再次播放
-                video.play();
-            }
-            
-        }
+var check = setInterval(function() {
+  if (checkTime != null) {
+    if (video.paused) {
+      //如果是暂停状态
     }
-    checkLastTime = checkTime;
+    if (checkTime == checkLastTime || (checkTime == 0 && checkLastTime == 0)) {
+      if (!video.paused) {
+        //如果是暂停状态，就忽略
+        Message.tip("主播暂时"); // 提示一下用户
+        video.pause();
+        video.src = video.src; // 重置src，否则ios不会再次播放
+        video.play();
+      }
+    }
+  }
+  checkLastTime = checkTime;
 }, 10000);
 
-video.addEventListener('timeupdate', function(e){
-    //每次play()都会触发一次timeupdate,所以需要加个条件判断
-    if(checkTime != checkLastTime) hideShowTip();//隐藏上面 主播 离开的提示
-    checkTime = e.target.currentTime;
+video.addEventListener("timeupdate", function(e) {
+  //每次play()都会触发一次timeupdate,所以需要加个条件判断
+  if (checkTime != checkLastTime) hideShowTip(); //隐藏上面 主播 离开的提示
+  checkTime = e.target.currentTime;
 });
 ```
 
-但是这样仍然会有一些问题，比如当前检测到视频卡住了，JS控制重新播放，而当前还是没有获取到推流的话。 浏览器会先loading获取视频，最后会x显示加载失败。 我们的检查会轮询执行，所以我们可以在视频正常播放前使用一些提示类组件。
+但是这样仍然会有一些问题，比如当前检测到视频卡住了，JS 控制重新播放，而当前还是没有获取到推流的话。 浏览器会先 loading 获取视频，最后会 x 显示加载失败。 我们的检查会轮询执行，所以我们可以在视频正常播放前使用一些提示类组件。
 
-
-4. 自动播放兼容问题 
+- ### 自动播放兼容问题
 
 但是在很多移动浏览器里，都是要求用户的真实操作来（`touchend`、`click`、`doubleclick` 或 `keydown 事件等标准的事件`）触发调用`video.play()`,才能自动播放影音视频。
 
 ```js
- dom.addEventListener('click', function () {
-   video.play()
-})
+dom.addEventListener("click", function() {
+  video.play();
+});
 ```
 
-在微信里IOS支持自动播放，安卓目前暂不支持
+在微信里 IOS 支持自动播放，安卓目前暂不支持(经过实测发现黑鲨手机上可以播放)。
 
 ```js
 window.wx &&
-    wx.ready && 
-        wx.ready(() => {
-            wx.getNetworkType({
-                success: res => {
-                    video.play();
-                }
-            });
-        })
+  wx.ready &&
+  wx.ready(() => {
+    wx.getNetworkType({
+      success: (res) => {
+        video.play();
+      },
+    });
+  });
 ```
+
+- ### 多个 source 之间的播放问题
+
+有的时候我们可能会在`<audio>`、`<video>`之间放置多个`<source>`标签。
+
+```html
+<audio>
+  <source src =“ http://example.com/mysong.aac”>
+  <source src="“" mysong.oga” />
+</audio>
+```
+
+:::tip
+当我们提供了多个 source 的时候,浏览器会遍历 source 列表并播放它可以播放的第一个源。
+:::
+
+- ### 如何良好的兼容回退
+
+不支持 HTML5 的浏览器会忽略`<audio>` 和 `<video>` 标记，而支持 HTML5 的浏览器会忽略开始和结束标记之间除`<source>`标记以外的所有内容。因此为旧版浏览器指定后备行为很容易。只需将后备 HTML 放在开始或结束`<audio>` 或 `<video>` 标记之间（在任何`<source>`标记之后）即可。
