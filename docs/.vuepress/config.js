@@ -100,6 +100,7 @@ module.exports = {
           "/javascript/url",
           "/javascript/math",
           "/javascript/oop",
+          "/javascript/prototype",
           "/javascript/form",
           "/javascript/canvans",
           "/javascript/webgl",
@@ -112,6 +113,7 @@ module.exports = {
           "/javascript/throtte",
           "/javascript/eventsEmitter",
           "/javascript/target",
+          "/javascript/asyncCatch",
         ],
       },
       {
@@ -121,6 +123,7 @@ module.exports = {
           "/javascriptHigh/tips",
           "/javascriptHigh/mutationObserver",
           "/javascriptHigh/createTypes",
+          "/javascriptHigh/queue",
         ],
       },
       "/es/",
@@ -181,7 +184,7 @@ module.exports = {
       {
         title: "git",
         collapsable: true,
-        children: ["/git/base", "/git/standant", "/git/list"],
+        children: ["/git/base", "/git/standant", "/git/list", "/git/rebase"],
       },
       {
         title: "nginx",
@@ -228,6 +231,7 @@ module.exports = {
           "/react/component",
           "/react/com",
           "/react/setState",
+          "/react/componentWillUnMount",
           "/react/redux",
           "/react/hooksRedux",
           "/react/reduxSaga",
