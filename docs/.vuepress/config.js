@@ -166,6 +166,7 @@ module.exports = {
         title: "前端工程化",
         collapsable: true,
         children: [
+          "/project/vscode",
           "/project/mock",
           "/project/module",
           "/project/babel",
@@ -180,7 +181,11 @@ module.exports = {
           "/project/immer",
         ],
       },
-      "/safe/",
+      {
+        title: "Web安全问题",
+        collapsable: true,
+        children: ["/safe/base", "/safe/xss", "/safe/csrf", "/safe/javascript"],
+      },
       {
         title: "git",
         collapsable: true,
@@ -249,6 +254,7 @@ module.exports = {
           "/react/recompose",
           "/react/problems",
           "/react/upgrade",
+          "/react/plugin",
         ],
       },
       {
@@ -330,6 +336,7 @@ module.exports = {
           "/open/pageVisualization",
           "/open/semicolon",
           "/open/performance",
+          "/open/deepClone",
         ],
       },
       {
