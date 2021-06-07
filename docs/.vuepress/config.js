@@ -81,6 +81,7 @@ module.exports = {
           "/javascript/scriptsort",
           "/javascript/strict",
           "/javascript/var",
+          "/javascript/improve",
           "/javascript/type",
           "/javascript/null",
           "/javascript/number",
@@ -114,6 +115,7 @@ module.exports = {
           "/javascript/eventsEmitter",
           "/javascript/target",
           "/javascript/asyncCatch",
+          "/javascript/empty",
         ],
       },
       {
@@ -207,6 +209,7 @@ module.exports = {
           "/typescript/fan",
           "/typescript/func",
           "/typescript/expirence",
+          "/typescript/prefer",
         ],
       },
       {
@@ -362,6 +365,7 @@ module.exports = {
         title: "微信开发相关",
         collapsable: true,
         children: [
+          "/wechat/vscode",
           "/wechat/h5share",
           "/wechat/miniprogramComponent",
           "/wechat/miniprogram",
@@ -371,7 +375,7 @@ module.exports = {
       {
         title: "工具",
         collapsable: true,
-        children: ["/tool/charles"],
+        children: ["/tool/charles", "/tool/emoji"],
       },
       {
         title: "插件推荐",

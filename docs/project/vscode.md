@@ -1,4 +1,4 @@
-# VsCode 常用配置项
+# VsCode 常用配置
 
 - 2021.05.14
 
@@ -113,3 +113,27 @@
   "vetur.format.defaultFormatter.js": "vscode-typescript"
 }
 ```
+
+## 小程序常用配置插件
+
+- 小程序开发助手
+- minapp
+- vscode wxml
+- Wechat Snippet
+- wechat-snippet
+- wxml
+
+## H5常用配置插件
+
+- Beautify
+- Chinese (Simplified) Language Pack for Visual Studio Code
+- Color Highlight
+- Color Picker
+- Git Blame
+- Git History
+- koroFileHeader
+- language-stylus
+- Path Autocomplete
+- Path Intellisense
+- Stock Watch
+- vscode-icons

@@ -1,4 +1,4 @@
-# 深入jsx
+# 深入 jsx
 
 ## React.createElement
 
@@ -29,6 +29,7 @@ React.createElement(
 ```
 
 **源码部分(可选择观看)**
+
 ```jsx
 //注意：react只写了3个参数，实际上，从第三个参数往后都是children
 export function createElement(type, config, children) {
@@ -48,7 +49,7 @@ export function createElement(type, config, children) {
     }
     if (hasValidKey(config)) {
       // 防止是Number类型 转化为字符串
-      key = '' + config.key;
+      key = "" + config.key;
     }
     // __self、__source 暂时不知道是干啥用的属性
     self = config.__self === undefined ? null : config.__self;
@@ -117,8 +118,8 @@ export function createElement(type, config, children) {
     if (key || ref) {
       //如果type是组件的话，赋值displayName
       const displayName =
-        typeof type === 'function'
-          ? type.displayName || type.name || 'Unknown'
+        typeof type === "function"
+          ? type.displayName || type.name || "Unknown"
           : type;
       //可不看
       if (key) {
@@ -130,13 +131,13 @@ export function createElement(type, config, children) {
     }
   }
   return ReactElement(
-    type,  //'div'
-    key,  //null
-    ref,  //null
+    type, //'div'
+    key, //null
+    ref, //null
     self, //null
     source, //null
     ReactCurrentOwner.current, //null或Fiber
-    props, //自定义的属性、方法，注意：props.children=childArray
+    props //自定义的属性、方法，注意：props.children=childArray
   );
 }
 
@@ -146,13 +147,13 @@ function hasValidRef(config) {
   if (__DEV__) {
     // 如果config中存在ref属性的话
     // 在jQuery中 .call/.apply的更大作用是绑定this
-    if (hasOwnProperty.call(config, 'ref')) {
+    if (hasOwnProperty.call(config, "ref")) {
       //Object.getOwnPropertyDescriptor() es5
       //Object.getOwnPropertyDescriptors() es6
       //https://blog.csdn.net/qq_30100043/article/details/53424963
 
       //返回对象config的属性ref 的get对象
-      const getter = Object.getOwnPropertyDescriptor(config, 'ref').get;
+      const getter = Object.getOwnPropertyDescriptor(config, "ref").get;
       //如果isReactWarning，则忽略ref属性，返回false
       if (getter && getter.isReactWarning) {
         return false;
@@ -165,8 +166,8 @@ function hasValidRef(config) {
 
 function hasValidKey(config) {
   if (__DEV__) {
-    if (hasOwnProperty.call(config, 'key')) {
-      const getter = Object.getOwnPropertyDescriptor(config, 'key').get;
+    if (hasOwnProperty.call(config, "key")) {
+      const getter = Object.getOwnPropertyDescriptor(config, "key").get;
       if (getter && getter.isReactWarning) {
         return false;
       }
@@ -174,11 +175,11 @@ function hasValidKey(config) {
   }
   return config.key !== undefined;
 }
-
 ```
+
 ## ReactElement()
 
-通过工厂模式创建`React.Element`对象，你打印一个React组件的话，会是下面这个样子：
+通过工厂模式创建`React.Element`对象，你打印一个 React 组件的话，会是下面这个样子：
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200218151605636.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
 
@@ -214,9 +215,11 @@ function hasValidKey(config) {
 const ReactElement = function(type, key, ref, self, source, owner, props) {
   const element = {
     // This tag allows us to uniquely identify this as a React Element
-    //标识element的类型
-    //因为jsx都是通过createElement创建的，所以ReactElement的类型固定:为REACT_ELEMENT_TYPE
-    //重要！因为react最终渲染到DOM上时，需要判断$$typeof===REACT_ELEMENT_TYPE
+    // 标识element的类型
+    // 因为jsx都是通过createElement创建的，所以ReactElement的类型固定:为REACT_ELEMENT_TYPE
+    // 重要！因为react最终渲染到DOM上时，需要判断$$typeof===REACT_ELEMENT_TYPE
+    // 这里也是因为其是symbol类型 可以用于放置XSS攻击,JSON中不能存储Symbol类型的变量
+    // React渲染时会把没有$$typeof标识，以及规则校验不通过的组件过滤掉。
     $$typeof: REACT_ELEMENT_TYPE,
 
     // Built-in properties that belong on the element
@@ -249,14 +252,14 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
     // include every environment we run tests in), so the test framework
     // ignores it.
     //方便测试用
-    Object.defineProperty(element._store, 'validated', {
+    Object.defineProperty(element._store, "validated", {
       configurable: false,
       enumerable: false,
       writable: true,
       value: false,
     });
     // self and source are DEV only properties.
-    Object.defineProperty(element, '_self', {
+    Object.defineProperty(element, "_self", {
       configurable: false,
       enumerable: false,
       writable: false,
@@ -264,7 +267,7 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
     });
     // Two elements created in two different places should be considered
     // equal for testing purposes and therefore we hide it from enumeration.
-    Object.defineProperty(element, '_source', {
+    Object.defineProperty(element, "_source", {
       configurable: false,
       enumerable: false,
       writable: false,
@@ -279,6 +282,7 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
   return element;
 };
 ```
+
 ## 自定义组件
 
 **用户定义的组件必须以大写字母开头**
@@ -314,5 +318,3 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
 
 <div>{true}</div>
 ```
-
-

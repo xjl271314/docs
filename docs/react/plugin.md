@@ -75,3 +75,34 @@ ReactDOM.render(<App />, document.body);
 | `position`                 | `{ x: number,y: number }`                                                                | 设置`position`属性的时候组件会变成受控组件。                                                                                                                                                           |
 | `positionOffset`           | `{ x: number,y: number } | string`                                                       | 设置组件件初始偏移位置。                                                                                                                                                                               |
 | `scale`                    | `number`                                                                                 | 设置组件缩放比例。                                                                                                                                                                                     |
+
+## react-use
+
+> 一个丰富多彩的 `react-hooks` 组件库。[传送门](https://github.com/streamich/react-use)
+
+### 安装
+
+```
+npm i react-use
+yarn add react-use
+```
+
+### 示例说明
+
+- #### 传感器相关
+
+| Hooks 名称                                                                                        | Hooks 说明                                                                                                                                         |
+| :------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [useBattery](https://github.com/streamich/react-use/blob/master/docs/useBattery.md)               | 追踪设备的电池相关状态                                                                                                                             |
+| [useGeolocation](https://github.com/streamich/react-use/blob/master/docs/useGeolocation.md)       | 追踪设备的 geo 定位相关信息                                                                                                                        |
+| [useHover and useHoverDirty](https://github.com/streamich/react-use/blob/master/docs/useHover.md) | 监听元素的 mouse 相关事件                                                                                                                          |
+| [useHash ](https://github.com/streamich/react-use/blob/master/docs/useHash.md)                    | 设置 Hash 值                                                                                                                                       |
+| [useIdle ](https://github.com/streamich/react-use/blob/master/docs/useIdle.md)                    | 反应传感器挂钩，用于跟踪页面上的用户是否空闲。                                                                                                     |
+| [useIntersection ](https://github.com/streamich/react-use/blob/master/docs/useIntersection.md)    | 反应传感器挂钩，用于跟踪目标元素与祖先元素或顶层文档的视口的交集中的变化。使用 `IntersectionObserver API` 并返回一个 `IntersectionObserverEntry`。 |
+| [useKey](https://github.com/streamich/react-use/blob/master/docs/useKey.md)                       | 反应传感器挂钩，用于监听键盘按钮点击事件。                                                                                                         |
+| [useKeyPress](https://github.com/streamich/react-use/blob/master/docs/useKeyPress.md)             | 反应传感器挂钩，用于监听键盘按钮点击事件。                                                                                                         |
+| [useKeyboardJs](https://github.com/streamich/react-use/blob/master/docs/useKeyboardJs.md)         | 反应传感器挂钩，用于监听键盘多个按钮同时点击事件。                                                                                                 |
+| [useKeyPressEvent](https://github.com/streamich/react-use/blob/master/docs/useKeyPressEvent.md)   | 反应传感器挂钩，用于监听 useKey 的按压事件,但是此事件仅会触发一次，比如说你先按住了某个键，过了一会才房放掉，但是也仅会触发一次 keydwon 事件。     |
+| [useLocation](https://github.com/streamich/react-use/blob/master/docs/useLocation.md)             | 监听 navigation 导航相关。                                                                                                                         |
+| [useSearchParam](https://github.com/streamich/react-use/blob/master/docs/useSearchParam.md)       | 监听 location 下参数相关。                                                                                                                         |
+| [useLongPress](https://github.com/streamich/react-use/blob/master/docs/useLongPress.md)           | 监听某个元素的长按事件。                                                                                                                           |
