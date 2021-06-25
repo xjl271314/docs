@@ -123,7 +123,7 @@
 - wechat-snippet
 - wxml
 
-## H5常用配置插件
+## H5 常用配置插件
 
 - Beautify
 - Chinese (Simplified) Language Pack for Visual Studio Code
@@ -137,3 +137,19 @@
 - Path Intellisense
 - Stock Watch
 - vscode-icons
+
+## mac 下彻底删除 vscode
+
+- 删除设置和所有配置项
+
+```bash
+sudo rm -rf $HOME/Library/Application\ Support/Code
+```
+
+- 删除所有扩展程序
+
+```bash
+sudo rm -rf $HOME/.vscode
+```
+
+- 删除应用程序

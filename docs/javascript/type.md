@@ -1,27 +1,35 @@
 # 数据类型
 
-javascript有如下几种数据类型：
+javascript 有如下几种数据类型：
 
 ## 基本数据类型
-	1. `undefined`
-	2. `null`
-	3. `number`
-	4. `string`
-	5. `boolean`
-	6. `symbol`(ES6中加入的变量类型)
-	7. `bigInt`(ES10中加入的变量类型)
+
+    1. `undefined`
+    2. `null`
+    3. `number`
+    4. `string`
+    5. `boolean`
+    6. `symbol`(ES6中加入的变量类型)
+    7. `bigInt`(ES10中加入的变量类型)
 
 ## 复杂数据类型
-	1. `object`
 
-在将一个值赋给变量时，解析器必须确定这个值是基本类型值还是引用类型值。
+    1. `object`
+
+在将一个值赋给变量时，解析器必须确定这个值是`基本类型值`还是`引用类型值`。
 
 基本数据类型：`Undefined`、`Null`、`Boolean`、`Number` 、`String`、`Symbol`、`BigInt` 是按值访问的，因为可以操作保存在变量中的实际的值。
 
 :::tip
-`引用类型`的值是保存在`内存`中的对象。与其他语言不同，`JavaScript`不允许直接访问内存中的位置，也就是说不能直接操作对象的内存空间。
 
-当复制保存着对象的某个变量时，操作的是对象的引用。
+**`原始值`和`引用值`的区别在于存储的位置与访问的方式不同。**
+
+- `原始类型`的值是存储在栈中的简单数据。
+- `引用类型`的值是保存在`内存(堆内存)`中的对象。
+
+与其他语言不同，`JavaScript`不允许直接访问内存中的位置，也就是说不能直接操作对象的内存空间。
+
+当复制保存着对象的某个变量时，操作的是`对象的引用`。
 
 但在为对象添加属性时，操作的是实际的对象。
 :::
@@ -45,7 +53,6 @@ javascript有如下几种数据类型：
 - 可以直接操作其保存的变量，运行效率高
 - 由系统自动分配存储空间
 
-
 **`JavaScript`中的原始类型的值被直接存储在`栈`中，在变量定义时，`栈`就为其分配好了内存空间**。
 
 ### 堆内存
@@ -59,8 +66,8 @@ javascript有如下几种数据类型：
 
 ```js
 const str = "Hello World";
-const obj1 = { id: 1, title: 'Hello World'};
-const obj2 = ()=> console.log('obj2');
+const obj1 = { id: 1, title: "Hello World" };
+const obj2 = () => console.log("obj2");
 const obj3 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 ```
 
@@ -71,7 +78,7 @@ const obj3 = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 如果从一个变量向另一个变量复制基本类型的值，会在变量对象上创建一个新值，然后把该值复制到为新变量分配的位置上。
 
 ```
-var num1 = 5; 
+var num1 = 5;
 var num2 = num1;
 ```
 
@@ -92,9 +99,9 @@ var num2 = num1;
 因此，改变其中一个变量，就会影响另一个变量，如下面的例子所示：
 
 ```js
-var obj1 = new Object(); 
-var obj2 = obj1; 
-obj1.name = "Nicholas"; 
+var obj1 = new Object();
+var obj2 = obj1;
+obj1.name = "Nicholas";
 alert(obj2.name); //"Nicholas"
 ```
 
@@ -116,46 +123,46 @@ alert(obj2.name); //"Nicholas"
 当我们在对两个变量进行比较时，不同类型的变量的表现是不同的：
 
 ```js
-const name = 'ConardLi';
-const name2 = 'ConardLi';
+const name = "ConardLi";
+const name2 = "ConardLi";
 console.log(name === name2); // true
-const obj = {name:'ConardLi'};
-const obj2 = {name:'ConardLi'};
+const obj = { name: "ConardLi" };
+const obj2 = { name: "ConardLi" };
 console.log(obj === obj2); // false
 ```
 
 :::tip
-通过上述变量类型在内存中的存储方式,我们知道基础变量类型之间存储在栈中,两者的比较只会去比较两者的类型和值是否一致，如果一致就返回了true。
+通过上述变量类型在内存中的存储方式,我们知道基础变量类型之间存储在栈中,两者的比较只会去比较两者的类型和值是否一致，如果一致就返回了 true。
 
-对应引用类型obj、obj2我们知道他们在栈中存储了一个指向堆中数据的指针,两个数据的值虽然是一样的,但是在栈中存储的指针的地址是不一致的,所以两者并不相等。
+对应引用类型 obj、obj2 我们知道他们在栈中存储了一个指向堆中数据的指针,两个数据的值虽然是一样的,但是在栈中存储的指针的地址是不一致的,所以两者并不相等。
 :::
 
 ## 值传递和引用传递
 
 ```js
-let name = 'Lucy';
+let name = "Lucy";
 const changeName = (name) => {
-    name = 'Jack';
-}
+  name = "Jack";
+};
 
 changeName(name);
-console.log(name);// Lucy
+console.log(name); // Lucy
 ```
 
-上述代码的执行结果,name仍然是 Lucy,说明函数参数传递的是变量的值，即`值传递`,改变这个局部变量不会对外部变量产生影响。
+上述代码的执行结果,name 仍然是 Lucy,说明函数参数传递的是变量的值，即`值传递`,改变这个局部变量不会对外部变量产生影响。
 
 ```js
 let obj = {
-    name:'Lucy'
+  name: "Lucy",
 };
-function changeValue(obj){
-  obj.name = 'Jack';
+function changeValue(obj) {
+  obj.name = "Jack";
 }
 changeValue(obj);
 console.log(obj.name); // Jack
 ```
 
-上述代码的执行结果 name变成了Jack。**但是，是不是参数是引用类型就是引用传递呢？**
+上述代码的执行结果 name 变成了 Jack。**但是，是不是参数是引用类型就是引用传递呢？**
 
 :::warning
 `ECMAScript`中所有的函数的参数都是`按值传递`的。
@@ -165,9 +172,9 @@ console.log(obj.name); // Jack
 
 ```js
 let obj = {};
-function changeValue(obj){
-  obj.name = 'Lucy';
-  obj = { name:'Jack'};
+function changeValue(obj) {
+  obj.name = "Lucy";
+  obj = { name: "Jack" };
 }
 changeValue(obj);
 console.log(obj.name); // Lucy
@@ -183,8 +190,8 @@ console.log(obj.name); // Lucy
 <font color="red">这意味着我们不能在运行时为基本类型值添加属性和方法。</font>来看下面的例子：
 
 ```js
-var s1 = "some text"; 
-s1.color = "red"; 
+var s1 = "some text";
+s1.color = "red";
 alert(s1.color); //undefined
 ```
 
