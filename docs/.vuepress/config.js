@@ -116,6 +116,7 @@ module.exports = {
           "/javascript/target",
           "/javascript/asyncCatch",
           "/javascript/empty",
+          "/javascript/json",
         ],
       },
       {
