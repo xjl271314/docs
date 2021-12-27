@@ -41,11 +41,11 @@
 
 ### scrollIntoViewOptions
 
-| 参数名| 参数形式 | 参数描述
-| :--- | :--- | :---
-| behavior | 可选 | 定义动画过渡效果， "auto"`或 "smooth" 之一。默认为 "auto"。
-| block | 可选 | 定义垂直方向的对齐， "start", "center", "end", 或 "nearest"之一。默认为 "start"。
-| inline | 可选 | 定义水平方向的对齐， "start", "center", "end", 或 "nearest"之一。默认为 "nearest"。
+| 参数名   | 参数形式 | 参数描述                                                                            |
+| :------- | :------- | :---------------------------------------------------------------------------------- |
+| behavior | 可选     | 定义动画过渡效果， "auto"`或 "smooth" 之一。默认为 "auto"。                         |
+| block    | 可选     | 定义垂直方向的对齐， "start", "center", "end", 或 "nearest"之一。默认为 "start"。   |
+| inline   | 可选     | 定义水平方向的对齐， "start", "center", "end", 或 "nearest"之一。默认为 "nearest"。 |
 
 
 这个是H5上用来滚动元素到指定位置的方法.
@@ -86,7 +86,6 @@ window.scrollTo(top, { behavior: 'smooth');
 
 > `MutationObserver`接口提供了监视对`DOM`树所做更改的能力。它被设计为旧的`Mutation Events`功能的替代品，该功能是`DOM3 Events`规范的一部分。
 
-
 ### 支持情况
 
 ![MutationObserver支持情况](https://img-blog.csdnimg.cn/20200514200309491.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
@@ -119,15 +118,15 @@ window.scrollTo(top, { behavior: 'smooth');
 
 options可选参数如下:
 
-| 参数名 | 参数描述
-| :--- | :--- | 
-| childList  | 监听目标子节点的变化。
-| attributes  | 监听目标属性的变化。
-| characterData  | 监听目标数据的变化。
-| subtree  | 监听目标以及其后代的变化。
-| attributeOldValue  | 监听目标属性变化前的具体值。
-| characterDataOldValue  | 监听目标数据变化前的具体值。
-| attributeFilter  | 不需要监听的属性列表（此属性填入过滤的属性列表）。
+| 参数名                | 参数描述                                           |
+| :-------------------- | :------------------------------------------------- |
+| childList             | 监听目标子节点的变化。                             |
+| attributes            | 监听目标属性的变化。                               |
+| characterData         | 监听目标数据的变化。                               |
+| subtree               | 监听目标以及其后代的变化。                         |
+| attributeOldValue     | 监听目标属性变化前的具体值。                       |
+| characterDataOldValue | 监听目标数据变化前的具体值。                       |
+| attributeFilter       | 不需要监听的属性列表（此属性填入过滤的属性列表）。 |
 
 ### 示例
 
