@@ -88,7 +88,7 @@ $ git reset --soft commitHash; git add .; git commit -m '提交信息'; git push
 
 ## 分支管理
 
-```sh 
+```sh
 # 列出所有本地分支
 $ git branch
 
@@ -314,7 +314,7 @@ $ git stash
 $ git stash pop
 ```
 
-## 合并两个分支：Merge
+## 合并分支
 
 ```sh
 # 将开发分支代码合入到master中
@@ -337,7 +337,7 @@ git push origin dev
 
 ### 将一个分支下的多个commit合并成一个
 
-场景：有时候我们修改一个Bug或者一段代码的时候，commit 一次之后，发现 Bug 没改对或者这段代码需要再优化之类的，改完之后又 commit 了一次或多次，这样就会感觉提交历史不太美观（有点强迫症），这个时候我们就希望只想保留一次提交历史记录，合并为一个完整的提交。或者是为了上线方便错误回滚，将多次开发的commit合并成一个.https://www.jianshu.com/p/571153f5daa1
+场景：有时候我们修改一个Bug或者一段代码的时候，commit 一次之后，发现 Bug 没改对或者这段代码需要再优化之类的，改完之后又 commit 了一次或多次，这样就会感觉提交历史不太美观（有点强迫症），这个时候我们就希望只想保留一次提交历史记录，合并为一个完整的提交。或者是为了上线方便错误回滚，将多次开发的commit合并成一个.<https://www.jianshu.com/p/571153f5daa1>
 
 > git rebase 命令：将多次commit合并，只保留一次提交历史记录。
 
@@ -364,3 +364,11 @@ git push origin dev
 
 9. 同步到远程 git 仓库 `git push -f`
 ```
+
+## 代码回滚
+
+> `git revert`的原理是: 在当前提交后面，新增一次提交，抵消掉上一次提交导致的所有变化。它不会改变过去的历史，所以是首选方式，没有任何丢失代码的风险。
+
+`revert`可以抵消上一个提交，那么如果想要抵消多个需要执行 `git revert 倒数第一个commit id 倒数第二个commit`
+
+常用于当我们提交了一次`commit`之后发现提交的可能有问题就可以用`revert`进行回滚。

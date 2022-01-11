@@ -41,9 +41,9 @@ HTTP 协议永远是客户端发起，然后服务器返回响应。
 
 :::
 
-## ISO5 层模型
+## OSI5 层模型
 
-![ISO5层模型](https://img-blog.csdnimg.cn/2021041320410447.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
+![OSI5层模型](https://img-blog.csdnimg.cn/2021041320410447.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hqbDI3MTMxNA==,size_16,color_FFFFFF,t_70)
 
 ### 物理层:
 
