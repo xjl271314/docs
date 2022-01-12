@@ -1336,7 +1336,7 @@
     markdown-it-table-of-contents "^0.4.0"
     prismjs "^1.13.0"
 
-"@vuepress/plugin-active-header-links@1.9.5", "@vuepress/plugin-active-header-links@^1.5.0":
+"@vuepress/plugin-active-header-links@1.9.5", "@vuepress/plugin-active-header-links@^1.9.5":
   version "1.9.5"
   resolved "https://registry.npmjs.org/@vuepress/plugin-active-header-links/-/plugin-active-header-links-1.9.5.tgz#db24938fba6500508259eb4ab4b5f26f876c14c9"
   integrity sha512-Pi6cu5Ed4m6Ri8QatigapdXqhEcZXd/s+lyhdKWIwjJQaMSYlyAN2pX8Pqm4vqAvW6c0Dw2wEXrd989BcI7T4g==
@@ -1344,7 +1344,7 @@
     "@vuepress/types" "1.9.5"
     lodash.debounce "^4.0.8"
 
-"@vuepress/plugin-back-to-top@^1.5.0":
+"@vuepress/plugin-back-to-top@^1.9.5":
   version "1.9.5"
   resolved "https://registry.npmjs.org/@vuepress/plugin-back-to-top/-/plugin-back-to-top-1.9.5.tgz#61e2f5aa84f07306843db5e13f53a386aa89e443"
   integrity sha512-zcESgBsH5EYQLUN+EtxDYKHyPmZXIgLEReaKU8ddRaMxzodMXW84WtCmsc0En/P9wkf4SOXZkmWllH53rZWrzQ==
@@ -1368,7 +1368,7 @@
     "@vuepress/types" "1.9.5"
     nprogress "^0.2.0"
 
-"@vuepress/plugin-register-components@1.9.5", "@vuepress/plugin-register-components@^1.5.2":
+"@vuepress/plugin-register-components@1.9.5", "@vuepress/plugin-register-components@^1.9.5":
   version "1.9.5"
   resolved "https://registry.npmjs.org/@vuepress/plugin-register-components/-/plugin-register-components-1.9.5.tgz#7d0628a7bf4937ea32573f884479be8b47090678"
   integrity sha512-2eFqboPCOSY8bh7lkd13Cs7vyUcETEzzYnK/7CjqaeDmYtiJuWCoPjF30K2RsdbpVCE5aqheyXmBSEp2uWEosA==
@@ -6008,10 +6008,10 @@ markdown-it-emoji@^1.4.0:
   resolved "https://registry.npmjs.org/markdown-it-emoji/-/markdown-it-emoji-1.4.0.tgz#9bee0e9a990a963ba96df6980c4fddb05dfb4dcc"
   integrity sha1-m+4OmpkKljupbfaYDE/dsF37Tcw=
 
-markdown-it-include@^1.0.0:
-  version "1.1.1"
-  resolved "https://registry.npmjs.org/markdown-it-include/-/markdown-it-include-1.1.1.tgz#7015209f7b64365d32bb6ccc25366bc15d3eadc9"
-  integrity sha512-jDWIHhOtiQkFIc6BqXqXK1r4LfCxKFOWtsdvwZjLw5zZaWk64n71lE5HWHtzyVvfDudYWxR+tH0hO10B2I1e3w==
+markdown-it-include@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/markdown-it-include/-/markdown-it-include-2.0.0.tgz#e86e3b3c68c8f0e0437e179ba919ffd28443127a"
+  integrity sha512-wfgIX92ZEYahYWiCk6Jx36XmHvAimeHN420csOWgfyZjpf171Y0xREqZWcm/Rwjzyd0RLYryY+cbNmrkYW2MDw==
 
 markdown-it-mermaid@^0.2.5:
   version "0.2.5"
@@ -9324,10 +9324,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-vilike@0.1.0-beta.3:
-  version "0.1.0-beta.3"
-  resolved "https://registry.npmjs.org/vilike/-/vilike-0.1.0-beta.3.tgz#50a2678ae0b0a8effd3bdd7e19031d5a2f5819f5"
-  integrity sha512-37GEsv2nQ5Dx5zaqsJs7RQ6WmVBq56zrLuv9lrslcevW3ZE8IfVZK8zFBU4D4jldzowNkodySKBA9xT4A306+Q==
+vilike@0.2.0:
+  version "0.2.0"
+  resolved "https://registry.npmjs.org/vilike/-/vilike-0.2.0.tgz#f1ec07449a4d565c34048f950658cac6d1f3eb58"
+  integrity sha512-CQdRVm7+t5v/m0+6WchNhHX6GENVVBnp1LeDfthk/VXcCSUG761IGqCHB4dREEaRzImeK1phNyjCkYMRFq3nnA==
 
 vm-browserify@^1.0.1:
   version "1.1.2"

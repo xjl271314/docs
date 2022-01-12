@@ -15,9 +15,9 @@
     "url": "https://github.com/xjl271314/my-blogs/issues"
   },
   "devDependencies": {
-    "@vuepress/plugin-active-header-links": "^1.5.0",
-    "@vuepress/plugin-back-to-top": "^1.5.0",
-    "@vuepress/plugin-register-components": "^1.5.2",
+    "@vuepress/plugin-active-header-links": "^1.9.5",
+    "@vuepress/plugin-back-to-top": "^1.9.5",
+    "@vuepress/plugin-register-components": "^1.9.5",
     "chalk": "^4.1.0",
     "element-ui": "^2.13.1",
     "gh-pages": "^3.2.0",
@@ -32,10 +32,10 @@
     "async-validator": "1.11.5",
     "clipboard": "^2.0.6",
     "hydrogen-js-sdk": "^2.2.51",
-    "markdown-it-include": "^1.0.0",
+    "markdown-it-include": "^2.0.0",
     "markdown-it-mermaid": "^0.2.5",
     "moment": "^2.25.3",
     "odometer": "^0.4.8",
-    "vilike": "0.1.0-beta.3"
+    "vilike": "0.2.0"
   }
 }
