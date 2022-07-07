@@ -34,7 +34,7 @@
     "hydrogen-js-sdk": "^2.2.51",
     "markdown-it-include": "^2.0.0",
     "markdown-it-mermaid": "^0.2.5",
-    "moment": "^2.25.3",
+    "moment": "^2.29.4",
     "odometer": "^0.4.8",
     "vilike": "0.2.0"
   }
